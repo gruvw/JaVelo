@@ -1,14 +1,23 @@
 package ch.epfl.javelo;
 
+/**
+ * Preconditions used to verify method arguments.
+ *
+ * Non-instantiable.
+ *
+ * @author Lucas Jung (324724)
+ */
 public final class Preconditions {
-    private Preconditions() {
-    } // non-instantiable
+
+    private Preconditions() {}
 
     /**
-     * @param shouldBeTrue tested argument
-     * @throws IllegalArgumentException if the argument is false
+     * @param shouldBeTrue tested argument condition
+     * @throws IllegalArgumentException if the shouldBeTrue is false
      */
-    public static void checkArgument(boolean shouldBeTrue) throws IllegalArgumentException {
-
+    public static void checkArgument(boolean shouldBeTrue) {
+        if (!shouldBeTrue)
+            throw new IllegalArgumentException("Invalid argument!");
     }
+
 }

@@ -1,8 +1,15 @@
 package ch.epfl.javelo.projection;
 
+/**
+ * Switzerland's limits.
+ *
+ * Non-instantiable.
+ *
+ * @author Lucas Jung (324724)
+ */
 public final class SwissBounds {
-    private SwissBounds() {
-    } // non-instantiable
+
+    private SwissBounds() {}
 
     /**
      * Smallest east coordinate in Switzerland.
@@ -44,4 +51,5 @@ public final class SwissBounds {
         boolean containsN = n <= MAX_N && n >= MIN_N;
         return containsE && containsN;
     }
+
 }
