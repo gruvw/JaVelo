@@ -1,10 +1,10 @@
 package ch.epfl.javelo.projection;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class SwissBoundsTest {
+
     @Test
     void swissBoundsAreCorrect() {
         assertEquals(2_485_000, SwissBounds.MIN_E);
@@ -14,4 +14,5 @@ class SwissBoundsTest {
         assertEquals(349000.0, SwissBounds.WIDTH);
         assertEquals(221000.0, SwissBounds.HEIGHT);
     }
+
 }

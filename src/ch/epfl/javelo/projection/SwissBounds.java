@@ -44,7 +44,7 @@ public final class SwissBounds {
     /**
      * @param e tested east coordinate
      * @param n tested north coordinate
-     * @return true if the coordinates are in Switzerland limits, false otherwise
+     * @return true if the coordinates are within Switzerland's limits, false otherwise
      */
     public static boolean containsEN(double e, double n) {
         boolean containsE = e <= MAX_E && e >= MIN_E;

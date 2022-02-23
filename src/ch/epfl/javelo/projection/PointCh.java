@@ -17,7 +17,7 @@ public record PointCh(double e, double n) {
 
     /**
      * @param that other point
-     * @return squared distance between this point and the given one <code>that</code>
+     * @return squared distance between this point and the given one (<code>that</code>)
      */
     public double squaredDistanceTo(PointCh that) {
         return Math.pow(that.e - this.e, 2) + Math.pow(that.n - this.n, 2);
@@ -25,7 +25,7 @@ public record PointCh(double e, double n) {
 
     /**
      * @param that other point
-     * @return distance between this point and the given one <code>that</code>
+     * @return distance between this point and the given one (<code>that</code>)
      */
     public double distanceTo(PointCh that) {
         return Math.sqrt(squaredDistanceTo(that));

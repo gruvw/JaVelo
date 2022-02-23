@@ -13,6 +13,8 @@ public final class Math2 {
     private Math2() {}
 
     /**
+     * Ceil division for positive integers.
+     *
      * @param x
      * @param y
      * @return ceiling of <code>x</code>/<code>y</code> (⌈x/y⌉)
@@ -25,8 +27,8 @@ public final class Math2 {
     }
 
     /**
-     * @param y0 y value of the line on x=0
-     * @param y1 y value of the line on x=1
+     * @param y0 y value of the line where x=0
+     * @param y1 y value of the line where x=1
      * @param x x value to interpolate with the line
      * @return the y coordinate of the point (<code>x</code>, y) standing on the line passing by (0,
      *         <code>y0</code>) and (1, <code>y1</code>)
@@ -52,9 +54,9 @@ public final class Math2 {
      * @param min the minimum value for v
      * @param v
      * @param max the maximum value for v
-     * @return <code>min</code> when <code>v < min</code>, <code>max</code> when
-     *         <code>v > max</code>, <code>v</code> otherwise
-     * @throws IllegalArgumentException if min > max
+     * @return <code>min</code> when <code>v</code> < <code>min</code>, <code>max</code> when
+     *         <code>v</code> > <code>max</code>, <code>v</code> otherwise
+     * @throws IllegalArgumentException if <code>min</code> > <code>max</code>
      */
     public static double clamp(double min, double v, double max) {
         Preconditions.checkArgument(min <= max);
@@ -63,7 +65,7 @@ public final class Math2 {
 
     /**
      * @param x
-     * @return arsinh(x)
+     * @return arsinh(<code>x</code>)
      */
     public static double asinh(double x) {
         return Math.log(x + Math.sqrt(1 + Math.pow(x, 2)));

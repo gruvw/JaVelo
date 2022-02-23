@@ -11,7 +11,6 @@ class Math2Test {
 
     private static final double DELTA = 1e-7;
 
-
     @Test
     void ceilDivThrowsOnNegativeX() {
         assertThrows(IllegalArgumentException.class, () -> {

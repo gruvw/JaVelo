@@ -13,7 +13,7 @@ public final class Preconditions {
 
     /**
      * @param shouldBeTrue tested argument condition
-     * @throws IllegalArgumentException if the shouldBeTrue is false
+     * @throws IllegalArgumentException if <code>shouldBeTrue</code> is false
      */
     public static void checkArgument(boolean shouldBeTrue) {
         if (!shouldBeTrue)

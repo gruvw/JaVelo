@@ -15,7 +15,7 @@ public final class Ch1903 {
      * Conversion factor used when converting from the Swiss coordinates system to WGS84
      * coordinates.
      */
-    private static double conversionFactor = 100 / (double) 36;
+    private static final double CONVERSION_FACTOR = 100 / (double) 36;
 
     /**
      * @param lon initial longitude in radians
@@ -54,8 +54,7 @@ public final class Ch1903 {
      *
      * @param lon point's longitude, in radians
      * @param lat point's latitude, in radians
-     * @return the east coordinate, in meters, of the point of the given longitude and latitude
-     *         (WGS84)
+     * @return the east coordinate, in meters, of the point of given longitude and latitude (WGS84)
      */
     public static double e(double lon, double lat) {
         double lon1 = convertLon(lon), lat1 = convertLat(lat);
@@ -68,8 +67,7 @@ public final class Ch1903 {
      *
      * @param lon point's longitude, in radians
      * @param lat point's latitude, in radians
-     * @return the north coordinate, in meters, of the point of the given longitude and latitude
-     *         (WGS84)
+     * @return the north coordinate, in meters, of the point of given longitude and latitude (WGS84)
      */
     public static double n(double lon, double lat) {
         double lon1 = convertLon(lon), lat1 = convertLat(lat);
@@ -83,14 +81,13 @@ public final class Ch1903 {
      *
      * @param e point's east coordinates, in meters
      * @param n point's north coordinates, in meters
-     * @return the longitude (WGS84), in radians, of the point of the given east and north
-     *         coordinates
+     * @return the longitude (WGS84), in radians, of the point of given east and north coordinates
      */
     public static double lon(double e, double n) {
         double x = convertE(e), y = convertN(n);
         double lon0 = 2.6779094 + 4.728982 * x + 0.791484 * x * y + 0.1306 * x * Math.pow(y, 2)
                 - 0.0436 * Math.pow(x, 3);
-        return Math.toRadians(lon0 * conversionFactor);
+        return Math.toRadians(lon0 * CONVERSION_FACTOR);
     }
 
     /**
@@ -98,15 +95,14 @@ public final class Ch1903 {
      *
      * @param e point's east coordinates, in meters
      * @param n point's north coordinates, in meters
-     * @return the latitude (WGS84), in radians, of the point of the given east and north
-     *         coordinates
+     * @return the latitude (WGS84), in radians, of the point of given east and north coordinates
      */
     public static double lat(double e, double n) {
         double x = convertE(e), y = convertN(n);
         double xSquared = Math.pow(x, 2);
         double lat0 = 16.9023892 + 3.238272 * y - 0.270978 * xSquared - 0.002528 * Math.pow(y, 2)
                 - 0.0447 * xSquared * y - 0.0140 * Math.pow(y, 3);
-        return Math.toRadians(lat0 * conversionFactor);
+        return Math.toRadians(lat0 * CONVERSION_FACTOR);
     }
 
 }
