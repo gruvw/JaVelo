@@ -62,7 +62,7 @@ class PointChTest {
     @CsvSource({"2.6e6,1.2e6,0.8194509527598063", "2485001,1075001,0.7996558818339784",
             "2833999,1295999,0.8337899321808625", "2700000,1100000,0.8036216134779096"})
     void pointChLatWorksWithKnownValues(double e, double n, double expected) {
-        var actual = new PointCh(e, n).lat();
+        double actual = new PointCh(e, n).lat();
         assertEquals(expected, actual, DELTA);
     }
 

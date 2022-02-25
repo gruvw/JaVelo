@@ -3,7 +3,7 @@ package ch.epfl.javelo.projection;
 /**
  * Used to convert coordinates between the WSG84 and the Swiss coordinates system.
  *
- * Non instantiable. Arguments are not checked.
+ * Non-instantiable. Arguments are not checked.
  *
  * @author Lucas Jung (324724)
  */
@@ -50,7 +50,7 @@ public final class Ch1903 {
     }
 
     /**
-     * Converting from WGS84 to Swiss coordinates system (E).
+     * Converts from WGS84 to Swiss coordinates system (E).
      *
      * @param lon point's longitude, in radians
      * @param lat point's latitude, in radians
@@ -63,7 +63,7 @@ public final class Ch1903 {
     }
 
     /**
-     * Converting from WGS84 to Swiss coordinates system (N).
+     * Converts from WGS84 to Swiss coordinates system (N).
      *
      * @param lon point's longitude, in radians
      * @param lat point's latitude, in radians
@@ -77,7 +77,7 @@ public final class Ch1903 {
     }
 
     /**
-     * Converting from the Swiss coordinates system to WGS84 (longitude).
+     * Converts from the Swiss coordinates system to WGS84 (longitude).
      *
      * @param e point's east coordinates, in meters
      * @param n point's north coordinates, in meters
@@ -91,7 +91,7 @@ public final class Ch1903 {
     }
 
     /**
-     * Converting from the Swiss coordinates system to WGS84 (latitude).
+     * Converts from the Swiss coordinates system to WGS84 (latitude).
      *
      * @param e point's east coordinates, in meters
      * @param n point's north coordinates, in meters

@@ -15,8 +15,8 @@ public final class Math2 {
     /**
      * Ceil division for positive integers.
      *
-     * @param x
-     * @param y
+     * @param x numerator
+     * @param y denominator
      * @return ceiling of <code>x</code>/<code>y</code> (⌈x/y⌉)
      * @throws IllegalArgumentException if x < 0 or y <= 0
      */
@@ -52,7 +52,7 @@ public final class Math2 {
      * Limits the value of v to the interval [min, max].
      *
      * @param min the minimum value for v
-     * @param v
+     * @param v value to limit
      * @param max the maximum value for v
      * @return <code>min</code> when <code>v</code> < <code>min</code>, <code>max</code> when
      *         <code>v</code> > <code>max</code>, <code>v</code> otherwise
@@ -64,7 +64,7 @@ public final class Math2 {
     }
 
     /**
-     * @param x
+     * @param x argument
      * @return arsinh(<code>x</code>)
      */
     public static double asinh(double x) {

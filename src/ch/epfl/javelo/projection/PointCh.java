@@ -1,5 +1,7 @@
 package ch.epfl.javelo.projection;
 
+import ch.epfl.javelo.Preconditions;
+
 /**
  * A point in Switzerland (record).
  *
@@ -8,11 +10,14 @@ package ch.epfl.javelo.projection;
 public record PointCh(double e, double n) {
 
     /**
+     * Validates coordinates.
+     *
+     * @param e east coordinate
+     * @param n north coordinate
      * @throws IllegalArgumentException if the point is outside of Switzerland's limits
      */
     public PointCh {
-        if (!SwissBounds.containsEN(e, n))
-            throw new IllegalArgumentException("Point outside of Switzerland's limits!");
+        Preconditions.checkArgument(SwissBounds.containsEN(e, n));
     }
 
     /**
