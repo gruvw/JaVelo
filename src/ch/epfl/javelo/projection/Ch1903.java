@@ -12,12 +12,6 @@ public final class Ch1903 {
     private Ch1903() {}
 
     /**
-     * Conversion factor used when converting from the Swiss coordinates system to WGS84
-     * coordinates.
-     */
-    private static final double CONVERSION_FACTOR = 100 / (double) 36;
-
-    /**
      * @param lon initial longitude in radians
      * @return converted longitude (after degrees conversion)
      */
@@ -59,7 +53,7 @@ public final class Ch1903 {
     public static double e(double lon, double lat) {
         double lon1 = convertLon(lon), lat1 = convertLat(lat);
         return 2_600_072.37 + 211_455.93 * lon1 - 10_938.51 * lon1 * lat1
-                - 0.36 * lon1 * Math.pow(lat1, 2) - 44.54 * Math.pow(lon1, 3);
+                - .36 * lon1 * Math.pow(lat1, 2) - 44.54 * Math.pow(lon1, 3);
     }
 
     /**
@@ -85,9 +79,9 @@ public final class Ch1903 {
      */
     public static double lon(double e, double n) {
         double x = convertE(e), y = convertN(n);
-        double lon0 = 2.6779094 + 4.728982 * x + 0.791484 * x * y + 0.1306 * x * Math.pow(y, 2)
-                - 0.0436 * Math.pow(x, 3);
-        return Math.toRadians(lon0 * CONVERSION_FACTOR);
+        double lon0 = 2.6779094 + 4.728982 * x + .791484 * x * y + .1306 * x * Math.pow(y, 2)
+                - .0436 * Math.pow(x, 3);
+        return Math.toRadians(lon0 * 10 / 3.6);
     }
 
     /**
@@ -100,9 +94,9 @@ public final class Ch1903 {
     public static double lat(double e, double n) {
         double x = convertE(e), y = convertN(n);
         double xSquared = Math.pow(x, 2);
-        double lat0 = 16.9023892 + 3.238272 * y - 0.270978 * xSquared - 0.002528 * Math.pow(y, 2)
-                - 0.0447 * xSquared * y - 0.0140 * Math.pow(y, 3);
-        return Math.toRadians(lat0 * CONVERSION_FACTOR);
+        double lat0 = 16.9023892 + 3.238272 * y - .270978 * xSquared - .002528 * Math.pow(y, 2)
+                - .0447 * xSquared * y - .0140 * Math.pow(y, 3);
+        return Math.toRadians(lat0 * 10 / 3.6);
     }
 
 }

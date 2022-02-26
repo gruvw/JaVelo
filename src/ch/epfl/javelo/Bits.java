@@ -20,7 +20,9 @@ public final class Bits {
      * @throws IllegalArgumentException if slice is not between 0 and 31 (included)
      */
     public static int extractSigned(int value, int start, int length) {
-
+        Preconditions.checkArgument(start >= 0);
+        Preconditions.checkArgument(length >= 0 && start + length <= 32);
+        return value << (32 - start - length) >> (32 - length);
     }
 
     /**
@@ -33,7 +35,9 @@ public final class Bits {
      *         <code>length</code> is larger than 31
      */
     public static int extractUnsigned(int value, int start, int length) {
-
+        Preconditions.checkArgument(start >= 0);
+        Preconditions.checkArgument(length >= 0 && start + length < 32);
+        return value << (32 - start - length) >>> (32 - length);
     }
 
 }

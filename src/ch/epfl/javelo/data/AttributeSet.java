@@ -1,5 +1,7 @@
 package ch.epfl.javelo.data;
 
+import ch.epfl.javelo.Preconditions;
+
 /**
  * Set of OpenStreetMap attributes (record).
  *
@@ -14,7 +16,7 @@ public record AttributeSet(long bits) {
      *         correspond to any OSM attribute
      */
     public AttributeSet {
-        // TODO
+        Preconditions.checkArgument(bits >> Attribute.COUNT == 0);
     }
 
     /**
@@ -30,7 +32,7 @@ public record AttributeSet(long bits) {
      * @return true if this set contains the given attribute, false otherwise
      */
     public boolean contains(Attribute attribute) {
-        // TODO
+        return (bits & (1 << attribute.ordinal())) != 0;
     }
 
     /**

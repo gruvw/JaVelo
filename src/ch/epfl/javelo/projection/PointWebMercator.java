@@ -1,6 +1,5 @@
 package ch.epfl.javelo.projection;
 
-import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.Preconditions;
 
 /**
@@ -18,8 +17,8 @@ public record PointWebMercator(double x, double y) {
      * @throws IllegalArgumentException if given coordinates are lower than 0 or larger than 1
      */
     public PointWebMercator {
-        Preconditions.checkArgument(x <= 1 || x >= 0);
-        Preconditions.checkArgument(y <= 1 || y >= 0);
+        Preconditions.checkArgument(0 <= x && x <= 1);
+        Preconditions.checkArgument(0 <= y && y <= 1);
     }
 
     /**
@@ -30,7 +29,7 @@ public record PointWebMercator(double x, double y) {
      *         <code>zoomLevel</code> map zoom level
      */
     public static PointWebMercator of(int zoomLevel, double x, double y) {
-        return new PointWebMercator(Math.scalb(x, 8 - zoomLevel), Math.scalb(y, 8 - zoomLevel));
+        return new PointWebMercator(Math.scalb(x, -8 - zoomLevel), Math.scalb(y, -8 - zoomLevel));
     }
 
     /**
@@ -39,9 +38,7 @@ public record PointWebMercator(double x, double y) {
      *         coordinates system
      */
     public static PointWebMercator ofPointCh(PointCh pointCh) {
-        double x = pointCh.lon() / (2 * Math.PI) + 0.5;
-        double y = 0.5 - Math2.asinh(Math.tan(pointCh.lat())) / (2 * Math.PI);
-        return new PointWebMercator(x, y);
+        return new PointWebMercator(WebMercator.x(pointCh.lon()), WebMercator.y(pointCh.lat()));
     }
 
     /**
@@ -62,16 +59,18 @@ public record PointWebMercator(double x, double y) {
 
     /**
      * @return longitude of the point (WGS84), in radians
+     * @see WebMercator#lon(double)
      */
     public double lon() {
-        return Math.fma(2 * Math.PI, x, -Math.PI);
+        return WebMercator.lon(x);
     }
 
     /**
      * @return latitude of the point (WGS84), in radians
+     * @see WebMercator#lat(double)
      */
     public double lat() {
-        return Math.atan(Math.sinh(Math.fma(2 * Math.PI, -y, Math.PI)));
+        return WebMercator.lat(y);
     }
 
     /**

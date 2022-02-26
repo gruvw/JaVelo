@@ -1,6 +1,5 @@
 package ch.epfl.javelo;
 
-// FIXME allowed to change the arguments name ?
 /**
  * Mathematical calculations, similar to <code>Math</code>.
  *
@@ -37,15 +36,19 @@ public final class Math2 {
         return Math.fma(y1 - y0, x, y0);
     }
 
-    // FIXME is this javadoc ok, why do we need this method ? ?
     /**
-     * Works just like {@link #clamp(double, double, double)} except it takes arguments of type int.
+     * Limits the value of v to the interval [min, max].
      *
-     * @see #clamp(double, double, double)
+     * @param min the minimum value for v
+     * @param v value to limit
+     * @param max the maximum value for v
+     * @return <code>min</code> when <code>v</code> < <code>min</code>, <code>max</code> when
+     *         <code>v</code> > <code>max</code>, <code>v</code> otherwise
+     * @throws IllegalArgumentException if <code>min</code> > <code>max</code>
      */
     public static int clamp(int min, int v, int max) {
-        // FIXME better to cast rather than rewriting the method ?
-        return (int) clamp((double) min, (double) v, (double) max);
+        Preconditions.checkArgument(min <= max);
+        return v < min ? min : v > max ? max : v;
     }
 
     /**

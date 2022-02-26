@@ -32,7 +32,7 @@ public final class Functions {
      *         is less than 0
      */
     public static DoubleUnaryOperator sampled(float[] samples, double xMax) {
-
+        // TODO
     }
 
 }
