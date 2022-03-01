@@ -1,5 +1,6 @@
 package ch.epfl.javelo.data;
 
+import java.util.StringJoiner;
 import ch.epfl.javelo.Preconditions;
 
 /**
@@ -24,7 +25,10 @@ public record AttributeSet(long bits) {
      * @return the set corresponding to the given attributes
      */
     public static AttributeSet of(Attribute... attributes) {
-        // TODO
+        long bits = 0;
+        for (Attribute attribute : attributes)
+            bits |= 1L << attribute.ordinal();
+        return new AttributeSet(bits);
     }
 
     /**
@@ -32,7 +36,7 @@ public record AttributeSet(long bits) {
      * @return true if this set contains the given attribute, false otherwise
      */
     public boolean contains(Attribute attribute) {
-        return (bits & (1 << attribute.ordinal())) != 0;
+        return (bits & (1L << attribute.ordinal())) != 0;
     }
 
     /**
@@ -46,7 +50,11 @@ public record AttributeSet(long bits) {
 
     @Override
     public String toString() {
-        // TODO
+        StringJoiner joiner = new StringJoiner(",", "{", "}");
+        for (Attribute attribute : Attribute.values())
+            if (contains(attribute))
+                joiner.add(attribute.keyValue());
+        return joiner.toString();
     }
 
 }

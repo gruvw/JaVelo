@@ -32,18 +32,17 @@ public final class Functions {
      *         is less than 0
      */
     public static DoubleUnaryOperator sampled(float[] samples, double xMax) {
-        // FIXME use Math2.interpolate() ?
         Preconditions.checkArgument(samples.length >= 2);
         Preconditions.checkArgument(xMax >= 0);
         return value -> {
+            // FIXME better way for bounds
             if (value <= 0)
                 return samples[0];
             else if (value >= xMax)
                 return samples[samples.length - 1];
-            double dx = xMax / (samples.length - 1);
-            int offset = (int) (value / dx);
-            return samples[offset]
-                    + (value - offset * dx) * ((samples[offset + 1] - samples[offset]) / dx);
+            double dx = xMax / (samples.length - 1), xPos = value / dx;
+            int offset = (int) (xPos);
+            return Math2.interpolate(samples[offset], samples[offset + 1], xPos - offset);
         };
     }
 
