@@ -28,6 +28,15 @@ public class AttributeSetTest {
     }
 
     @Test
+    void ofValuesTest() {
+        AttributeSet set1 = AttributeSet.of(Attribute.HIGHWAY_SERVICE);
+        assertEquals(1, set1.bits());
+        AttributeSet set2 = AttributeSet.of(Attribute.LCN_YES);
+        assertEquals(1L << 61, set2.bits());
+        assertEquals(-1l, AttributeSet.of(Attribute.values()).bits());
+    }
+
+    @Test
     void ofTest() {
         assertDoesNotThrow(() -> {
             AttributeSet.of(Attribute.ACCESS_NO, Attribute.HIGHWAY_PATH, Attribute.VEHICLE_NO);
@@ -42,8 +51,8 @@ public class AttributeSetTest {
 
     @Test
     void containsTest() {
-        AttributeSet set1 =
-                AttributeSet.of(Attribute.ACCESS_NO, Attribute.HIGHWAY_PATH, Attribute.VEHICLE_NO);
+        AttributeSet set1 = AttributeSet.of(Attribute.ACCESS_NO, Attribute.HIGHWAY_PATH,
+                Attribute.VEHICLE_NO);
         assertTrue(set1.contains(Attribute.ACCESS_NO));
         assertTrue(set1.contains(Attribute.HIGHWAY_PATH));
         assertTrue(set1.contains(Attribute.VEHICLE_NO));
@@ -60,11 +69,11 @@ public class AttributeSetTest {
 
     @Test
     void intersectTest() {
-        AttributeSet set1 =
-                AttributeSet.of(Attribute.ACCESS_NO, Attribute.HIGHWAY_PATH, Attribute.VEHICLE_NO);
+        AttributeSet set1 = AttributeSet.of(Attribute.ACCESS_NO, Attribute.HIGHWAY_PATH,
+                Attribute.VEHICLE_NO);
         AttributeSet set2 = AttributeSet.of(Attribute.ACCESS_NO);
-        AttributeSet set3 = AttributeSet.of(Attribute.VEHICLE_PRIVATE);
         assertTrue(set1.intersects(set2));
+        AttributeSet set3 = AttributeSet.of(Attribute.VEHICLE_PRIVATE);
         assertFalse(set1.intersects(set3));
         assertFalse(set2.intersects(set3));
         AttributeSet set4 = new AttributeSet(0);
@@ -79,13 +88,13 @@ public class AttributeSetTest {
 
     @Test
     void toStringTest() {
-        AttributeSet set1 =
-                AttributeSet.of(Attribute.ACCESS_NO, Attribute.HIGHWAY_PATH, Attribute.VEHICLE_NO);
-        AttributeSet set2 =
-                AttributeSet.of(Attribute.ACCESS_NO, Attribute.VEHICLE_NO, Attribute.HIGHWAY_PATH);
-        AttributeSet set3 = new AttributeSet(0);
+        AttributeSet set1 = AttributeSet.of(Attribute.ACCESS_NO, Attribute.HIGHWAY_PATH,
+                Attribute.VEHICLE_NO);
         assertEquals("{highway=path,vehicle=no,access=no}", set1.toString());
+        AttributeSet set2 = AttributeSet.of(Attribute.ACCESS_NO, Attribute.VEHICLE_NO,
+                Attribute.HIGHWAY_PATH);
         assertEquals("{highway=path,vehicle=no,access=no}", set2.toString());
+        AttributeSet set3 = new AttributeSet(0);
         assertEquals("{}", set3.toString());
     }
 

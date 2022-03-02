@@ -10,7 +10,7 @@ import ch.epfl.javelo.Preconditions;
 public record PointWebMercator(double x, double y) {
 
     /**
-     * Validates coordinates.
+     * Validates given coordinates.
      *
      * @param x x coordinate
      * @param y y coordinate
