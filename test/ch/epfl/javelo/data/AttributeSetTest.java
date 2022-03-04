@@ -33,7 +33,7 @@ public class AttributeSetTest {
         assertEquals(1, set1.bits());
         AttributeSet set2 = AttributeSet.of(Attribute.LCN_YES);
         assertEquals(1L << 61, set2.bits());
-        assertEquals(-1l, AttributeSet.of(Attribute.values()).bits());
+        assertEquals(-1l >>> (64 - Attribute.COUNT), AttributeSet.of(Attribute.values()).bits());
     }
 
     @Test

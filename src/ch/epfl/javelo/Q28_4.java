@@ -24,7 +24,7 @@ public final class Q28_4 {
      * @return double value corresponding to the given Q28.4 number
      */
     public static double asDouble(int q28_4) {
-        return Math.scalb(q28_4, -4);
+        return Math.scalb((double) q28_4, -4);
     }
 
     /**
@@ -32,7 +32,7 @@ public final class Q28_4 {
      * @return float value corresponding to the given Q28.4 number
      */
     public static float asFloat(int q28_4) {
-        return Math.scalb(q28_4, -4);
+        return Math.scalb((float) q28_4, -4);
     }
 
 }

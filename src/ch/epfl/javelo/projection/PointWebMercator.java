@@ -14,7 +14,8 @@ public record PointWebMercator(double x, double y) {
      *
      * @param x x coordinate
      * @param y y coordinate
-     * @throws IllegalArgumentException if given coordinates are lower than 0 or larger than 1
+     * @throws IllegalArgumentException if given coordinates are less than 0 or larger than 1
+     *         (strictly)
      */
     public PointWebMercator {
         Preconditions.checkArgument(0 <= x && x <= 1);

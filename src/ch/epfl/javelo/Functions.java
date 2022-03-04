@@ -18,22 +18,21 @@ public final class Functions {
      * @return a constant function of value <code>y</code>
      */
     public static DoubleUnaryOperator constant(double y) {
-        return value -> {
-            return y;
-        };
+        return value -> y;
     }
 
     /**
-     * @param samples uniformly spaced (from 0 to <code>xMax</code>) y values used for interpolation
+     * @param samples uniformly distributed (from 0 to <code>xMax</code>) y values used for
+     *        interpolation
      * @param xMax maximum x value
      * @return function obtained by linear interpolation of the given <code>samples</code>, evenly
      *         distributed from 0 to <code>xMax</code>
      * @throws IllegalArgumentException if there are less than two samples or if <code>xMax</code>
-     *         is less than 0
+     *         is less or equal to 0
      */
     public static DoubleUnaryOperator sampled(float[] samples, double xMax) {
         Preconditions.checkArgument(samples.length >= 2);
-        Preconditions.checkArgument(xMax >= 0);
+        Preconditions.checkArgument(xMax > 0);
         return value -> {
             // FIXME better way for bounds
             if (value <= 0)

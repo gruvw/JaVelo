@@ -9,7 +9,7 @@ public class BitsTest {
 
     @ParameterizedTest
     @CsvSource({"-889275714,8,4,-6", "-1,4,10,-1", "-1,10,20,-1", "2147483647,0,0,0",
-            "2147483647,31,1,0", "-1,31,1,-1", "14567,0,32,14567"})
+            "2147483647,31,1,0", "-1,31,1,-1", "14567,0,32,14567", "-1,0,32,-1", "-1,0,31,-1"})
     void extractSignedTest(int value, int start, int length, int expected) {
         int actual = Bits.extractSigned(value, start, length);
         assertEquals(expected, actual);
@@ -17,7 +17,7 @@ public class BitsTest {
 
     @ParameterizedTest
     @CsvSource({"-889275714,8,4,10", "-1,4,10,1023", "-1,10,10,1023", "-1,10,20,1048575",
-            "2147483647,0,0,0", "14567,0,31,14567"})
+            "2147483647,0,0,0", "14567,0,31,14567", "-1,0,31,2147483647"})
     void extractUnsignedTest(int value, int start, int length, int expected) {
         int actual = Bits.extractUnsigned(value, start, length);
         assertEquals(expected, actual);
