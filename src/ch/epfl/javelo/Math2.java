@@ -2,7 +2,7 @@ package ch.epfl.javelo;
 
 /**
  * Mathematical calculations, similar to <code>Math</code>.
- *
+ * <p>
  * Non-instantiable.
  *
  * @author Lucas Jung (324724)

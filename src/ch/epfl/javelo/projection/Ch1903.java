@@ -2,7 +2,7 @@ package ch.epfl.javelo.projection;
 
 /**
  * Used to convert coordinates between the WSG84 and the Swiss coordinates system.
- *
+ * <p>
  * Non-instantiable. Arguments are not checked.
  *
  * @author Lucas Jung (324724)

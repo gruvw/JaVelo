@@ -2,7 +2,7 @@ package ch.epfl.javelo;
 
 /**
  * Preconditions used to verify method arguments.
- *
+ * <p>
  * Non-instantiable.
  *
  * @author Lucas Jung (324724)

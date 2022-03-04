@@ -4,7 +4,7 @@ import ch.epfl.javelo.Math2;
 
 /**
  * Used to convert coordinates between the WGS84 system and the Web Mercator projection.
- *
+ * <p>
  * Non-instantiable. Arguments are not checked.
  *
  * @author Lucas Jung (324724)

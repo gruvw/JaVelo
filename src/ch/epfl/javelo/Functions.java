@@ -4,7 +4,7 @@ import java.util.function.DoubleUnaryOperator;
 
 /**
  * Creates objects representing mathematic functions.
- *
+ * <p>
  * Non-instantiable.
  *
  * @author Lucas Jung (324724)
@@ -34,10 +34,9 @@ public final class Functions {
         Preconditions.checkArgument(samples.length >= 2);
         Preconditions.checkArgument(xMax > 0);
         return value -> {
-            // FIXME better way for bounds
             if (value <= 0)
                 return samples[0];
-            else if (value >= xMax)
+            if (value >= xMax)
                 return samples[samples.length - 1];
             double dx = xMax / (samples.length - 1), xPos = value / dx;
             int offset = (int) (xPos);

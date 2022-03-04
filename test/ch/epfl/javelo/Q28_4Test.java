@@ -25,8 +25,7 @@ public class Q28_4Test {
     @ParameterizedTest
     @CsvSource({"0,0", "10,0.625", "-10,-0.625", "2147483,134217.6875", "536870911,33554431.9375",
             "2147483647,134217727.9375"})
-    void asFloatTest(int input, double expected) {
-        // FIXME
+    void asFloatTest(int input, float expected) {
         float actual = Q28_4.asFloat(input);
         assertEquals(expected, actual);
     }

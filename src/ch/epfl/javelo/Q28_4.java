@@ -2,7 +2,7 @@ package ch.epfl.javelo;
 
 /**
  * Used to convert numbers between the Q28.4 representation and other representations.
- *
+ * <p>
  * Non-instantiable.
  *
  * @author Lucas Jung (324724)

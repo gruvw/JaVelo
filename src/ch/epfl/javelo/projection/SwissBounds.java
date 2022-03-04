@@ -2,7 +2,7 @@ package ch.epfl.javelo.projection;
 
 /**
  * Switzerland's limits.
- *
+ * <p>
  * Non-instantiable.
  *
  * @author Lucas Jung (324724)
