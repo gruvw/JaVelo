@@ -5,6 +5,9 @@ import ch.epfl.javelo.Preconditions;
 /**
  * A point in the Web Mercator projection (record).
  *
+ * @param x x coordinate
+ * @param y y coordinate
+ *
  * @author Lucas Jung (324724)
  * @author Florian Kolly (328313)
  */
@@ -13,8 +16,6 @@ public record PointWebMercator(double x, double y) {
     /**
      * Validates that the given coordinates are inside the Web Mercator projection's coordinates.
      *
-     * @param x x coordinate
-     * @param y y coordinate
      * @throws IllegalArgumentException if given coordinates are less than 0 or larger than 1
      *         (strictly)
      */
@@ -24,17 +25,21 @@ public record PointWebMercator(double x, double y) {
     }
 
     /**
+     * Generates the point with coordinates x and y for the specified zoom level.
+     *
      * @param zoomLevel map zoom level
-     * @param x x coordinate at <code>zoomLevel</code> zoom level
-     * @param y y coordinate at <code>zoomLevel</code> zoom level
-     * @return point corresponding to the <code>x</code> and <code>y</code> coordinates at
-     *         <code>zoomLevel</code> map zoom level
+     * @param x x coordinate at {@code zoomLevel} zoom level
+     * @param y y coordinate at {@code zoomLevel} zoom level
+     * @return the point corresponding to the {@code x} and {@code y} coordinates at
+     *         {@code zoomLevel} map zoom level
      */
     public static PointWebMercator of(int zoomLevel, double x, double y) {
         return new PointWebMercator(Math.scalb(x, -8 - zoomLevel), Math.scalb(y, -8 - zoomLevel));
     }
 
     /**
+     * Generates the Web Mercator point corresponding to the given swiss coordinates point.
+     *
      * @param pointCh in Swiss Coordinates system
      * @return the point in Web Mercator projection corresponding to the given point in Swiss
      *         coordinates system
@@ -44,23 +49,29 @@ public record PointWebMercator(double x, double y) {
     }
 
     /**
+     * Computes the x coordinate at the specified zoom level.
+     *
      * @param zoomLevel map zoom level
-     * @return x coordinate at given zoom level
+     * @return the x coordinate at given zoom level
      */
     public double xAtZoomLevel(int zoomLevel) {
         return Math.scalb(x, 8 + zoomLevel);
     }
 
     /**
+     * Computes the y coordinate at the specified zoom level.
+     *
      * @param zoomLevel map zoom level
-     * @return y coordinate at given zoom level
+     * @return the y coordinate at given zoom level
      */
     public double yAtZoomLevel(int zoomLevel) {
         return Math.scalb(y, 8 + zoomLevel);
     }
 
     /**
-     * @return longitude of the point (WGS84), in radians
+     * Computes the longitude of the x coordinate in WGS 84.
+     *
+     * @return the longitude of the point (WGS84), in radians
      * @see WebMercator#lon(double)
      */
     public double lon() {
@@ -68,7 +79,9 @@ public record PointWebMercator(double x, double y) {
     }
 
     /**
-     * @return latitude of the point (WGS84), in radians
+     * Computes the latitude of the y coordinate in WGS 84.
+     *
+     * @return the latitude of the point (WGS84), in radians
      * @see WebMercator#lat(double)
      */
     public double lat() {
@@ -76,8 +89,10 @@ public record PointWebMercator(double x, double y) {
     }
 
     /**
+     * Computes the equivalent swiss coordinates point.
+     *
      * @return the point in the Swiss coordinates system corresponding to this point if the point is
-     *         inside Switzerland's limits, <code>null</code> otherwise
+     *         inside Switzerland's limits, {@code null} otherwise
      */
     public PointCh toPointCh() {
         double lon = lon(), lat = lat();

@@ -17,7 +17,7 @@ public final class WebMercator {
      * Converts from WGS84 longitude to Web Mercator projection (x coordinate).
      *
      * @param lon longitude in radians
-     * @return x coordinate (Web Mercator) from given longitude (WGS84)
+     * @return the x coordinate (Web Mercator) from given longitude (WGS84)
      */
     public static double x(double lon) {
         return lon / (2 * Math.PI) + .5;
@@ -27,7 +27,7 @@ public final class WebMercator {
      * Converts from WGS84 latitude to Web Mercator projection (y coordinate).
      *
      * @param lat latitude in radians
-     * @return y coordinate (Web Mercator) from given latitude (WGS84)
+     * @return the y coordinate (Web Mercator) from given latitude (WGS84)
      */
     public static double y(double lat) {
         return .5 - Math2.asinh(Math.tan(lat)) / (2 * Math.PI);
@@ -37,7 +37,7 @@ public final class WebMercator {
      * Converts from Web Mercator projection (x coordinate) to WGS84 (longitude).
      *
      * @param x coordinate in Web Mercator projection
-     * @return longitude (WGS84), in radians, corresponding to the given <code>x</code> coordinate
+     * @return the longitude (WGS84), in radians, corresponding to the given {@code x} coordinate
      */
     public static double lon(double x) {
         return 2 * Math.PI * x - Math.PI;
@@ -47,7 +47,7 @@ public final class WebMercator {
      * Converts from Web Mercator projection (y coordinate) to WGS84 (latitude).
      *
      * @param y coordinate in Web Mercator projection
-     * @return latitude (WGS84), in radians, corresponding to the given <code>y> coordinate
+     * @return the latitude (WGS84), in radians, corresponding to the given {@code y} coordinate
      */
     public static double lat(double y) {
         return Math.atan(Math.sinh(Math.PI - 2 * Math.PI * y));
