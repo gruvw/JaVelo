@@ -6,11 +6,12 @@ import ch.epfl.javelo.Preconditions;
  * A point in the Web Mercator projection (record).
  *
  * @author Lucas Jung (324724)
+ * @author Florian Kolly (328313)
  */
 public record PointWebMercator(double x, double y) {
 
     /**
-     * Validates given coordinates.
+     * Validates that the given coordinates are inside the Web Mercator projection's coordinates.
      *
      * @param x x coordinate
      * @param y y coordinate

@@ -3,18 +3,19 @@ package ch.epfl.javelo;
 import java.util.function.DoubleUnaryOperator;
 
 /**
- * Creates objects representing mathematic functions.
+ * Creates objects representing mathematical functions.
  * <p>
  * Non-instantiable.
  *
  * @author Lucas Jung (324724)
+ * @author Florian Kolly (328313)
  */
 public final class Functions {
 
     private Functions() {}
 
     /**
-     * @param y contant value of the function
+     * @param y constant value of the function
      * @return a constant function of value <code>y</code>
      */
     public static DoubleUnaryOperator constant(double y) {

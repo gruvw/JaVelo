@@ -6,11 +6,12 @@ import ch.epfl.javelo.Preconditions;
  * A point in Switzerland (record).
  *
  * @author Lucas Jung (324724)
+ * @author Florian Kolly (328313)
  */
 public record PointCh(double e, double n) {
 
     /**
-     * Validates coordinates.
+     * Validates that the coordinates are inside the Swiss borders.
      *
      * @param e east coordinate
      * @param n north coordinate

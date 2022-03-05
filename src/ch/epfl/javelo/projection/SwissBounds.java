@@ -6,6 +6,7 @@ package ch.epfl.javelo.projection;
  * Non-instantiable.
  *
  * @author Lucas Jung (324724)
+ * @author Florian Kolly (328313)
  */
 public final class SwissBounds {
 
@@ -42,8 +43,8 @@ public final class SwissBounds {
     public static final double HEIGHT = MAX_N - MIN_N;
 
     /**
-     * @param e tested east coordinate
-     * @param n tested north coordinate
+     * @param e east coordinate to verify
+     * @param n north coordinate to verify
      * @return true if the coordinates are within Switzerland's limits, false otherwise
      */
     public static boolean containsEN(double e, double n) {
