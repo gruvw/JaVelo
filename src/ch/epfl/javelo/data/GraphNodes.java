@@ -9,8 +9,8 @@ import ch.epfl.javelo.Q28_4;
  * <p>
  * Arguments are not checked.
  * <p>
- * Node attributes: (int) east coordinate, (int) north coordinate, (int) number of outgoing edges
- * and id of the first one.
+ * Node attributes: (int - Q28.4) east coordinate, (int - Q28.4) north coordinate, (int - U4 U28)
+ * number of outgoing edges and id of the first one.
  *
  * @param buffer buffer memory containing the value of each attribute for all graph nodes
  *
@@ -81,9 +81,10 @@ public record GraphNodes(IntBuffer buffer) {
     /**
      * Retrieves the id of the edge number {@code edgeIndex} (relative to a given node).
      *
-     * @param nodeId id (index) of the node
+     * @param nodeId    id (index) of the node
      * @param edgeIndex index of the edge coming out of the given node, assumed valid, between 0
-     *        (included) and the total number of outgoing edges of the given node (excluded)
+     *                      (included) and the total number of outgoing edges of the given node
+     *                      (excluded)
      * @return the id of the {@code edgeIndex}-th edge coming out of the node corresponding to the
      *         given id {@code nodeId}
      */
