@@ -3,13 +3,11 @@ package ch.epfl.javelo.data;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
-import java.util.Arrays;
-import java.util.Collections;
 import ch.epfl.javelo.Bits;
 import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.Q28_4;
 
-// FIXME elevation attributes
+// TODO elevation attributes
 /**
  * All the edges of the JaVelo graph (record).
  * <p>
@@ -73,23 +71,6 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      * Number of integers contained inside a buffer range corresponding to a profile.
      */
     private final static int PROFILE_INTS = OFFSET_PROFILE_TYPE + 1;
-
-    // == ELEVATIONS BUFFER ==
-
-    /**
-     * Position of the first sample within a buffer range corresponding to an elevation.
-     */
-    private final static short OFFSET_FIRST_SAMPLE = 0;
-
-    /**
-     * Size of a sample for a type 1 elevation.
-     */
-    private final static short SAMPLE_TYPE_1_SIZE = OFFSET_FIRST_SAMPLE + 1;
-
-    /**
-     *
-     */
-    private final static short OFFSET_TYPE_2_ELEVATION = Short.BYTES;
 
     /**
      * Reverses a given array (in-place reversal).
