@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class PointChTest {
 
-    public static final double DELTA = 1e-7;
+    static final double DELTA = 1e-7;
 
     @ParameterizedTest
     @CsvSource({"2484999,1.2e6", "2834001,1.2e6", "2.6e6,1074999", "2.6e6,1296001"})

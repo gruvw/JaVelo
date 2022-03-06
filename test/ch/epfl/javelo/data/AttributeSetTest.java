@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-public class AttributeSetTest {
+class AttributeSetTest {
 
     @ParameterizedTest
-    @ValueSource(longs = {1l << 63, 1l << 62, 0b11l << 62, 1l << 62 | 1, 1l << 63 | 0b11})
+    @ValueSource(longs = {1L << 63, 1L << 62, 0b11L << 62, 1L << 62 | 1, 1L << 63 | 0b11})
     void constructorThrowsTest(long illegalBits) {
         assertThrows(IllegalArgumentException.class, () -> {
             new AttributeSet(illegalBits);
@@ -20,7 +20,7 @@ public class AttributeSetTest {
     }
 
     @ParameterizedTest
-    @ValueSource(longs = {0, 1l << 61, 0b11l << 30, 1l << 60 | 1l << 32})
+    @ValueSource(longs = {0, 1L << 61, 0b11L << 30, 1L << 60 | 1L << 32})
     void constructorOkTest(long bits) {
         assertDoesNotThrow(() -> {
             new AttributeSet(bits);
@@ -33,7 +33,7 @@ public class AttributeSetTest {
         assertEquals(1, set1.bits());
         AttributeSet set2 = AttributeSet.of(Attribute.LCN_YES);
         assertEquals(1L << 61, set2.bits());
-        assertEquals(-1l >>> (64 - Attribute.COUNT), AttributeSet.of(Attribute.values()).bits());
+        assertEquals(-1L >>> (64 - Attribute.COUNT), AttributeSet.of(Attribute.values()).bits());
     }
 
     @Test

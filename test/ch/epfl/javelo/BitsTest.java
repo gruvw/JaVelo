@@ -5,7 +5,7 @@ import static org.junit.Assert.assertThrows;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-public class BitsTest {
+class BitsTest {
 
     @ParameterizedTest
     @CsvSource({"-889275714,8,4,-6", "-1,4,10,-1", "-1,10,20,-1", "2147483647,0,0,0",

@@ -3,6 +3,8 @@ package ch.epfl.javelo.data;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+import java.util.Arrays;
+import java.util.Collections;
 import ch.epfl.javelo.Bits;
 import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.Q28_4;
@@ -89,6 +91,18 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      */
     private final static short OFFSET_TYPE_2_ELEVATION = Short.BYTES;
 
+    /**
+     * Reverses a given array (in-place reversal).
+     *
+     * @param array the array to reverse
+     */
+    private final static void reverseArray(float[] array) {
+        for (int i = 0; i < array.length / 2; i++) {
+            float temp = array[i];
+            array[i] = array[array.length - i - 1];
+            array[array.length - i - 1] = temp;
+        }
+    }
 
     /**
      * Indicates if an edge is going the opposite direction to how OSM represents it.
@@ -153,48 +167,44 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      *         given id
      */
     public float[] profileSamples(int edgeId) {
-        // FIXME multi-get profile and its type but not using/storing it, why?
-        float[] profiles;
-        if (hasProfile(edgeId)) {
-            int nbSamples = 1 + Math2.ceilDiv(
-                    Short.toUnsignedInt(edgesBuffer.getShort(edgeId * EDGE_SIZE + OFFSET_LENGTH)),
-                    Q28_4.ofInt(2));
-            profiles = new float[nbSamples];
-            int profileIndex = edgeId * PROFILE_INTS + OFFSET_PROFILE_TYPE;
-            int profileType = Bits.extractUnsigned(profileIds.get(profileIndex), 30, 2);
-            int firstSampleId = Bits.extractUnsigned(profileIds.get(profileIndex), 0, 30);
-            profiles[0] = elevations.get(firstSampleId);
-            switch (profileType) {
-                case 1 -> {
-                    for (int offset = 1; offset < nbSamples; offset++)
-                        profiles[offset] = elevations.get(firstSampleId + offset);
-                }
-                case 2 -> {
-                    // FIXME nbSamples / 2
-                    for (int offset = 1; offset < nbSamples / 2; offset++) {
-                        for (int index = 0; index < 2; index++) {
-                            profiles[offset * 2 + index - 1] = profiles[offset * 2 + index - 2]
-                                    + Q28_4.asFloat(Bits.extractSigned(
-                                            elevations.get(firstSampleId + offset), 8 * index, 8));
-                        }
-                    }
-                }
-                case 3 -> {
-                    // FIXME nbSamples / 4
-                    for (int offset = 1; offset < nbSamples / 4; offset++) {
-                        for (int index = 0; index < 4; index++) {
-                            profiles[offset * 4 + index - 3] = profiles[offset * 4 + index - 4]
-                                    + Q28_4.asFloat(Bits.extractSigned(
-                                            elevations.get(firstSampleId + offset), 4 * index, 4));
-                        }
-                    }
-                }
-                default -> {
+        if (!hasProfile(edgeId))
+            return new float[0];
+
+        int nbSamples = 1 + Math2.ceilDiv(
+                Short.toUnsignedInt(edgesBuffer.getShort(edgeId * EDGE_SIZE + OFFSET_LENGTH)),
+                Q28_4.ofInt(2));
+        float[] profiles = new float[nbSamples];
+        int profileIndex = edgeId * PROFILE_INTS + OFFSET_PROFILE_TYPE;
+        int profileType = Bits.extractUnsigned(profileIds.get(profileIndex), 30, 2); // U2
+        int firstSampleId = Bits.extractUnsigned(profileIds.get(profileIndex), 0, 30); // U30
+
+        profiles[0] = Q28_4.asFloat(Short.toUnsignedInt(elevations.get(firstSampleId)));
+        if (profileType == 1) {
+            for (int i = 1; i < nbSamples; i++)
+                profiles[i] = Q28_4.asFloat(Short.toUnsignedInt(elevations.get(firstSampleId + i)));
+        } else {
+            // Number of samples per short: type 2 -> 2, type 3 -> 4
+            final int SAMPLES_PER_SHORT = (profileType - 1) * 2;
+            // Size of a sample in bits: type 2 -> 8, type 3 -> 4
+            final int SAMPLE_SIZE = 8 * Short.BYTES / SAMPLES_PER_SHORT;
+
+            for (int offset = 0; offset < Math2.ceilDiv(nbSamples, SAMPLES_PER_SHORT); offset++) {
+                short samples = elevations.get(firstSampleId + offset + 1);
+                // Index: type 2 -> 1, 2 | 3, 4 | ..., nbSamples - 2 | nbSamples - 1
+                // Index: type 3 -> 1, 2, 3, 4 | 5, 6, 7, 8 | ..., nbSamples - 4, nbSamples
+                // - 3 | nbSamples - 2, nbSamples - 1
+                for (int i = SAMPLES_PER_SHORT * offset + 1; i <= (offset + 1) * SAMPLES_PER_SHORT
+                        && i < nbSamples; i++) {
+                    float elevationDelta = Q28_4.asFloat(Bits.extractSigned(samples,
+                            (SAMPLES_PER_SHORT - (i - 1) % SAMPLE_SIZE - 1) * SAMPLE_SIZE,
+                            SAMPLE_SIZE));
+                    profiles[i] = profiles[i - 1] + elevationDelta;
                 }
             }
-        } else {
-            profiles = new float[0];
         }
+
+        if (isInverted(edgeId))
+            reverseArray(profiles);
         return profiles;
     }
 

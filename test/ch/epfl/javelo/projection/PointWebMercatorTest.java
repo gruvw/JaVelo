@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-public class PointWebMercatorTest {
+class PointWebMercatorTest {
 
     private static final double DELTA = 1e-11;
 

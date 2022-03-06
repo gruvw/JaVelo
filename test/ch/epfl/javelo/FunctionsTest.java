@@ -8,7 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-public class FunctionsTest {
+class FunctionsTest {
 
     private static final double DELTA = 1e-6;
 
@@ -16,9 +16,9 @@ public class FunctionsTest {
     static final DoubleUnaryOperator constant2 = Functions.constant(-1);
     static final DoubleUnaryOperator constant3 = Functions.constant(10000);
 
-    static final DoubleUnaryOperator sampled1 = Functions
-            .sampled(new float[] {2.5f, 2, 1, 0.5f, 1, 1, 2}, 6);
-    static final DoubleUnaryOperator sampled2 = Functions.sampled(new float[] {0, 2, 1, 1, 3.5f},
+    static final DoubleUnaryOperator sampled1 = Functions.sampled(
+            new float[] {2.5F, 2, 1, 0.5F, 1, 1, 2}, 6);
+    static final DoubleUnaryOperator sampled2 = Functions.sampled(new float[] {0, 2, 1, 1, 3.5F},
             2);
     static final DoubleUnaryOperator sampled3 = Functions.sampled(new float[] {5, 7, 1, 14}, 9);
 
@@ -35,7 +35,7 @@ public class FunctionsTest {
 
     @ParameterizedTest
     @CsvSource({"0,2.5", "-5,2.5", "6,2", "10,2", "0.5,2.25", "1.5,1.5", "2.5,0.75", "3,0.5",
-            "4.1,1", "5.56,1.56"})
+                "4.1,1", "5.56,1.56"})
     void sampledTest1(double input, double expected) {
         double actual = sampled1.applyAsDouble(input);
         assertEquals(expected, actual, DELTA);
@@ -43,7 +43,7 @@ public class FunctionsTest {
 
     @ParameterizedTest
     @CsvSource({"0,0", "-5,0", "3,3.5", "2,3.5", "0.2,0.8", "0.5,2", "0.8,1.4", "1.2,1",
-            "1.91,3.05"})
+                "1.91,3.05"})
     void sampledTest2(double input, double expected) {
         double actual = sampled2.applyAsDouble(input);
         assertEquals(expected, actual, DELTA);
@@ -59,16 +59,16 @@ public class FunctionsTest {
     @Test
     void sampledPreconditionsTest() {
         assertThrows(IllegalArgumentException.class, () -> {
-            Functions.sampled(new float[] {2.5f, 2, 1, 0.5f, 1, 1, 2}, -1);
+            Functions.sampled(new float[] {2.5F, 2, 1, 0.5F, 1, 1, 2}, -1);
         });
         assertThrows(IllegalArgumentException.class, () -> {
-            Functions.sampled(new float[] {2.5f}, 10);
+            Functions.sampled(new float[] {2.5F}, 10);
         });
         assertThrows(IllegalArgumentException.class, () -> {
             Functions.sampled(new float[] {}, 10);
         });
         assertThrows(IllegalArgumentException.class, () -> {
-            Functions.sampled(new float[] {2.5f, 2, 1, 0.5f}, 0);
+            Functions.sampled(new float[] {2.5F, 2, 1, 0.5F}, 0);
         });
     }
 
