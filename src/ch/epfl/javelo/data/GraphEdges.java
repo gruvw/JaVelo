@@ -167,7 +167,7 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
             // Number of samples per short: type 2 -> 2, type 3 -> 4
             final int SAMPLES_PER_SHORT = (profileType - 1) * 2;
             // Size of a sample in bits: type 2 -> 8, type 3 -> 4
-            final int SAMPLE_SIZE = 8 * Short.BYTES / SAMPLES_PER_SHORT;
+            final int SAMPLE_SIZE = Short.SIZE / SAMPLES_PER_SHORT;
 
             for (int offset = 0; offset < Math2.ceilDiv(nbSamples, SAMPLES_PER_SHORT); offset++) {
                 short samples = elevations.get(firstSampleId + offset + 1);
