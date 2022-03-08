@@ -3,6 +3,7 @@ package ch.epfl.javelo.data;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.SwissBounds;
 
@@ -77,19 +78,27 @@ public record GraphSectors(ByteBuffer buffer) {
      *         side length equals to twice the {@code distance}
      */
     public List<Sector> sectorsInArea(PointCh center, double distance) {
-        // TODO: distance = 0
         // FIXME: distance >= 0
-        // FIXME: bounds always not included (pas de dépassement pour les
-        // valeurs pleines de highestHeight et highestWidth)
-        int lowestWidth = (int) ((center.e() - SwissBounds.MIN_E - distance) / SECTOR_WIDTH);
-        int lowestHeight = (int) ((center.n() - SwissBounds.MIN_N - distance) / SECTOR_HEIGHT);
-        int highestWidth = (int) Math.ceil((center.e() - SwissBounds.MIN_E + distance) / SECTOR_WIDTH) - 1;
-        int highestHeight = (int) Math.ceil((center.n()- SwissBounds.MIN_N + distance) / SECTOR_HEIGHT) - 1;
-        System.out.println("Lowest width: " + lowestWidth);
-        System.out.println("Lowest height: " + lowestHeight);
-        System.out.println("Highest width: " + highestWidth);
-        System.out.println("Highest height " + highestHeight);
-        // FIXME max(firstSector, 0) - max(lastSector, 0)
+        int lowestWidth = Math2.clamp(0,
+                (int) ((center.e() - SwissBounds.MIN_E - distance) / SECTOR_WIDTH),
+                SECTORS_PER_AXIS - 1);
+        int lowestHeight = Math2.clamp(0,
+                (int) ((center.n() - SwissBounds.MIN_N - distance) / SECTOR_HEIGHT),
+                SECTORS_PER_AXIS - 1);
+        int highestWidth = Math2.clamp(0,
+                (int) ((center.e() - SwissBounds.MIN_E + distance) / SECTOR_WIDTH),
+                SECTORS_PER_AXIS - 1);
+        int highestHeight = Math2.clamp(0,
+                (int) ((center.n() - SwissBounds.MIN_N + distance) / SECTOR_HEIGHT),
+                SECTORS_PER_AXIS - 1);
+        System.out.println("Lowest width: " + lowestWidth + "("
+                + (int) ((center.e() - SwissBounds.MIN_E - distance) / SECTOR_WIDTH) + ")");
+        System.out.println("Lowest height: " + lowestHeight + "("
+                + (int) ((center.n() - SwissBounds.MIN_N - distance) / SECTOR_HEIGHT) + ")");
+        System.out.println("Highest width: " + highestWidth + "("
+                + (int) ((center.e() - SwissBounds.MIN_E + distance) / SECTOR_WIDTH) + ")");
+        System.out.println("Highest height " + highestHeight + "("
+                + (int) ((center.n() - SwissBounds.MIN_N + distance) / SECTOR_HEIGHT) + ")");
         int firstSector = lowestHeight * SECTORS_PER_AXIS + lowestWidth;
         int lastSector = highestHeight * SECTORS_PER_AXIS + highestWidth;
         System.out.println("First sector: " + firstSector);
