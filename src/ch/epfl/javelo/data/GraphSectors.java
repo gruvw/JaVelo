@@ -77,20 +77,28 @@ public record GraphSectors(ByteBuffer buffer) {
      *         side length equals to twice the {@code distance}
      */
     public List<Sector> sectorsInArea(PointCh center, double distance) {
+        // TODO: distance = 0
         // FIXME: distance >= 0
         // FIXME: bounds always not included (pas de dépassement pour les
-        // valeurs pleines de
-        // highestHeight et highestWidth)
-        int lowestWidth = (int) ((center.e() - distance) / SECTOR_WIDTH),
-                lowestHeight = (int) ((center.n() - distance) / SECTOR_HEIGHT),
-                highestWidth = (int) Math.ceil((center.e() + distance) / SECTOR_WIDTH) - 1,
-                highestHeight = (int) Math.ceil((center.n() + distance) / SECTOR_HEIGHT) - 1;
-        int firstSector = lowestHeight * SECTORS_PER_AXIS + lowestWidth,
-                lastSector = highestHeight * SECTORS_PER_AXIS + highestWidth;
+        // valeurs pleines de highestHeight et highestWidth)
+        int lowestWidth = (int) ((center.e() - SwissBounds.MIN_E - distance) / SECTOR_WIDTH);
+        int lowestHeight = (int) ((center.n() - SwissBounds.MIN_N - distance) / SECTOR_HEIGHT);
+        int highestWidth = (int) Math.ceil((center.e() - SwissBounds.MIN_E + distance) / SECTOR_WIDTH) - 1;
+        int highestHeight = (int) Math.ceil((center.n()- SwissBounds.MIN_N + distance) / SECTOR_HEIGHT) - 1;
+        System.out.println("Lowest width: " + lowestWidth);
+        System.out.println("Lowest height: " + lowestHeight);
+        System.out.println("Highest width: " + highestWidth);
+        System.out.println("Highest height " + highestHeight);
+        // FIXME max(firstSector, 0) - max(lastSector, 0)
+        int firstSector = lowestHeight * SECTORS_PER_AXIS + lowestWidth;
+        int lastSector = highestHeight * SECTORS_PER_AXIS + highestWidth;
+        System.out.println("First sector: " + firstSector);
+        System.out.println("Last sector: " + lastSector);
         // Number of sectors to the right of firstSector (included)
         int width = (lastSector - firstSector) % SECTORS_PER_AXIS;
         // Number of sectors above firstSector (included)
         int height = (lastSector - firstSector) / SECTORS_PER_AXIS;
+        System.out.println("==============================");
 
         List<Sector> sectors = new ArrayList<Sector>();
         for (int y = 0; y <= height; y++)

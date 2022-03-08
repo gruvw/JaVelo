@@ -16,7 +16,7 @@ class GraphNodesTest {
 
     @BeforeAll
     static void initGlobalVars() {
-        IntBuffer b = IntBuffer.wrap(new int[] {2_600_000 << 4, 1_200_000 << 4, 0x2_000_1234});
+        IntBuffer b = IntBuffer.wrap(new int[] { 2_600_000 << 4, 1_200_000 << 4, 0x2_000_1234 });
         nodes = new GraphNodes(b.asReadOnlyBuffer());
     }
 
