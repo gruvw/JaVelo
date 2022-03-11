@@ -32,9 +32,6 @@ class GraphSectorsTest {
             SECTOR_HEIGHT + SwissBounds.MIN_N + 10);
     private final static PointCh middle = new PointCh((SwissBounds.MIN_E + SwissBounds.MAX_E) / 2,
             (SwissBounds.MIN_N + SwissBounds.MAX_N) / 2);
-    private final static PointCh specPoint2 = new PointCh(
-            123 * SECTOR_HEIGHT + SwissBounds.MIN_E + 200,
-            15 * SECTOR_WIDTH + SwissBounds.MIN_N + 20);
 
     private final static int SMALL_DISTANCE = 30;
     private final static int INTERMEDIATE_DISTANCE = 3000;
