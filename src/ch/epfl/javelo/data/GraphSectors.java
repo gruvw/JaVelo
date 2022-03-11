@@ -23,7 +23,6 @@ public record GraphSectors(ByteBuffer buffer) {
 
     // == BUFFER ==
 
-    // FIXME: correct offsets?
     /**
      * Position of the first node's id within a buffer range corresponding to a sector.
      */
@@ -71,14 +70,16 @@ public record GraphSectors(ByteBuffer buffer) {
     /**
      * Lists all sectors having an intersection with a given {@code center} and of length equal to
      * twice the given {@code distance}.
+     * <p>
+     * Top & right expansion in case of border conflicts.
      *
      * @param center   point in the middle of the square
-     * @param distance distance from the center of a square to any one of its four sides
+     * @param distance distance from the center of a square to any one of its four sides (supposed
+     *                 positive or 0)
      * @return a list of all sectors intersecting with the square centered at {@code center} and of
      *         side length equals to twice the {@code distance}
      */
     public List<Sector> sectorsInArea(PointCh center, double distance) {
-        // FIXME: distance >= 0
         int lowestWidth = Math2.clamp(0,
                 (int) ((center.e() - SwissBounds.MIN_E - distance) / SECTOR_WIDTH),
                 SECTORS_PER_AXIS - 1);

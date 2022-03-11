@@ -22,7 +22,7 @@ import ch.epfl.javelo.Q28_4;
  * Elevation attributes: samples only values XXXXXXXXXXXXXXXXXXXXX
  *
  * @param edgesBuffer buffer memory containing the value of each attributes (fundamental and
- *                        derived) for all edges of the graph (used for route computation)
+ *                    derived) for all edges of the graph (used for route computation)
  * @param profileIds  buffer memory containing the value of each profile attribute for all edges
  * @param elevations  buffer memory containing every samples for each profile (compressed or not)
  *
@@ -150,7 +150,7 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
     public float[] profileSamples(int edgeId) {
         if (!hasProfile(edgeId))
             return new float[0];
-
+        // FIXME verifier le nombre de samples
         int nbSamples = 1 + Math2.ceilDiv(
                 Short.toUnsignedInt(edgesBuffer.getShort(edgeId * EDGE_SIZE + OFFSET_LENGTH)),
                 Q28_4.ofInt(2));
@@ -159,6 +159,7 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
         int profileType = Bits.extractUnsigned(profileIds.get(profileIndex), 30, 2); // U2
         int firstSampleId = Bits.extractUnsigned(profileIds.get(profileIndex), 0, 30); // U30
 
+        // Starting altitude
         profiles[0] = Q28_4.asFloat(Short.toUnsignedInt(elevations.get(firstSampleId)));
         if (profileType == 1) {
             for (int i = 1; i < nbSamples; i++)

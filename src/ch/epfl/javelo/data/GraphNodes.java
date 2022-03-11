@@ -83,13 +83,12 @@ public record GraphNodes(IntBuffer buffer) {
      *
      * @param nodeId    id (index) of the node
      * @param edgeIndex index of the edge coming out of the given node, assumed valid, between 0
-     *                      (included) and the total number of outgoing edges of the given node
-     *                      (excluded)
+     *                  (included) and the total number of outgoing edges of the given node
+     *                  (excluded), supposed valid
      * @return the id of the {@code edgeIndex}-th edge coming out of the node corresponding to the
      *         given id {@code nodeId}
      */
     public int edgeId(int nodeId, int edgeIndex) {
-        // FIXME assert proposé, ou precondition, ou rien ?
         return Bits.extractUnsigned(buffer.get(nodeId * NODE_INTS + OFFSET_OUT_EDGES), 0, 28)
                 + edgeIndex;
     }

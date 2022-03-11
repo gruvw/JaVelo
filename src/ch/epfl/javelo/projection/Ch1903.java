@@ -6,6 +6,7 @@ package ch.epfl.javelo.projection;
  * Non-instantiable. Arguments are not checked.
  *
  * @author Lucas Jung (324724)
+ * @author Florian Kolly (328313)
  */
 public final class Ch1903 {
 
@@ -22,7 +23,7 @@ public final class Ch1903 {
     }
 
     /**
-     * Computes XXXphi_1 from the latitude.
+     * Computes φ₁ from the latitude.
      *
      * @param lat initial latitude in radians
      * @return the converted latitude (after degrees conversion)
