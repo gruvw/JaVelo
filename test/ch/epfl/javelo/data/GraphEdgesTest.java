@@ -19,7 +19,7 @@ class GraphEdgesTest {
 
     @BeforeAll
     static void initGlobalVars() {
-        ByteBuffer edgesBuffer = ByteBuffer.allocate(4 * 10);
+        ByteBuffer edgesBuffer = ByteBuffer.allocate(4 * 10); // 4 edges, 10 bytes each
         IntBuffer profilesBuffer = IntBuffer.allocate(4); // one int per edge
         ShortBuffer elevationsBuffer = ShortBuffer.allocate(12);
 

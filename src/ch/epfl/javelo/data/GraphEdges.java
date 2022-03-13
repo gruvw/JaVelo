@@ -18,8 +18,8 @@ import ch.epfl.javelo.Q28_4;
  * <p>
  * Profile attributes: (int - U2 U30) profile type and id/index of the first sample.
  * <p>
- * Elevations: samples values only -> first altitude (short - UQ12.4), type 1 (short - UQ12.4) |
- * type 2 (short - Q4.4 Q4.4) | type 3 (short Q0.4 Q0.4 Q0.4 Q0.4)
+ * Elevations: samples value only -> first altitude (short - UQ12.4), type 1 (short - UQ12.4) | type
+ * 2 (short - Q4.4 Q4.4) | type 3 (short Q0.4 Q0.4 Q0.4 Q0.4).
  *
  * @param edgesBuffer buffer memory containing the value of each attributes (fundamental and
  *                    derived) for all edges of the graph (used for route computation)
@@ -152,13 +152,13 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
             return new float[0];
 
         int length = Short.toUnsignedInt(edgesBuffer.getShort(edgeId * EDGE_SIZE + OFFSET_LENGTH)); // UQ12.4
-        int nbSamples = 1 + Math2.ceilDiv(length, Q28_4.ofInt(2));
+        int nbSamples = 1 + Math2.ceilDiv(length, Q28_4.ofInt(2)); // at least one sample
         float[] profiles = new float[nbSamples];
         int profileIndex = edgeId * PROFILE_INTS + OFFSET_PROFILE_TYPE_ID;
         int profileType = Bits.extractUnsigned(profileIds.get(profileIndex), 30, 2); // U2
         int firstSampleId = Bits.extractUnsigned(profileIds.get(profileIndex), 0, 30); // U30
 
-        // Starting altitude
+        // Starting altitude (first sample, full short)
         profiles[0] = Q28_4.asFloat(Short.toUnsignedInt(elevations.get(firstSampleId))); // UQ12.4
         if (profileType == 1) {
             for (int i = 1; i < nbSamples; i++)
@@ -169,16 +169,18 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
             // Size of a sample in bits: type 2 -> 8, type 3 -> 4
             final int SAMPLE_SIZE = Short.SIZE / SAMPLES_PER_SHORT;
 
-            for (int offset = 0; offset < Math2.ceilDiv(nbSamples, SAMPLES_PER_SHORT); offset++) {
-                short samples = elevations.get(firstSampleId + offset + 1);
-                // Index: type 2 -> 1, 2 / 3, 4 / ..., nbSamples - 2 / nbSamples - 1
-                // Index: type 3 -> 1, 2, 3, 4 / 5, 6, 7, 8 / ..., nbSamples - 4, nbSamples
-                // - 3 / nbSamples - 2, nbSamples - 1
-                for (int i = SAMPLES_PER_SHORT * offset + 1; i <= (offset + 1) * SAMPLES_PER_SHORT
+            for (int offset = 1; offset <= Math2.ceilDiv(nbSamples - 1,
+                    SAMPLES_PER_SHORT); offset++) {
+                short compressedSamples = elevations.get(firstSampleId + offset);
+                // Index i: type 2 -> 0 / 1, 2 / 3, 4 / ..., nbSamples - 2 / nbSamples - 1
+                // Index i: type 3 -> 0 / 1, 2, 3, 4 / 5, 6, 7, 8 / ..., nbSamples - 4,
+                // nbSamples - 3 / nbSamples - 2, nbSamples - 1
+                for (int i = 1 + SAMPLES_PER_SHORT * (offset - 1); i <= offset * SAMPLES_PER_SHORT
                         && i < nbSamples; i++) {
-                    float elevationDelta = Q28_4.asFloat(Bits.extractSigned(samples,
-                            Math.floorMod(SAMPLES_PER_SHORT - i, SAMPLES_PER_SHORT) * SAMPLE_SIZE,
-                            SAMPLE_SIZE));
+                    // (-i mod m = -i & ~-m) when m is a power of 2
+                    int start = (-i & ~-SAMPLES_PER_SHORT) * SAMPLE_SIZE;
+                    float elevationDelta = Q28_4.asFloat(
+                            Bits.extractSigned(compressedSamples, start, SAMPLE_SIZE));
                     profiles[i] = profiles[i - 1] + elevationDelta;
                 }
             }

@@ -75,21 +75,20 @@ public record GraphNodes(IntBuffer buffer) {
      * @return the number of outgoing edges of the node corresponding to the given id
      */
     public int outDegree(int nodeId) {
-        return Bits.extractUnsigned(buffer.get(nodeId * NODE_INTS + OFFSET_OUT_EDGES), 28, 4);
+        return Bits.extractUnsigned(buffer.get(nodeId * NODE_INTS + OFFSET_OUT_EDGES), 28, 4); // U4
     }
 
     /**
      * Retrieves the id of the edge number {@code edgeIndex} (relative to a given node).
      *
      * @param nodeId    id (index) of the node
-     * @param edgeIndex index of the edge coming out of the given node, assumed valid, between 0
-     *                  (included) and the total number of outgoing edges of the given node
-     *                  (excluded), supposed valid
+     * @param edgeIndex index of the edge coming out of the given node, between 0 (included) and the
+     *                  total number of outgoing edges of the given node (excluded), supposed valid
      * @return the id of the {@code edgeIndex}-th edge coming out of the node corresponding to the
      *         given id {@code nodeId}
      */
     public int edgeId(int nodeId, int edgeIndex) {
-        return Bits.extractUnsigned(buffer.get(nodeId * NODE_INTS + OFFSET_OUT_EDGES), 0, 28)
+        return Bits.extractUnsigned(buffer.get(nodeId * NODE_INTS + OFFSET_OUT_EDGES), 0, 28) // U28
                 + edgeIndex;
     }
 
