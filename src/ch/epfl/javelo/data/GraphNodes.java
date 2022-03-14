@@ -5,7 +5,7 @@ import ch.epfl.javelo.Bits;
 import ch.epfl.javelo.Q28_4;
 
 /**
- * All the nodes of the JaVelo graph (record).
+ * All the nodes of the JaVelo graph. (record)
  * <p>
  * Arguments are not checked.
  * <p>

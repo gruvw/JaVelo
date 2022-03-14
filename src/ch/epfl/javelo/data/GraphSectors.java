@@ -8,7 +8,7 @@ import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.SwissBounds;
 
 /**
- * All the sectors in JaVelo (record).
+ * All the sectors in JaVelo. (record)
  * <p>
  * Arguments are not checked.
  * <p>

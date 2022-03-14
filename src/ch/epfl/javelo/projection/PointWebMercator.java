@@ -3,7 +3,7 @@ package ch.epfl.javelo.projection;
 import ch.epfl.javelo.Preconditions;
 
 /**
- * A point in the Web Mercator projection (record).
+ * A point in the Web Mercator projection. (record)
  *
  * @param x x coordinate
  * @param y y coordinate
@@ -17,7 +17,7 @@ public record PointWebMercator(double x, double y) {
      * Validates that the given coordinates are inside the Web Mercator projection's coordinates.
      *
      * @throws IllegalArgumentException if given coordinates are less than 0 or larger than 1
-     *         (strictly)
+     *                                  (strictly)
      */
     public PointWebMercator {
         Preconditions.checkArgument(0 <= x && x <= 1);
@@ -28,8 +28,8 @@ public record PointWebMercator(double x, double y) {
      * Generates the point with coordinates x and y for the specified zoom level.
      *
      * @param zoomLevel map zoom level
-     * @param x x coordinate at {@code zoomLevel} zoom level
-     * @param y y coordinate at {@code zoomLevel} zoom level
+     * @param x         x coordinate at {@code zoomLevel} zoom level
+     * @param y         y coordinate at {@code zoomLevel} zoom level
      * @return the point corresponding to the {@code x} and {@code y} coordinates at
      *         {@code zoomLevel} map zoom level
      */

@@ -3,7 +3,7 @@ package ch.epfl.javelo.projection;
 import ch.epfl.javelo.Preconditions;
 
 /**
- * A point in Switzerland (record).
+ * A point in Switzerland. (record)
  *
  * @param e east coordinate
  * @param n north coordinate

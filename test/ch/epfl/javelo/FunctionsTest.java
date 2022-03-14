@@ -19,8 +19,8 @@ class FunctionsTest {
     static final DoubleUnaryOperator constant2 = Functions.constant(-1);
     static final DoubleUnaryOperator constant3 = Functions.constant(10000);
 
-    static final DoubleUnaryOperator sampled1 = Functions.sampled(new float[] {2.5F, 2, 1, 0.5F, 1,
-                                                                               1, 2}, 6);
+    static final DoubleUnaryOperator sampled1 = Functions.sampled(
+            new float[] {2.5F, 2, 1, 0.5F, 1, 1, 2}, 6);
     static final DoubleUnaryOperator sampled2 = Functions.sampled(new float[] {0, 2, 1, 1, 3.5F},
             2);
     static final DoubleUnaryOperator sampled3 = Functions.sampled(new float[] {5, 7, 1, 14}, 9);

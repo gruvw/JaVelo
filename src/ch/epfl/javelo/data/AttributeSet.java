@@ -4,10 +4,10 @@ import java.util.StringJoiner;
 import ch.epfl.javelo.Preconditions;
 
 /**
- * Set of OpenStreetMap attributes (record).
+ * Set of OpenStreetMap attributes. (record)
  *
  * @param bits binary vector representing the content of the set: bit at index b is 1 if and only if
- *        the attribute b is in the set
+ *             the attribute b is in the set
  *
  * @author Lucas Jung (324724)
  */
@@ -17,7 +17,7 @@ public record AttributeSet(long bits) {
      * Constructor for an attribute set.
      *
      * @throws IllegalArgumentException if a bit in {@code bits} is set to 1 but does not correspond
-     *         to any OSM attribute
+     *                                  to any OSM attribute
      */
     public AttributeSet {
         Preconditions.checkArgument(bits >> Attribute.COUNT == 0);
