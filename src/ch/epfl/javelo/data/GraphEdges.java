@@ -198,7 +198,7 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      * @return the attribute set's id of to the edge corresponding to the given id
      */
     public int attributesIndex(int edgeId) {
-        return edgesBuffer.getShort(edgeId * EDGE_SIZE + OFFSET_ATTRIBUTES);
+        return Short.toUnsignedInt(edgesBuffer.getShort(edgeId * EDGE_SIZE + OFFSET_ATTRIBUTES));
     }
 
 }
