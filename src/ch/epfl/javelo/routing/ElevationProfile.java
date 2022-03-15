@@ -1,5 +1,8 @@
 package ch.epfl.javelo.routing;
 
+import java.util.DoubleSummaryStatistics;
+import java.util.function.DoubleUnaryOperator;
+import ch.epfl.javelo.Functions;
 import ch.epfl.javelo.Preconditions;
 
 /**
@@ -14,6 +17,16 @@ public final class ElevationProfile {
     private final float[] elevationSamples;
 
     /**
+     * Statistics helper to calculate the minimum and maximum altitude.
+     */
+    private DoubleSummaryStatistics s;
+
+    /**
+     * Sampled function for the profile.
+     */
+    private DoubleUnaryOperator profile;
+
+    /**
      * ElevationProfile's constructor.
      *
      * @param length           length of the route, in meters
@@ -26,6 +39,10 @@ public final class ElevationProfile {
         Preconditions.checkArgument(elevationSamples.length >= 2);
         this.length = length;
         this.elevationSamples = elevationSamples.clone();
+        for (int i = 0; i < this.elevationSamples.length; i++) {
+            s.accept(i);
+        }
+        profile = Functions.sampled(this.elevationSamples, this.elevationSamples.length);
     }
 
     /**
@@ -34,7 +51,7 @@ public final class ElevationProfile {
      * @return the profile's length in meters
      */
     public double length() {
-
+        return length;
     }
 
     /**
@@ -43,7 +60,7 @@ public final class ElevationProfile {
      * @return the minimum altitude in the profile
      */
     public double minElevation() {
-
+        return s.getMin();
     }
 
     /**
@@ -52,7 +69,7 @@ public final class ElevationProfile {
      * @return the maximum altitude in the profile
      */
     public double maxElevation() {
-
+        return s.getMax();
     }
 
     /**
@@ -61,7 +78,13 @@ public final class ElevationProfile {
      * @return the total ascent of the profile
      */
     public double totalAscent() {
-
+        double ascent = 0;
+        for (int i = 0; i < elevationSamples.length - 1; i++) {
+            if (elevationSamples[i + 1] > elevationSamples[i]) {
+                ascent += elevationSamples[i + 1] - elevationSamples[i];
+            }
+        }
+        return ascent;
     }
 
     /**
@@ -70,7 +93,13 @@ public final class ElevationProfile {
      * @return the total descent of the profile
      */
     public double totalDescent() {
-
+        double descent = 0;
+        for (int i = 0; i < elevationSamples.length - 1; i++) {
+            if (elevationSamples[i + 1] < elevationSamples[i]) {
+                descent += elevationSamples[i] - elevationSamples[i + 1];
+            }
+        }
+        return descent;
     }
 
     /**
@@ -80,7 +109,7 @@ public final class ElevationProfile {
      * @return the altitude at the given position, clamped between 0 and the maximum position
      */
     public double elevationAt(double position) {
-
+        return profile.applyAsDouble(position);
     }
 
 }

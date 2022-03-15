@@ -169,14 +169,14 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
             // Size of a sample in bits: type 2 -> 8, type 3 -> 4
             final int SAMPLE_SIZE = Short.SIZE / SAMPLES_PER_SHORT;
 
-            for (int offset = 1; offset <= Math2.ceilDiv(nbSamples - 1,
-                    SAMPLES_PER_SHORT); offset++) {
+            for (int offset = 1; offset <= Math2.ceilDiv(nbSamples - 1, SAMPLES_PER_SHORT);
+                 offset++) {
                 short compressedSamples = elevations.get(firstSampleId + offset);
                 // Index i: type 2 -> 0 / 1, 2 / 3, 4 / ..., nbSamples - 2 / nbSamples - 1
                 // Index i: type 3 -> 0 / 1, 2, 3, 4 / 5, 6, 7, 8 / ..., nbSamples - 4,
                 // nbSamples - 3 / nbSamples - 2, nbSamples - 1
-                for (int i = 1 + SAMPLES_PER_SHORT * (offset - 1); i <= offset * SAMPLES_PER_SHORT
-                        && i < nbSamples; i++) {
+                for (int i = 1 + SAMPLES_PER_SHORT * (offset - 1);
+                     i <= offset * SAMPLES_PER_SHORT && i < nbSamples; i++) {
                     // (-i mod m = -i & ~-m) when m is a power of 2
                     int start = (-i & ~-SAMPLES_PER_SHORT) * SAMPLE_SIZE;
                     float elevationDelta = Q28_4.asFloat(

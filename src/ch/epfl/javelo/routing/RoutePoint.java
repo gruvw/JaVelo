@@ -28,7 +28,7 @@ public record RoutePoint(PointCh point, double position, double distanceToRefere
      * @return a shifted copy of the current instance
      */
     public RoutePoint withPositionShiftedBy(double positionDifference) {
-
+        return new RoutePoint(point, position + positionDifference, distanceToReference);
     }
 
     /**
@@ -40,12 +40,12 @@ public record RoutePoint(PointCh point, double position, double distanceToRefere
      *         otherwise
      */
     public RoutePoint min(RoutePoint that) {
-
+        return this.distanceToReference <= that.distanceToReference ? this : that;
     }
 
     /**
      * Returns the point of the route that is the closest to a point of reference between the
-     * current instance and a point at {@code thatDistanceToReference} away from the point of
+     * current instance and a point at {@code thatDistanceToReference} meters away from the point of
      * reference.
      *
      * @param thatPoint               a point at {@code thatDistanceToReference} away from the point
@@ -57,7 +57,8 @@ public record RoutePoint(PointCh point, double position, double distanceToRefere
      *         {@code this} to the reference, {@this} otherwise
      */
     public RoutePoint min(PointCh thatPoint, double thatPosition, double thatDistanceToReference) {
-
+        return this.distanceToReference <= thatDistanceToReference ? this
+                : new RoutePoint(thatPoint, thatPosition, thatDistanceToReference);
     }
 
 }
