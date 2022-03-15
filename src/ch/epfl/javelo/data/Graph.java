@@ -3,11 +3,14 @@ package ch.epfl.javelo.data;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.nio.LongBuffer;
 import java.nio.ShortBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleUnaryOperator;
+import ch.epfl.javelo.Functions;
 import ch.epfl.javelo.projection.PointCh;
 
 /**
@@ -57,13 +60,18 @@ public final class Graph {
      * @throws IOException if some input/output error is thrown during file related operations
      */
     public static Graph loadFrom(Path basePath) throws IOException {
-        Path attributesPath = basePath.resolve("attributes.bin");
-
         IntBuffer nodesBuffer = mapFileToBuffer(basePath, "nodes.bin").asIntBuffer();
         ByteBuffer sectorsBuffer = mapFileToBuffer(basePath, "sectors.bin");
         ByteBuffer edgesBuffer = mapFileToBuffer(basePath, "edges.bin");
         IntBuffer profileIds = mapFileToBuffer(basePath, "profile_ids.bin").asIntBuffer();
         ShortBuffer elevations = mapFileToBuffer(basePath, "elevations.bin").asShortBuffer();
+
+        LongBuffer attributesBuffer = mapFileToBuffer(basePath, "attributes.bin").asLongBuffer();
+        ArrayList<AttributeSet> attributeSets = new ArrayList<AttributeSet>();
+        for (long bits : attributesBuffer.array()) {
+            attributeSets.add(new AttributeSet(bits));
+        }
+
         return new Graph(new GraphNodes(nodesBuffer), new GraphSectors(sectorsBuffer),
                 new GraphEdges(edgesBuffer, profileIds, elevations), attributeSets);
     }
@@ -74,7 +82,7 @@ public final class Graph {
      * @return the total number of nodes
      */
     public int nodeCount() {
-        // TODO
+        return nodes.count();
     }
 
     /**
@@ -84,7 +92,7 @@ public final class Graph {
      * @return the position of the node corresponding to the given id
      */
     public PointCh nodePoint(int nodeId) {
-        // TODO
+        return new PointCh(nodes.nodeE(nodeId), nodes.nodeN(nodeId));
     }
 
     /**
@@ -94,7 +102,7 @@ public final class Graph {
      * @return the number of outgoing edges
      */
     public int nodeOutDegree(int nodeId) {
-        // TODO
+        return nodes.outDegree(nodeId);
     }
 
     /**
@@ -102,11 +110,11 @@ public final class Graph {
      *
      * @param nodeId    id (index) of the node
      * @param edgeIndex id (index) of the edge
-     * @return the index of the outgoing {@code edgeIndex}-th edge of the node corresponding to the
-     *         given id
+     * @return the id (index) of the outgoing {@code edgeIndex}-th edge of the node corresponding to
+     *         the given id
      */
     public int nodeOutEdgeId(int nodeId, int edgeIndex) {
-        // TODO
+        return nodes.edgeId(nodeId, edgeIndex);
     }
 
     /**
@@ -128,7 +136,7 @@ public final class Graph {
      * @return the index of the destination node
      */
     public int edgeTargetNodeId(int edgeId) {
-        // TODO
+        return edges.targetNodeId(edgeId);
     }
 
     /**
@@ -138,7 +146,7 @@ public final class Graph {
      * @return true if the edge corresponding to the given id is inverted, false otherwise
      */
     public boolean edgeIsInverted(int edgeId) {
-        // TODO
+        return edges.isInverted(edgeId);
     }
 
     /**
@@ -148,7 +156,7 @@ public final class Graph {
      * @return the OSM attributes' set of the edge corresponding to the given id
      */
     public AttributeSet edgeAttributes(int edgeId) {
-        // TODO
+        return attributeSets.get(edges.attributesIndex(edgeId));
     }
 
     /**
@@ -158,7 +166,7 @@ public final class Graph {
      * @return the length of the edge corresponding to the given id
      */
     public double edgeLength(int edgeId) {
-        // TODO
+        return edges.length(edgeId);
     }
 
     /**
@@ -168,7 +176,7 @@ public final class Graph {
      * @return the elevation gain of the edge corresponding to the given id
      */
     public double edgeElevationGain(int edgeId) {
-        // TODO
+        return edges.elevationGain(edgeId);
     }
 
     /**
@@ -180,7 +188,9 @@ public final class Graph {
      *         always returning {@code Double.NaN} if the edge does not have a profile
      */
     public DoubleUnaryOperator edgeProfile(int edgeId) {
-        // TODO
+        if (!edges.hasProfile(edgeId))
+            return value -> Double.NaN;
+        return Functions.sampled(edges.profileSamples(edgeId), edgeLength(edgeId));
     }
 
 }
