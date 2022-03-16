@@ -33,7 +33,6 @@ public record Edge(int fromNodeId, int toNodeId, PointCh fromPoint, PointCh toPo
      *         graph
      */
     public static Edge of(Graph graph, int edgeId, int fromNodeId, int toNodeId) {
-        // FIXME from the edge ??
         PointCh fromPoint = graph.nodePoint(fromNodeId);
         PointCh toPoint = graph.nodePoint(toNodeId);
         double length = graph.edgeLength(edgeId);
@@ -53,7 +52,6 @@ public record Edge(int fromNodeId, int toNodeId, PointCh fromPoint, PointCh toPo
                 point.e(), point.n());
     }
 
-    // TODO: try with interpolate
     /**
      * Returns a point at a given position along the edge.
      *
@@ -61,12 +59,9 @@ public record Edge(int fromNodeId, int toNodeId, PointCh fromPoint, PointCh toPo
      * @return the point at the given position
      */
     public PointCh pointAt(double position) {
-        double eastDiff = toPoint.e() - fromPoint.e();
-        double northDiff = toPoint.n() - fromPoint.n();
         double ratio = position / length;
-        double n = northDiff * ratio + fromPoint.n();
-        double e = eastDiff * ratio + fromPoint.e();
-        return new PointCh(e, n);
+        return new PointCh(Math2.interpolate(fromPoint.e(), toPoint.e(), ratio),
+                Math2.interpolate(fromPoint.n(), toPoint.n(), ratio));
     }
 
     /**

@@ -7,6 +7,8 @@ import ch.epfl.javelo.Preconditions;
 
 /**
  * Represents the elevation profile of a route.
+ * <p>
+ * Immutable.
  *
  * @author Lucas Jung (324724)
  * @author Florian Kolly (328313)

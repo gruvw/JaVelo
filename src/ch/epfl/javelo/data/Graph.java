@@ -11,12 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleUnaryOperator;
 import ch.epfl.javelo.Functions;
+import ch.epfl.javelo.data.GraphSectors.Sector;
 import ch.epfl.javelo.projection.PointCh;
 
 /**
  * Represents the JaVelo graph.
  * <p>
- * Arguments are not checked.
+ * Immutable. Arguments are not checked.
  * <p>
  *
  * @author Lucas Jung (324724)
@@ -31,6 +32,9 @@ public final class Graph {
 
     /**
      * Loads and creates the graph.
+     * <p>
+     * WARNING: Calling this method with {@code GraphNodes}, {@code GraphSectors} or
+     * {@code GraphEdges} generated with modifiable buffers violates immutability.
      *
      * @param nodes         graph's nodes
      * @param sectors       graph's sectors
@@ -54,6 +58,9 @@ public final class Graph {
 
     /**
      * Retrieves the graph from the files in the directory indicated by {@code basePath}.
+     * <p>
+     * The following files are required: nodes.bin, sectors.bin, edges.bin, profile_ids.bin,
+     * elevations.bin, attributes.bin.
      *
      * @param basePath directory of the files
      * @return the graph with the nodes, the sectors, the edges and the attribute set
@@ -68,8 +75,8 @@ public final class Graph {
 
         LongBuffer attributesBuffer = mapFileToBuffer(basePath, "attributes.bin").asLongBuffer();
         ArrayList<AttributeSet> attributeSets = new ArrayList<AttributeSet>();
-        for (long bits : attributesBuffer.array()) {
-            attributeSets.add(new AttributeSet(bits));
+        while (attributesBuffer.hasRemaining()) {
+            attributeSets.add(new AttributeSet(attributesBuffer.get()));
         }
 
         return new Graph(new GraphNodes(nodesBuffer), new GraphSectors(sectorsBuffer),
@@ -121,12 +128,24 @@ public final class Graph {
      * Retrieves the index of the node closest to the given point within a maximum distance (in
      * meters) of {@code searchDistance}.
      *
-     * @param point          center around which the search is done
-     * @param searchDistance maximum distance around the point
-     * @return the closest node's index, -1 if no node respects the conditions
+     * @param point          center point around which search is performed
+     * @param searchDistance maximum search distance around the point
+     * @return the closest node's id (index), -1 if there is no node within the given distance
      */
     public int nodeClosestTo(PointCh point, double searchDistance) {
-        // TODO
+        List<Sector> closeSectors = sectors.sectorsInArea(point, searchDistance);
+        int closestNodeId = -1;
+        double smallestSquaredDistance = Double.MAX_VALUE;
+        for (Sector sector : closeSectors)
+            for (int nodeId = sector.startNodeId(); nodeId < sector.endNodeId(); nodeId++) {
+                PointCh candidate = nodePoint(nodeId);
+                double distanceToPoint = candidate.squaredDistanceTo(point);
+                if (distanceToPoint < smallestSquaredDistance) {
+                    smallestSquaredDistance = distanceToPoint;
+                    closestNodeId = nodeId;
+                }
+            }
+        return closestNodeId;
     }
 
     /**
@@ -189,7 +208,7 @@ public final class Graph {
      */
     public DoubleUnaryOperator edgeProfile(int edgeId) {
         if (!edges.hasProfile(edgeId))
-            return value -> Double.NaN;
+            return Functions.constant(Double.NaN);
         return Functions.sampled(edges.profileSamples(edgeId), edgeLength(edgeId));
     }
 
