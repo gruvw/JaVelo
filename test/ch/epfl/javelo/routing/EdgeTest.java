@@ -33,9 +33,9 @@ public class EdgeTest {
 
   }
 
-  private void assertEqualsPointCh(PointCh expected, PointCh actual, double delta) {
+  public static void assertEqualsPointCh(PointCh expected, PointCh actual, double delta) {
     assertEquals(expected.e(), actual.e(), delta);
-    assertEquals(expected.e(), actual.e(), delta);
+    assertEquals(expected.n(), actual.n(), delta);
   }
 
   @BeforeAll

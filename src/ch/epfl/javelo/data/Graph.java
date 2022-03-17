@@ -129,7 +129,7 @@ public final class Graph {
      * meters) of {@code searchDistance}.
      *
      * @param point          center point around which search is performed
-     * @param searchDistance maximum search distance around the point
+     * @param searchDistance maximum search distance around the point (supposed positive or 0)
      * @return the closest node's id (index), -1 if there is no node within the given distance
      */
     public int nodeClosestTo(PointCh point, double searchDistance) {
@@ -137,9 +137,11 @@ public final class Graph {
         int closestNodeId = -1;
         double smallestSquaredDistance = Double.MAX_VALUE;
         for (Sector sector : closeSectors)
+            // Won't iterate if sector is empty
             for (int nodeId = sector.startNodeId(); nodeId < sector.endNodeId(); nodeId++) {
                 PointCh candidate = nodePoint(nodeId);
                 double distanceToPoint = candidate.squaredDistanceTo(point);
+                System.out.println(distanceToPoint + " " + nodeId);
                 if (distanceToPoint < smallestSquaredDistance) {
                     smallestSquaredDistance = distanceToPoint;
                     closestNodeId = nodeId;
