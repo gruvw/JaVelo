@@ -21,12 +21,15 @@ public final class ElevationProfile {
     /**
      * Statistics helper to calculate the minimum and maximum altitude.
      */
-    private DoubleSummaryStatistics s;
+    private final DoubleSummaryStatistics stats = new DoubleSummaryStatistics();;
 
     /**
      * Sampled function for the profile.
      */
-    private DoubleUnaryOperator profile;
+    private final DoubleUnaryOperator profile;
+
+    private final double totalAscent;
+    private final double totalDescent;
 
     /**
      * ElevationProfile's constructor.
@@ -41,11 +44,19 @@ public final class ElevationProfile {
         Preconditions.checkArgument(elevationSamples.length >= 2);
         this.length = length;
         this.elevationSamples = elevationSamples.clone();
-        s = new DoubleSummaryStatistics();
         for (int i = 0; i < this.elevationSamples.length; i++) {
-            s.accept(this.elevationSamples[i]);
+            stats.accept(this.elevationSamples[i]);
         }
-        profile = Functions.sampled(this.elevationSamples, length);
+        this.profile = Functions.sampled(elevationSamples, length);
+        // FIXME only compute once in constructor, store result in var
+        double totalAscent = 0, totalDescent = 0;
+        for (int i = 0; i < elevationSamples.length - 1; i++)
+            if (elevationSamples[i + 1] > elevationSamples[i])
+                totalAscent += elevationSamples[i + 1] - elevationSamples[i];
+            else
+                totalDescent += elevationSamples[i] - elevationSamples[i + 1];
+        this.totalAscent = totalAscent;
+        this.totalDescent = totalDescent;
     }
 
     /**
@@ -63,7 +74,7 @@ public final class ElevationProfile {
      * @return the minimum altitude in the profile
      */
     public double minElevation() {
-        return s.getMin();
+        return stats.getMin();
     }
 
     /**
@@ -72,7 +83,7 @@ public final class ElevationProfile {
      * @return the maximum altitude in the profile
      */
     public double maxElevation() {
-        return s.getMax();
+        return stats.getMax();
     }
 
     /**
@@ -81,11 +92,7 @@ public final class ElevationProfile {
      * @return the total ascent of the profile
      */
     public double totalAscent() {
-        double ascent = 0;
-        for (int i = 0; i < elevationSamples.length - 1; i++)
-            if (elevationSamples[i + 1] > elevationSamples[i])
-                ascent += elevationSamples[i + 1] - elevationSamples[i];
-        return ascent;
+        return totalAscent;
     }
 
     /**
@@ -94,11 +101,7 @@ public final class ElevationProfile {
      * @return the total descent of the profile
      */
     public double totalDescent() {
-        double descent = 0;
-        for (int i = 0; i < elevationSamples.length - 1; i++)
-            if (elevationSamples[i + 1] < elevationSamples[i])
-                descent += elevationSamples[i] - elevationSamples[i + 1];
-        return descent;
+        return totalDescent;
     }
 
     /**

@@ -1,6 +1,5 @@
 package ch.epfl.javelo.data;
 
-// FIXME import from assert or assertions ? diff ?
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -45,7 +44,6 @@ public class GraphTest {
 
     private static void addEmptySectors(ByteBuffer buffer, int nb) {
         for (int i = 0; i < nb; i++) {
-            // FIXME: no nodes -> whatever id of first node
             buffer.putInt(0);
             buffer.putShort((short) 0);
         }
@@ -77,7 +75,6 @@ public class GraphTest {
         // Node 2
         nodesBuffer.put(0b1001100000000010111001_0010);
         nodesBuffer.put(0b100000111010001010001_0010);
-        // FIXME: no outgoing edge -> whatever for id of first edge
         nodesBuffer.put(0x00000000); // 0 outgoing edges, no first edge
         // Node 3
         nodesBuffer.put(0b1001100001010100111110_0100);
@@ -124,7 +121,6 @@ public class GraphTest {
         edgesBuffer.putShort((short) 1);
 
         IntBuffer profileIds = IntBuffer.allocate(3);
-        // FIXME: if the profile id is 0 -> whatever for the first profile id
         // Profile of Edge 0
         profileIds.put(0);
         // Profile of Edge 1

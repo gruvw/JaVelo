@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
-// FIXME: why giving us the bin files if we can't really test using them (to import and map them) ?
-
 public class ElevationProfileTest {
 
     private static final double DELTA = 1e-5;
@@ -19,6 +17,8 @@ public class ElevationProfileTest {
                 () -> new ElevationProfile(-10, new float[] {3f, 3f, 3f}));
         assertThrows(IllegalArgumentException.class,
                 () -> new ElevationProfile(2, new float[] {3f}));
+        assertThrows(IllegalArgumentException.class,
+                () -> new ElevationProfile(0, new float[] {3f, 3f}));
     }
 
     @Test

@@ -21,11 +21,9 @@ public final class TestUtils {
         assertEqualsProfile(expected.profile(), actual.profile());
     }
 
-
     public static void assertEqualsProfile(DoubleUnaryOperator expected,
                                            DoubleUnaryOperator actual) {
-        // FIXME: how to compare two profiles?
-        for (int i = -5000; i < 5000; i++) {
+        for (double i = -5000; i < 5000; i += 0.3) {
             assertEquals(expected.applyAsDouble(i), actual.applyAsDouble(i));
         }
     }
