@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import ch.epfl.javelo.data.Attribute;
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.projection.PointCh;
+import ch.epfl.test.TestUtils;
 
 public class EdgeTest {
 
@@ -17,26 +17,6 @@ public class EdgeTest {
   private static PointCh pointB = new PointCh(2546875.820309356, 1183248.8220051485);
 
   private static Edge edgeAB;
-  private static final double DELTA = 0.0625;
-
-  private void assertEqualsEdge(Edge expected, Edge actual) {
-    assertEquals(expected.fromNodeId(), actual.fromNodeId());
-    assertEquals(expected.toNodeId(), actual.toNodeId());
-    assertEqualsPointCh(expected.fromPoint(), actual.fromPoint(), DELTA);
-    assertEqualsPointCh(expected.toPoint(), actual.toPoint(), DELTA);
-    // FIXME: how to test the length?
-    // assertEquals(expected.length(), actual.length());
-    // FIXME: how to compare two profiles?
-    for (int i = -1000; i < 1000; i++) {
-      assertEquals(expected.profile().applyAsDouble(i), actual.profile().applyAsDouble(i));
-    }
-
-  }
-
-  public static void assertEqualsPointCh(PointCh expected, PointCh actual, double delta) {
-    assertEquals(expected.e(), actual.e(), delta);
-    assertEquals(expected.n(), actual.n(), delta);
-  }
 
   @BeforeAll
   static void initGlobalVars() throws IOException {
@@ -47,6 +27,7 @@ public class EdgeTest {
 
   @Test
   void ofTest() {
+    // FIXME: how to test the length?
     // FIXME
   }
 
@@ -68,13 +49,13 @@ public class EdgeTest {
     Edge edgeFlat = new Edge(2022, 2023, pointA, pointI, pointA.distanceTo(pointI),
         graph.edgeProfile(0));
     PointCh pointC = new PointCh(2566842.8, 1154575.27);
-    assertEqualsPointCh(pointC, edgeFlat.pointAt(31583.32), 1e-2);
+    TestUtils.assertEqualsPointCh(pointC, edgeFlat.pointAt(31583.32), 1e-2);
     PointCh pointD = new PointCh(2544138.65, 1176492.45);
     PointCh pointH = new PointCh(2525373.28, 1130172.36);
     PointCh pointG = new PointCh(2553145.35, 1198724.42);
-    assertEqualsPointCh(pointD, edgeAB.pointAt(23647.47), 1e-2);
-    assertEqualsPointCh(pointH, edgeAB.pointAt(-26329.43), 1e-2);
-    assertEqualsPointCh(pointG, edgeAB.pointAt(47634.57), 1e-2);
+    TestUtils.assertEqualsPointCh(pointD, edgeAB.pointAt(23647.47), 1e-2);
+    TestUtils.assertEqualsPointCh(pointH, edgeAB.pointAt(-26329.43), 1e-2);
+    TestUtils.assertEqualsPointCh(pointG, edgeAB.pointAt(47634.57), 1e-2);
   }
 
   @Test

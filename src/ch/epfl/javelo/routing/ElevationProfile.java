@@ -41,10 +41,11 @@ public final class ElevationProfile {
         Preconditions.checkArgument(elevationSamples.length >= 2);
         this.length = length;
         this.elevationSamples = elevationSamples.clone();
+        s = new DoubleSummaryStatistics();
         for (int i = 0; i < this.elevationSamples.length; i++) {
-            s.accept(i);
+            s.accept(this.elevationSamples[i]);
         }
-        profile = Functions.sampled(this.elevationSamples, this.elevationSamples.length);
+        profile = Functions.sampled(this.elevationSamples, length);
     }
 
     /**
@@ -81,11 +82,9 @@ public final class ElevationProfile {
      */
     public double totalAscent() {
         double ascent = 0;
-        for (int i = 0; i < elevationSamples.length - 1; i++) {
-            if (elevationSamples[i + 1] > elevationSamples[i]) {
+        for (int i = 0; i < elevationSamples.length - 1; i++)
+            if (elevationSamples[i + 1] > elevationSamples[i])
                 ascent += elevationSamples[i + 1] - elevationSamples[i];
-            }
-        }
         return ascent;
     }
 
@@ -96,11 +95,9 @@ public final class ElevationProfile {
      */
     public double totalDescent() {
         double descent = 0;
-        for (int i = 0; i < elevationSamples.length - 1; i++) {
-            if (elevationSamples[i + 1] < elevationSamples[i]) {
+        for (int i = 0; i < elevationSamples.length - 1; i++)
+            if (elevationSamples[i + 1] < elevationSamples[i])
                 descent += elevationSamples[i] - elevationSamples[i + 1];
-            }
-        }
         return descent;
     }
 

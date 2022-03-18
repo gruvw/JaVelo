@@ -141,7 +141,6 @@ public final class Graph {
             for (int nodeId = sector.startNodeId(); nodeId < sector.endNodeId(); nodeId++) {
                 PointCh candidate = nodePoint(nodeId);
                 double distanceToPoint = candidate.squaredDistanceTo(point);
-                System.out.println(distanceToPoint + " " + nodeId);
                 if (distanceToPoint < smallestSquaredDistance) {
                     smallestSquaredDistance = distanceToPoint;
                     closestNodeId = nodeId;
