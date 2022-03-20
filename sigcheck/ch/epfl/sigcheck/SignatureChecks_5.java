@@ -6,8 +6,8 @@ package ch.epfl.sigcheck;
 // pour cette étape du projet sont corrects.
 
 final class SignatureChecks_5 {
-    private SignatureChecks_5() {
-    }
+
+    private SignatureChecks_5() {}
 
     void checkElevationProfileComputer() throws Exception {
         v03 = ch.epfl.javelo.routing.ElevationProfileComputer.elevationProfile(v01, v02);
@@ -34,4 +34,5 @@ final class SignatureChecks_5 {
     ch.epfl.javelo.projection.PointCh v07;
     ch.epfl.javelo.routing.RoutePoint v08;
     java.util.List<ch.epfl.javelo.projection.PointCh> v09;
+
 }
