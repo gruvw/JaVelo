@@ -71,6 +71,7 @@ public class ElevationProfileTest {
     }
 
     // == GIVEN TESTS ==
+
     @Test
     void elevationProfileConstructorThrowsWithNotEnoughSamples() {
         assertThrows(IllegalArgumentException.class, () -> {

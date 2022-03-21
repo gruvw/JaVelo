@@ -86,8 +86,8 @@ public class EdgeTest {
     }
 
     // == GIVEN TESTS ==
-    private static final double DELTA = 1e-7;
 
+    private static final double DELTA = 1e-7;
 
     @Test
     void edgeOfWorksOnLausanneData() throws IOException {

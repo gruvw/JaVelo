@@ -256,6 +256,7 @@ public class GraphTest {
     }
 
     // == GIVEN TESTS ==
+
     private static final int SUBDIVISIONS_PER_SIDE = 128;
     private static final int SECTORS_COUNT = SUBDIVISIONS_PER_SIDE * SUBDIVISIONS_PER_SIDE;
 

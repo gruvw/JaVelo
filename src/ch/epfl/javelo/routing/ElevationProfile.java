@@ -48,7 +48,7 @@ public final class ElevationProfile {
             stats.accept(this.elevationSamples[i]);
         }
         this.profile = Functions.sampled(elevationSamples, length);
-        // FIXME only compute once in constructor, store result in var
+        // FIXME allowed to only compute once in constructor, store result in var ?
         double totalAscent = 0, totalDescent = 0;
         for (int i = 0; i < elevationSamples.length - 1; i++)
             if (elevationSamples[i + 1] > elevationSamples[i])

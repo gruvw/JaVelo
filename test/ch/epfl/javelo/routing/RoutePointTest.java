@@ -50,6 +50,7 @@ public class RoutePointTest {
     }
 
     // == GIVEN TESTS ==
+
     @Test
     void routePointNoneIsDefinedCorrectly() {
         assertNull(RoutePoint.NONE.point());
