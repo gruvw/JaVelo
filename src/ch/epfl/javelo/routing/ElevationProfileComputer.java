@@ -32,12 +32,12 @@ public final class ElevationProfileComputer {
      */
     public static ElevationProfile elevationProfile(Route route, double maxStepLength) {
         Preconditions.checkArgument(maxStepLength > 0);
-        // TODO: test for nbSamples = 1 (route.length() == 0)
+        // TODO: single edge length 0
         int nbSamples = (int) Math.ceil(route.length() / maxStepLength) + 1;
         double sampleSpacing = route.length() / (nbSamples - 1);
         float[] elevations = new float[nbSamples];
         int firstValidPos = -1;
-        // Fill the array (retrieve the data for each elevation)
+        // Fill the array (retrieve the data for each elevation) & find firstValidPos
         for (int i = 0; i < nbSamples; i++) {
             elevations[i] = (float) route.elevationAt(sampleSpacing * i);
             if (!Float.isNaN(elevations[i]) && firstValidPos < 0)
@@ -65,13 +65,14 @@ public final class ElevationProfileComputer {
                     nextValidPos++;
                 int nbHoles = nextValidPos - i;
                 // Interpolate values for the holes between the two valid samples
-                for (int j = 1; j <= nbHoles; j++) {
+                for (int j = 0; j < nbHoles; j++) {
                     double xPos = j / (double) (nbHoles + 1);
                     elevations[i + j] = (float) Math2.interpolate(elevations[i - 1],
                             elevations[nextValidPos], xPos);
                 }
             }
         }
+        System.out.println(Arrays.toString(elevations));
         return new ElevationProfile(route.length(), elevations);
     }
 

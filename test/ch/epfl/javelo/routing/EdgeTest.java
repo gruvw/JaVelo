@@ -27,8 +27,6 @@ public class EdgeTest {
     @BeforeAll
     static void initGlobalVars() throws IOException {
         graph = Graph.loadFrom(Path.of("lausanne"));
-        System.out.println(graph.edgeTargetNodeId(5413));
-
     }
 
     @Test

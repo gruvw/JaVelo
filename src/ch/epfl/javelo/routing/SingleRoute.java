@@ -7,8 +7,6 @@ import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.Preconditions;
 import ch.epfl.javelo.projection.PointCh;
 
-// FIXME: document override ?
-
 /**
  * Represents a simple route (without intermediate waypoints).
  * <p>
@@ -30,8 +28,7 @@ public final class SingleRoute implements Route {
      */
     public SingleRoute(List<Edge> edges) {
         Preconditions.checkArgument(!edges.isEmpty());
-        this.edges = List.copyOf(edges); // FIXME: enough ? Edge immutable ?
-        // FIXME: ok to do in constructor and store?
+        this.edges = List.copyOf(edges);
         runningLength = new double[edges.size() + 1];
         runningLength[0] = 0;
         for (int i = 0; i < edges.size(); i++)
@@ -56,7 +53,7 @@ public final class SingleRoute implements Route {
 
     @Override
     public List<PointCh> points() {
-        // FIXME: do it in constructor ?
+        // TODO: do it in constructor ?
         List<PointCh> points = new ArrayList<>();
         // TODO: first point (firstEdge.fromPoint)
         for (Edge edge : edges) {
@@ -69,11 +66,8 @@ public final class SingleRoute implements Route {
     private int edgeIndex(double position) {
         position = Math2.clamp(0, position, length());
         int index = Arrays.binarySearch(runningLength, position);
-        // FIXME: Special case when position is precisely on a node (fromPoint)
-        // if (index >= 0)
-        // return edges.get(index).fromPoint();
-        // int edgeIndex = -(index + 2);
-        return index >= 0 ? index : -index - 2; // binarySearch starts at -1
+        // binarySearch starts at -1
+        return Math2.clamp(0, index >= 0 ? index : (-index - 2), edges.size() - 1);
     }
 
     @Override

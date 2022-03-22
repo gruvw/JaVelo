@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.function.DoubleUnaryOperator;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.routing.Edge;
+import ch.epfl.javelo.routing.ElevationProfile;
 
 public final class TestUtils {
 
@@ -24,7 +25,15 @@ public final class TestUtils {
     public static void assertEqualsProfile(DoubleUnaryOperator expected,
                                            DoubleUnaryOperator actual) {
         for (double i = -5000; i < 5000; i += 0.3) {
-            assertEquals(expected.applyAsDouble(i), actual.applyAsDouble(i));
+            assertEquals(expected.applyAsDouble(i), actual.applyAsDouble(i), "Position: " + i);
+        }
+    }
+
+    public static void assertEqualsElevationProfile(ElevationProfile expected,
+                                                    ElevationProfile actual) {
+        assertEquals(expected.length(), actual.length());
+        for (double i = -5000; i < 5000; i += 0.3) {
+            assertEquals(expected.elevationAt(i), actual.elevationAt(i), "Position: " + i);
         }
     }
 
