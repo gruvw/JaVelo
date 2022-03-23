@@ -95,6 +95,7 @@ public final class SingleRoute implements Route {
     public RoutePoint pointClosestTo(PointCh point) {
         RoutePoint closest = RoutePoint.NONE;
         for (int i = 0; i < edges.size(); i++) {
+            // FIXME: should use foreach ?
             Edge edge = edges.get(i);
             double proj = Math2.projectionLength(edge.fromPoint().e(), edge.fromPoint().n(),
                     edge.toPoint().e(), edge.toPoint().n(), point.e(), point.n());

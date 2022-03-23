@@ -32,16 +32,19 @@ public final class ElevationProfileComputer {
      */
     public static ElevationProfile elevationProfile(Route route, double maxStepLength) {
         Preconditions.checkArgument(maxStepLength > 0);
-        // TODO: single edge length 0
+        // TODO: edge length 0 => nbSamples = 1 => sampleSpacing = NaN (div 0)
         int nbSamples = (int) Math.ceil(route.length() / maxStepLength) + 1;
         double sampleSpacing = route.length() / (nbSamples - 1);
         float[] elevations = new float[nbSamples];
-        int firstValidPos = -1;
-        // Fill the array (retrieve the data for each elevation) & find firstValidPos
+        int firstValidPos = -1, lastValidPos = -1;
+        // Fill the array (retrieve the data for each elevation)
         for (int i = 0; i < nbSamples; i++) {
             elevations[i] = (float) route.elevationAt(sampleSpacing * i);
-            if (!Float.isNaN(elevations[i]) && firstValidPos < 0)
-                firstValidPos = i;
+            if (!Float.isNaN(elevations[i])) { // find firstValidPos & lastValidPos
+                lastValidPos = i;
+                if (firstValidPos < 0)
+                    firstValidPos = i;
+            }
         }
         // No valid samples: return 0s
         if (firstValidPos < 0) {
@@ -50,10 +53,6 @@ public final class ElevationProfileComputer {
         }
         // Fill holes (i.e. NaN values) at the beginning of the array
         Arrays.fill(elevations, 0, firstValidPos, elevations[firstValidPos]);
-        // Find the last valid position (starting from the end)
-        int lastValidPos = elevations.length - 1;
-        while (lastValidPos > firstValidPos && Float.isNaN(elevations[lastValidPos]))
-            lastValidPos--;
         // Fill holes at the end of the array
         Arrays.fill(elevations, lastValidPos + 1, elevations.length, elevations[lastValidPos]);
         // Fill middle holes by interpolating surrounding valid samples
@@ -61,18 +60,17 @@ public final class ElevationProfileComputer {
             if (Float.isNaN(elevations[i])) {
                 // i: index of the first hole (previous sample is valid)
                 int nextValidPos = i + 1; // always exists
-                while (Float.isNaN(elevations[nextValidPos]) && nextValidPos < elevations.length)
+                while (Float.isNaN(elevations[nextValidPos]) && nextValidPos <= lastValidPos)
                     nextValidPos++;
                 int nbHoles = nextValidPos - i;
                 // Interpolate values for the holes between the two valid samples
                 for (int j = 0; j < nbHoles; j++) {
-                    double xPos = j / (double) (nbHoles + 1);
+                    double xPos = (j + 1) / (double) (nbHoles + 1);
                     elevations[i + j] = (float) Math2.interpolate(elevations[i - 1],
                             elevations[nextValidPos], xPos);
                 }
             }
         }
-        System.out.println(Arrays.toString(elevations));
         return new ElevationProfile(route.length(), elevations);
     }
 
