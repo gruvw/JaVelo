@@ -18,6 +18,7 @@ import ch.epfl.javelo.projection.PointCh;
 public final class SingleRoute implements Route {
 
     private final List<Edge> edges;
+    private final List<PointCh> points = new ArrayList<>();
     private final double[] runningLength;
 
     /**
@@ -31,8 +32,13 @@ public final class SingleRoute implements Route {
         this.edges = List.copyOf(edges);
         runningLength = new double[edges.size() + 1];
         runningLength[0] = 0;
-        for (int i = 0; i < edges.size(); i++)
-            runningLength[i + 1] = runningLength[i] + edges.get(i).length();
+        points.add(edges.get(0).fromPoint());
+        // FIXME: foreach ? (Lesson about Collections)
+        for (int i = 0; i < edges.size(); i++) {
+            Edge edge = edges.get(i);
+            runningLength[i + 1] = runningLength[i] + edge.length();
+            points.add(edge.toPoint());
+        }
     }
 
     @Override
@@ -53,18 +59,18 @@ public final class SingleRoute implements Route {
 
     @Override
     public List<PointCh> points() {
-        // TODO: do it in constructor ?
-        List<PointCh> points = new ArrayList<>();
-        // TODO: first point (firstEdge.fromPoint)
-        for (Edge edge : edges) {
-            points.add(edge.toPoint());
-        }
-        // FIXME: is the copy necessary ?
+        // // TODO: do it in constructor ?
+        // List<PointCh> points = new ArrayList<>();
+        // // TODO: first point (firstEdge.fromPoint)
+        // for (Edge edge : edges) {
+        // points.add(edge.toPoint());
+        // }
+        // // FIXME: is the copy necessary ?
+        // return List.copyOf(points);
         return List.copyOf(points);
     }
 
     private int edgeIndex(double position) {
-        position = Math2.clamp(0, position, length());
         int index = Arrays.binarySearch(runningLength, position);
         // binarySearch starts at -1
         return Math2.clamp(0, index >= 0 ? index : (-index - 2), edges.size() - 1);
@@ -72,22 +78,28 @@ public final class SingleRoute implements Route {
 
     @Override
     public PointCh pointAt(double position) {
+        // FIXME: is it correct to clamp position for every method?
+        position = Math2.clamp(0, position, length());
         int edgeIndex = edgeIndex(position);
         return edges.get(edgeIndex).pointAt(position - runningLength[edgeIndex]);
     }
 
     @Override
     public double elevationAt(double position) {
+        position = Math2.clamp(0, position, length());
         int edgeIndex = edgeIndex(position);
         return edges.get(edgeIndex).elevationAt(position - runningLength[edgeIndex]);
     }
 
     @Override
     public int nodeClosestTo(double position) {
+        position = Math2.clamp(0, position, length());
         Edge edge = edges.get(edgeIndex(position));
         PointCh point = pointAt(position);
         double distFrom = point.distanceTo(edge.fromPoint());
         double distTo = point.distanceTo(edge.toPoint());
+        // Returns destination node id when the position is in the middle of the edge
+        // FIXME: strict comparison? (not tested?)
         return distFrom < distTo ? edge.fromNodeId() : edge.toNodeId();
     }
 
