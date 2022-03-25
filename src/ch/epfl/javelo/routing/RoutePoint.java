@@ -3,11 +3,12 @@ package ch.epfl.javelo.routing;
 import ch.epfl.javelo.projection.PointCh;
 
 /**
- * A point of a route that is the closest to a point of reference. (record)
+ * A point of a route that is the closest to a point of reference (in Switzerland). (record)
  *
  * @param point               point on the route
  * @param position            position of the point on the route, in meters
- * @param distanceToReference distance between the point and the reference, in meters
+ * @param distanceToReference distance between the point on the route and the point of reference, in
+ *                            meters
  *
  * @author Lucas Jung (324724)
  * @author Florian Kolly (328313)
@@ -28,6 +29,8 @@ public record RoutePoint(PointCh point, double position, double distanceToRefere
      * @return a shifted copy of the current instance
      */
     public RoutePoint withPositionShiftedBy(double positionDifference) {
+        // FIXME: what garanties that the point will still be on the route, why the point does not
+        // change if its position does ?
         return new RoutePoint(point, position + positionDifference, distanceToReference);
     }
 
@@ -40,7 +43,7 @@ public record RoutePoint(PointCh point, double position, double distanceToRefere
      *         otherwise
      */
     public RoutePoint min(RoutePoint that) {
-        return this.distanceToReference <= that.distanceToReference ? this : that;
+        return this.distanceToReference > that.distanceToReference ? that : this;
     }
 
     /**

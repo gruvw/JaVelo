@@ -5,6 +5,7 @@ import java.util.function.DoubleUnaryOperator;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.routing.Edge;
 import ch.epfl.javelo.routing.ElevationProfile;
+import ch.epfl.javelo.routing.RoutePoint;
 
 public final class TestUtils {
 
@@ -35,6 +36,13 @@ public final class TestUtils {
         for (double i = -5000; i < 5000; i += 0.3) {
             assertEquals(expected.elevationAt(i), actual.elevationAt(i), "Position: " + i);
         }
+    }
+
+    public static void assertEqualsRoutePoint(RoutePoint expected, RoutePoint actual,
+                                              double delta) {
+        assertEqualsPointCh(expected.point(), actual.point(), delta);
+        assertEquals(expected.position(), actual.position(), delta);
+        assertEquals(expected.distanceToReference(), actual.distanceToReference(), delta);
     }
 
 }

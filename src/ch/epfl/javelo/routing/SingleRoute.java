@@ -59,14 +59,7 @@ public final class SingleRoute implements Route {
 
     @Override
     public List<PointCh> points() {
-        // // TODO: do it in constructor ?
-        // List<PointCh> points = new ArrayList<>();
-        // // TODO: first point (firstEdge.fromPoint)
-        // for (Edge edge : edges) {
-        // points.add(edge.toPoint());
-        // }
-        // // FIXME: is the copy necessary ?
-        // return List.copyOf(points);
+        // FIXME: is the copy necessary ?
         return List.copyOf(points);
     }
 
@@ -106,12 +99,18 @@ public final class SingleRoute implements Route {
     @Override
     public RoutePoint pointClosestTo(PointCh point) {
         RoutePoint closest = RoutePoint.NONE;
+        // FIXME: should use foreach ?
         for (int i = 0; i < edges.size(); i++) {
-            // FIXME: should use foreach ?
+            // FIXME: why not edge.pointClosestTo(pointCh) ?
             Edge edge = edges.get(i);
             double proj = Math2.projectionLength(edge.fromPoint().e(), edge.fromPoint().n(),
                     edge.toPoint().e(), edge.toPoint().n(), point.e(), point.n());
-            closest = closest.min(point, runningLength[i] + proj, proj);
+            // proj < 0: edge's starting point, proj > edge's length: edge's destination point
+            PointCh closestEdgePoint = edge.pointAt(Math2.clamp(0, proj, edge.length()));
+            double distanceToPoint = closestEdgePoint.distanceTo(point);
+            double positionOnRoute = runningLength[i]
+                    + edge.fromPoint().distanceTo(closestEdgePoint);
+            closest = closest.min(closestEdgePoint, positionOnRoute, distanceToPoint);
         }
         return closest;
     }
