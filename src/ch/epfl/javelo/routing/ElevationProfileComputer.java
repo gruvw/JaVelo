@@ -18,6 +18,41 @@ public final class ElevationProfileComputer {
     private ElevationProfileComputer() {}
 
     /**
+     * Fill holes (i.e. NaN values) in {@code elevations}.
+     *
+     * @param elevations    array (potentially) containing holes
+     * @param firstValidPos index of first non-NaN value in {@code elevations} (negative if full of
+     *                      NaN)
+     * @param lastValidPos  index of last non-NaN value in {@code elevations}
+     */
+    private static void fillHoles(float[] elevations, int firstValidPos, int lastValidPos) {
+        // No valid samples: fill with 0s
+        if (firstValidPos < 0) {
+            Arrays.fill(elevations, 0);
+            return;
+        }
+        // Fill holes at the beginning of the array
+        Arrays.fill(elevations, 0, firstValidPos, elevations[firstValidPos]);
+        // Fill holes at the end of the array
+        Arrays.fill(elevations, lastValidPos + 1, elevations.length, elevations[lastValidPos]);
+        // Fill middle holes by interpolating surrounding valid samples
+        for (int i = firstValidPos + 1; i < lastValidPos; i++)
+            if (Float.isNaN(elevations[i])) {
+                // i: index of the first hole (previous sample is valid)
+                int nextValidPos = i + 1; // should always exists
+                while (Float.isNaN(elevations[nextValidPos]) && nextValidPos <= lastValidPos)
+                    nextValidPos++;
+                int nbHoles = nextValidPos - i;
+                // Interpolate values for the holes between the two valid samples
+                for (int j = 0; j < nbHoles; j++) {
+                    double xPos = (j + 1) / (double) (nbHoles + 1);
+                    elevations[i + j] = (float) Math2.interpolate(elevations[i - 1],
+                            elevations[nextValidPos], xPos);
+                }
+            }
+    }
+
+    /**
      * Computes the elevation profile of a route, ensuring that the spacing between two samples is
      * maximum {@code maxStepLength} meters.
      *
@@ -32,7 +67,6 @@ public final class ElevationProfileComputer {
      */
     public static ElevationProfile elevationProfile(Route route, double maxStepLength) {
         Preconditions.checkArgument(maxStepLength > 0);
-        // FIXME: separate in methods
         // TODO: route length 0 (one edge with length 0) => nbSamples = 1 => sampleSpacing = NaN
         // (div 0)
         int nbSamples = (int) Math.ceil(route.length() / maxStepLength) + 1;
@@ -48,31 +82,7 @@ public final class ElevationProfileComputer {
                     firstValidPos = i;
             }
         }
-        // No valid samples: return 0s
-        if (firstValidPos < 0) {
-            Arrays.fill(elevations, 0);
-            return new ElevationProfile(route.length(), elevations);
-        }
-        // Fill holes (i.e. NaN values) at the beginning of the array
-        Arrays.fill(elevations, 0, firstValidPos, elevations[firstValidPos]);
-        // Fill holes at the end of the array
-        Arrays.fill(elevations, lastValidPos + 1, elevations.length, elevations[lastValidPos]);
-        // Fill middle holes by interpolating surrounding valid samples
-        for (int i = firstValidPos + 1; i < lastValidPos; i++) {
-            if (Float.isNaN(elevations[i])) {
-                // i: index of the first hole (previous sample is valid)
-                int nextValidPos = i + 1; // should always exists
-                while (Float.isNaN(elevations[nextValidPos]) && nextValidPos <= lastValidPos)
-                    nextValidPos++;
-                int nbHoles = nextValidPos - i;
-                // Interpolate values for the holes between the two valid samples
-                for (int j = 0; j < nbHoles; j++) {
-                    double xPos = (j + 1) / (double) (nbHoles + 1);
-                    elevations[i + j] = (float) Math2.interpolate(elevations[i - 1],
-                            elevations[nextValidPos], xPos);
-                }
-            }
-        }
+        fillHoles(elevations, firstValidPos, lastValidPos);
         return new ElevationProfile(route.length(), elevations);
     }
 

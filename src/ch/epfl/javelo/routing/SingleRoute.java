@@ -19,7 +19,7 @@ public final class SingleRoute implements Route {
 
     private final List<Edge> edges;
     private final List<PointCh> points;
-    private final double[] runningLength;
+    private final double[] runningLengths;
 
     /**
      * SingleRoute's constructor.
@@ -30,13 +30,13 @@ public final class SingleRoute implements Route {
     public SingleRoute(List<Edge> edges) {
         Preconditions.checkArgument(!edges.isEmpty());
         this.edges = List.copyOf(edges);
-        runningLength = new double[edges.size() + 1];
+        runningLengths = new double[this.edges.size() + 1];
         List<PointCh> points = new ArrayList<>();
-        runningLength[0] = 0;
-        points.add(edges.get(0).fromPoint());
-        for (int i = 0; i < edges.size(); i++) {
-            Edge edge = edges.get(i);
-            runningLength[i + 1] = runningLength[i] + edge.length();
+        runningLengths[0] = 0;
+        points.add(this.edges.get(0).fromPoint());
+        for (int i = 0; i < this.edges.size(); i++) {
+            Edge edge = this.edges.get(i);
+            runningLengths[i + 1] = runningLengths[i] + edge.length();
             points.add(edge.toPoint());
         }
         this.points = List.copyOf(points);
@@ -49,7 +49,7 @@ public final class SingleRoute implements Route {
 
     @Override
     public double length() {
-        return runningLength[edges.size()];
+        return runningLengths[runningLengths.length - 1];
     }
 
     @Override
@@ -62,30 +62,30 @@ public final class SingleRoute implements Route {
         return points;
     }
 
-    private int edgeIndex(double position) {
-        int index = Arrays.binarySearch(runningLength, position);
-        // binarySearch starts at -1
+    private int indexAt(double position) {
+        int index = Arrays.binarySearch(runningLengths, position);
+        // binarySearch starts at -1, goes up to length (included)
         return Math2.clamp(0, index >= 0 ? index : (-index - 2), edges.size() - 1);
     }
 
     @Override
     public PointCh pointAt(double position) {
         position = Math2.clamp(0, position, length());
-        int edgeIndex = edgeIndex(position);
-        return edges.get(edgeIndex).pointAt(position - runningLength[edgeIndex]);
+        int edgeIndex = indexAt(position);
+        return edges.get(edgeIndex).pointAt(position - runningLengths[edgeIndex]);
     }
 
     @Override
     public double elevationAt(double position) {
         position = Math2.clamp(0, position, length());
-        int edgeIndex = edgeIndex(position);
-        return edges.get(edgeIndex).elevationAt(position - runningLength[edgeIndex]);
+        int edgeIndex = indexAt(position);
+        return edges.get(edgeIndex).elevationAt(position - runningLengths[edgeIndex]);
     }
 
     @Override
     public int nodeClosestTo(double position) {
         position = Math2.clamp(0, position, length());
-        Edge edge = edges.get(edgeIndex(position));
+        Edge edge = edges.get(indexAt(position));
         PointCh point = pointAt(position);
         double distFrom = point.distanceTo(edge.fromPoint());
         double distTo = point.distanceTo(edge.toPoint());
@@ -102,7 +102,7 @@ public final class SingleRoute implements Route {
             // proj < 0: edge's starting point, proj > edge's length: edge's destination point
             PointCh closestEdgePoint = edge.pointAt(Math2.clamp(0, proj, edge.length()));
             double distanceToPoint = closestEdgePoint.distanceTo(point);
-            double positionOnRoute = runningLength[i]
+            double positionOnRoute = runningLengths[i]
                     + edge.fromPoint().distanceTo(closestEdgePoint);
             closest = closest.min(closestEdgePoint, positionOnRoute, distanceToPoint);
         }
