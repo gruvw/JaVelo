@@ -29,8 +29,6 @@ public record RoutePoint(PointCh point, double position, double distanceToRefere
      * @return a shifted copy of the current instance
      */
     public RoutePoint withPositionShiftedBy(double positionDifference) {
-        // FIXME: what garanties that the point will still be on the route, why the point does not
-        // change if its position does ?
         return new RoutePoint(point, position + positionDifference, distanceToReference);
     }
 

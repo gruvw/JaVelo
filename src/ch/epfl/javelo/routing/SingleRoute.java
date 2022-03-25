@@ -18,7 +18,7 @@ import ch.epfl.javelo.projection.PointCh;
 public final class SingleRoute implements Route {
 
     private final List<Edge> edges;
-    private final List<PointCh> points = new ArrayList<>();
+    private final List<PointCh> points;
     private final double[] runningLength;
 
     /**
@@ -31,14 +31,15 @@ public final class SingleRoute implements Route {
         Preconditions.checkArgument(!edges.isEmpty());
         this.edges = List.copyOf(edges);
         runningLength = new double[edges.size() + 1];
+        List<PointCh> points = new ArrayList<>();
         runningLength[0] = 0;
         points.add(edges.get(0).fromPoint());
-        // FIXME: foreach ? (Lesson about Collections)
         for (int i = 0; i < edges.size(); i++) {
             Edge edge = edges.get(i);
             runningLength[i + 1] = runningLength[i] + edge.length();
             points.add(edge.toPoint());
         }
+        this.points = List.copyOf(points);
     }
 
     @Override
@@ -53,14 +54,12 @@ public final class SingleRoute implements Route {
 
     @Override
     public List<Edge> edges() {
-        // FIXME: copy or not copy (class is immutable!)
-        return List.copyOf(edges);
+        return edges;
     }
 
     @Override
     public List<PointCh> points() {
-        // FIXME: is the copy necessary ?
-        return List.copyOf(points);
+        return points;
     }
 
     private int edgeIndex(double position) {
@@ -71,7 +70,6 @@ public final class SingleRoute implements Route {
 
     @Override
     public PointCh pointAt(double position) {
-        // FIXME: is it correct to clamp position for every method?
         position = Math2.clamp(0, position, length());
         int edgeIndex = edgeIndex(position);
         return edges.get(edgeIndex).pointAt(position - runningLength[edgeIndex]);
@@ -92,19 +90,15 @@ public final class SingleRoute implements Route {
         double distFrom = point.distanceTo(edge.fromPoint());
         double distTo = point.distanceTo(edge.toPoint());
         // Returns destination node id when the position is in the middle of the edge
-        // FIXME: strict comparison? (not tested?)
         return distFrom < distTo ? edge.fromNodeId() : edge.toNodeId();
     }
 
     @Override
     public RoutePoint pointClosestTo(PointCh point) {
         RoutePoint closest = RoutePoint.NONE;
-        // FIXME: should use foreach ?
         for (int i = 0; i < edges.size(); i++) {
-            // FIXME: why not edge.pointClosestTo(pointCh) ?
             Edge edge = edges.get(i);
-            double proj = Math2.projectionLength(edge.fromPoint().e(), edge.fromPoint().n(),
-                    edge.toPoint().e(), edge.toPoint().n(), point.e(), point.n());
+            double proj = edge.positionClosestTo(point);
             // proj < 0: edge's starting point, proj > edge's length: edge's destination point
             PointCh closestEdgePoint = edge.pointAt(Math2.clamp(0, proj, edge.length()));
             double distanceToPoint = closestEdgePoint.distanceTo(point);

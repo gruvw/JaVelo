@@ -32,7 +32,9 @@ public final class ElevationProfileComputer {
      */
     public static ElevationProfile elevationProfile(Route route, double maxStepLength) {
         Preconditions.checkArgument(maxStepLength > 0);
-        // TODO: edge length 0 => nbSamples = 1 => sampleSpacing = NaN (div 0)
+        // FIXME: separate in methods
+        // TODO: route length 0 (one edge with length 0) => nbSamples = 1 => sampleSpacing = NaN
+        // (div 0)
         int nbSamples = (int) Math.ceil(route.length() / maxStepLength) + 1;
         double sampleSpacing = route.length() / (nbSamples - 1);
         float[] elevations = new float[nbSamples];
@@ -59,7 +61,7 @@ public final class ElevationProfileComputer {
         for (int i = firstValidPos + 1; i < lastValidPos; i++) {
             if (Float.isNaN(elevations[i])) {
                 // i: index of the first hole (previous sample is valid)
-                int nextValidPos = i + 1; // always exists
+                int nextValidPos = i + 1; // should always exists
                 while (Float.isNaN(elevations[nextValidPos]) && nextValidPos <= lastValidPos)
                     nextValidPos++;
                 int nbHoles = nextValidPos - i;
