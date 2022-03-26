@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.PriorityQueue;
 import ch.epfl.javelo.Preconditions;
 import ch.epfl.javelo.data.Graph;
-import ch.epfl.javelo.data.GraphNodes;
 import ch.epfl.javelo.projection.PointCh;
 
 /**
@@ -45,50 +44,53 @@ public final class RouteComputer {
      * @throws IllegalArgumentException if the starting node and the destination node are the same
      */
     public Route bestRouteBetween(int startNodeId, int endNodeId) {
-        // TODO: Explain what happens in our algo if multiple routes have the same cost
         // FIXME: why WeightedNode inside method and not inside class ?
         /**
-         * Represents a weighted node (record).
+         * Represents a weighted node (record). Used to determine the best node to visit next.
          *
          * @param nodeId   id (index) of the node
-         * @param distance smallest known distance to the node from the starting node
+         * @param distance smallest known weighted distance from the starting node to this node
+         * @param score    value used to compare two nodes (which one to visit next)
          */
-        record WeightedNode(int nodeId, float distance) implements Comparable<WeightedNode> {
+        record WeightedNode(int nodeId, float distance, float score)
+                implements Comparable<WeightedNode> {
 
             @Override
             public int compareTo(WeightedNode that) {
-                return Float.compare(this.distance, that.distance);
+                return Float.compare(this.score, that.score);
             }
 
         }
 
         // FIXME: allowed to create a Tuple and use it in the hashMap ? nodeId -> (
-        // fromNodeId, edgeId)
-        record FromNode(int fromNodeId, int edgeId) {
+        // fromNodeId, edgeId, distance)
+        record PreviousNode(int fromNodeId, int edgeId, float distance) {
         }
 
         Preconditions.checkArgument(startNodeId != endNodeId);
         PriorityQueue<WeightedNode> toVisit = new PriorityQueue<WeightedNode>();
         // FIXME: I don't init distances to inf and previous to 0 so that I don't loop here
-        HashMap<Integer, Float> visited = new HashMap<Integer, Float>(); // nodeId -> distance
-        HashMap<Integer, FromNode> previous = new HashMap<Integer, FromNode>(); // toNodeId ->
-                                                                                // FromNode
-        toVisit.add(new WeightedNode(startNodeId, 0));
-        // PointCh endPoint = graph.nodePoint(endNodeId);
-        int i = 0;
+        // toNodeId -> (fromNodeId, edgeId, distance)
+        HashMap<Integer, PreviousNode> previous = new HashMap<Integer, PreviousNode>();
+        // FIXME: using done instead of Float NegativeInf
+        HashSet<Integer> done = new HashSet<Integer>();
+        // Score is not 0 but it is the only element in toVisit so it does not matter
+        toVisit.add(new WeightedNode(startNodeId, 0, 0));
+        PointCh endPoint = graph.nodePoint(endNodeId);
+
         while (!toVisit.isEmpty()) {
-            i++;
             WeightedNode current = toVisit.poll();
+            if (done.contains(current.nodeId)) // faster evaluation
+                continue;
             if (current.nodeId == endNodeId) {
                 List<Edge> edges = new ArrayList<Edge>();
                 int toNodeId = endNodeId;
                 do {
-                    FromNode fromNode = previous.get(toNodeId);
+                    PreviousNode fromNode = previous.get(toNodeId);
                     Edge edge = Edge.of(graph, fromNode.edgeId, fromNode.fromNodeId, toNodeId);
                     edges.add(edge);
                     toNodeId = fromNode.fromNodeId;
                 } while (toNodeId != startNodeId);
-                System.out.println(i);
                 return new SingleRoute(edges);
             }
             int outDegree = graph.nodeOutDegree(current.nodeId);
@@ -100,12 +102,14 @@ public final class RouteComputer {
                 double cost = costFunction.costFactor(current.nodeId, edgeId);
                 // FIXME: why cast ? why weightedNode distance is not double ?
                 float distance = current.distance + (float) (cost * toPoint.distanceTo(fromPoint));
-                if (!visited.containsKey(toNodeId) || distance < visited.get(toNodeId)) {
-                    visited.put(toNodeId, distance);
-                    previous.put(toNodeId, new FromNode(current.nodeId, edgeId));
-                    toVisit.add(new WeightedNode(toNodeId, distance));
+                // Using euclidean distance to destination as heuristic
+                float score = distance + (float) toPoint.distanceTo(endPoint);
+                if (!previous.containsKey(toNodeId) || distance < previous.get(toNodeId).distance) {
+                    previous.put(toNodeId, new PreviousNode(current.nodeId, edgeId, distance));
+                    toVisit.add(new WeightedNode(toNodeId, distance, score));
                 }
             }
+            done.add(current.nodeId);
         }
         return null;
     }
