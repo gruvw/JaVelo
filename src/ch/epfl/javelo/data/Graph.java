@@ -113,7 +113,7 @@ public final class Graph {
     }
 
     /**
-     * Retrieves the index of the {@code edgeIndex}-th edge going out of the node.
+     * Retrieves the id of the {@code edgeIndex}-th edge going out of the node.
      *
      * @param nodeId    id (index) of the node
      * @param edgeIndex id (index) of the edge
