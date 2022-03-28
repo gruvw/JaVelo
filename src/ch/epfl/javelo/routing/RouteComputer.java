@@ -97,31 +97,31 @@ public final class RouteComputer {
                 (float) graph.nodePoint(startNodeId).distanceTo(graph.nodePoint(endNodeId))));
         while (!exploring.isEmpty()) {
             WeightedNode curNode = exploring.remove();
-            if (curNode.distance == Float.NEGATIVE_INFINITY) {
+            int curNodeId = curNode.nodeId;
+            if (distance[curNodeId] == Float.NEGATIVE_INFINITY) {
                 continue;
             }
-            int curId = curNode.nodeId;
-            if (curId == endNodeId) {
+            PointCh endPoint = graph.nodePoint(endNodeId);
+            if (curNodeId == endNodeId) {
                 System.out.println(iter + " iterations");
                 return reconstruct(predecessor, endNodeId);
             }
-            for (int curEdgeId = 0; curEdgeId < graph.nodeOutDegree(curId); curEdgeId++) {
-                int edgeId = graph.nodeOutEdgeId(curId, curEdgeId);
+            for (int curEdgeId = 0; curEdgeId < graph.nodeOutDegree(curNodeId); curEdgeId++) {
+                int edgeId = graph.nodeOutEdgeId(curNodeId, curEdgeId);
                 int arrivalNodeId = graph.edgeTargetNodeId(edgeId);
                 float distToStart = curNode.distance + (float) (graph.edgeLength(edgeId)
-                        * costFunction.costFactor(curId, edgeId));
-                float distToEnd = (float) graph.nodePoint(arrivalNodeId)
-                                               .distanceTo(graph.nodePoint(endNodeId));
+                        * costFunction.costFactor(curNodeId, edgeId));
+                float distToEnd = (float) graph.nodePoint(arrivalNodeId).distanceTo(endPoint);
                 if (distToStart < distance[arrivalNodeId]) {
                     distance[arrivalNodeId] = distToStart;
-                    predecessor[arrivalNodeId] = curId;
+                    predecessor[arrivalNodeId] = curNodeId;
                     exploring.add(
                             new WeightedNode(arrivalNodeId, distToStart, distToStart + distToEnd));
 
                 }
             }
             iter++;
-            distance[curId] = Float.NEGATIVE_INFINITY;
+            distance[curNodeId] = Float.NEGATIVE_INFINITY;
         }
         return null;
     }
