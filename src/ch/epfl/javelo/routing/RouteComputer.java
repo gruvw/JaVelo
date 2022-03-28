@@ -1,5 +1,6 @@
 package ch.epfl.javelo.routing;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -34,22 +35,20 @@ public final class RouteComputer {
         this.costFunction = costFunction;
     }
 
-    /**
-     * Generates the route/path ending at {@code currentNodeId}.
-     *
-     * @param cameFrom      map linking a nodeId to the edge reaching it
-     * @param currentNodeId last node of the route we want to reconstruct
-     * @return the route ending at {@code currentNodeId}
-     */
-    private Route reconstructRoute(HashMap<Integer, EdgeTo> cameFrom, int currentNodeId) {
-        // FIXME: I use linkdexList to prepend in O(1)
-        List<Edge> edges = new LinkedList<Edge>();
-        int toNodeId = currentNodeId;
-        while (cameFrom.containsKey(toNodeId)) {
-            EdgeTo fromNode = cameFrom.get(toNodeId);
-            Edge edge = Edge.of(graph, fromNode.edgeId, fromNode.fromNodeId, toNodeId);
-            edges.add(0, edge);
-            toNodeId = fromNode.fromNodeId;
+    private Route reconstruct(int[] predecessor, int endNodeId) {
+        List<Edge> edges = new LinkedList<>();
+        int index = endNodeId;
+        while (predecessor[index] != 0) {
+            int edgeId = 0;
+            for (int curEdgeId = 0; curEdgeId < graph.nodeOutDegree(index); curEdgeId++) {
+                if (graph.nodeOutEdgeId(index, curEdgeId) == predecessor[index]) {
+                    edgeId = curEdgeId;
+                    break;
+                }
+            }
+            Edge e = Edge.of(graph, edgeId, predecessor[index], index);
+            edges.add(0, e);
+            index = e.fromNodeId();
         }
         return new SingleRoute(edges);
     }
@@ -85,47 +84,46 @@ public final class RouteComputer {
         }
 
         Preconditions.checkArgument(startNodeId != endNodeId);
-        PriorityQueue<WeightedNode> toVisit = new PriorityQueue<WeightedNode>();
-        // toNodeId -> (fromNodeId, edgeId, distance)
-        HashMap<Integer, EdgeTo> cameFrom = new HashMap<Integer, EdgeTo>();
-        // FIXME: I don't init distances to inf and previous to 0 so that I don't loop here
-        // FIXME: using visited instead of distance Float NegativeInf
-        HashSet<Integer> visited = new HashSet<Integer>();
-        // Score is not 0 but it is the only element in toVisit so it does not matter
-        toVisit.add(new WeightedNode(startNodeId, 0, 0));
-        PointCh endPoint = graph.nodePoint(endNodeId);
-
-        while (!toVisit.isEmpty()) {
-            WeightedNode current = toVisit.poll();
-            // FIXME: check here as we don't want to check node again if we already found a faster
-            // way
-            if (visited.contains(current.nodeId)) // faster evaluation (not necessary)
+        int iter = 0;
+        PriorityQueue<WeightedNode> exploring = new PriorityQueue<>();
+        float[] distance = new float[graph.nodeCount()];
+        int[] predecessor = new int[graph.nodeCount()];
+        for (int i = 0; i < graph.nodeCount(); i++) {
+            distance[i] = Float.POSITIVE_INFINITY;
+            predecessor[i] = 0;
+        }
+        distance[startNodeId] = 0;
+        exploring.add(new WeightedNode(startNodeId, 0,
+                (float) graph.nodePoint(startNodeId).distanceTo(graph.nodePoint(endNodeId))));
+        while (!exploring.isEmpty()) {
+            WeightedNode curNode = exploring.remove();
+            if (curNode.distance == Float.NEGATIVE_INFINITY) {
                 continue;
-            if (current.nodeId == endNodeId) // path found
-                return reconstructRoute(cameFrom, current.nodeId);
-            PointCh fromPoint = graph.nodePoint(current.nodeId);
-            int outDegree = graph.nodeOutDegree(current.nodeId);
-            for (int edgeIndex = 0; edgeIndex < outDegree; edgeIndex++) {
-                int edgeId = graph.nodeOutEdgeId(current.nodeId, edgeIndex);
-                int toNodeId = graph.edgeTargetNodeId(edgeId);
-                // FIXME: check here too as we don't want to check back where we already walked (ex:
-                // 1->2->1), don't add to cameFrom, don't recompute score
-                if (visited.contains(toNodeId)) // necessary: do not add start to cameFrom
-                    continue;
-                PointCh toPoint = graph.nodePoint(toNodeId);
-                double cost = costFunction.costFactor(current.nodeId, edgeId);
-                // FIXME: why cast ? why weightedNode distance is not double ?
-                float distance = current.distance + (float) (cost * toPoint.distanceTo(fromPoint));
-                // Using euclidean distance to destination as heuristic
-                if (!cameFrom.containsKey(toNodeId) || distance < cameFrom.get(toNodeId).distance) {
-                    float score = distance + (float) toPoint.distanceTo(endPoint);
-                    cameFrom.put(toNodeId, new EdgeTo(edgeId, current.nodeId, distance));
-                    toVisit.add(new WeightedNode(toNodeId, distance, score));
+            }
+            int curId = curNode.nodeId;
+            if (curId == endNodeId) {
+                System.out.println(iter + " iterations");
+                return reconstruct(predecessor, endNodeId);
+            }
+            for (int curEdgeId = 0; curEdgeId < graph.nodeOutDegree(curId); curEdgeId++) {
+                int edgeId = graph.nodeOutEdgeId(curId, curEdgeId);
+                int arrivalNodeId = graph.edgeTargetNodeId(edgeId);
+                float distToStart = curNode.distance + (float) (graph.edgeLength(edgeId)
+                        * costFunction.costFactor(curId, edgeId));
+                float distToEnd = (float) graph.nodePoint(arrivalNodeId)
+                                               .distanceTo(graph.nodePoint(endNodeId));
+                if (distToStart < distance[arrivalNodeId]) {
+                    distance[arrivalNodeId] = distToStart;
+                    predecessor[arrivalNodeId] = curId;
+                    exploring.add(
+                            new WeightedNode(arrivalNodeId, distToStart, distToStart + distToEnd));
+
                 }
             }
-            visited.add(current.nodeId);
+            iter++;
+            distance[curId] = Float.NEGATIVE_INFINITY;
         }
-        return null; // path does not exist
+        return null;
     }
 
     // FIXME: allowed to create a Tuple and use it in the hashMap ? nodeId -> (
