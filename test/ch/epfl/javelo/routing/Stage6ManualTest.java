@@ -12,9 +12,13 @@ public class Stage6ManualTest {
         CostFunction cf = new CityBikeCF(g);
         RouteComputer rc = new RouteComputer(g, cf);
         long t0 = System.nanoTime();
-        Route r = rc.bestRouteBetween(2046055, 2694240);
+        Route r = null;
+        for (int i = 0; i < 10; i++) {
+            r = rc.bestRouteBetween(2046055, 2694240);
+        }
         // Route r = rc.bestRouteBetween(159049, 117669); // lausanne exemple donnée
-        System.out.printf("Itinéraire calculé en %d ms\n", (System.nanoTime() - t0) / 1_000_000);
+        System.out.printf("Itinéraire calculé en %d ms\n",
+                ((System.nanoTime() - t0) / 1_000_000) / 10);
         KmlPrinter.write("javelo.kml", r);
     }
 

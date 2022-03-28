@@ -1,8 +1,5 @@
 package ch.epfl.javelo.routing;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -35,18 +32,11 @@ public final class RouteComputer {
         this.costFunction = costFunction;
     }
 
-    private Route reconstruct(int[] predecessor, int endNodeId) {
+    private Route reconstruct(int[] predecessor, int[] edgeIds, int endNodeId) {
         List<Edge> edges = new LinkedList<>();
         int index = endNodeId;
         while (predecessor[index] != 0) {
-            int edgeId = 0;
-            for (int curEdgeId = 0; curEdgeId < graph.nodeOutDegree(index); curEdgeId++) {
-                if (graph.nodeOutEdgeId(index, curEdgeId) == predecessor[index]) {
-                    edgeId = curEdgeId;
-                    break;
-                }
-            }
-            Edge e = Edge.of(graph, edgeId, predecessor[index], index);
+            Edge e = Edge.of(graph, edgeIds[index], predecessor[index], index);
             edges.add(0, e);
             index = e.fromNodeId();
         }
@@ -84,59 +74,45 @@ public final class RouteComputer {
         }
 
         Preconditions.checkArgument(startNodeId != endNodeId);
-        int iter = 0;
         PriorityQueue<WeightedNode> exploring = new PriorityQueue<>();
         float[] distance = new float[graph.nodeCount()];
         int[] predecessor = new int[graph.nodeCount()];
+        int[] edgeIds = new int[graph.nodeCount()];
+        PointCh endPoint = graph.nodePoint(endNodeId);
         for (int i = 0; i < graph.nodeCount(); i++) {
             distance[i] = Float.POSITIVE_INFINITY;
             predecessor[i] = 0;
+            edgeIds[i] = -1;
         }
         distance[startNodeId] = 0;
         exploring.add(new WeightedNode(startNodeId, 0,
-                (float) graph.nodePoint(startNodeId).distanceTo(graph.nodePoint(endNodeId))));
+                (float) graph.nodePoint(startNodeId).distanceTo(endPoint)));
         while (!exploring.isEmpty()) {
             WeightedNode curNode = exploring.remove();
             int curNodeId = curNode.nodeId;
             if (distance[curNodeId] == Float.NEGATIVE_INFINITY) {
                 continue;
             }
-            PointCh endPoint = graph.nodePoint(endNodeId);
             if (curNodeId == endNodeId) {
-                System.out.println(iter + " iterations");
-                return reconstruct(predecessor, endNodeId);
+                return reconstruct(predecessor, edgeIds, endNodeId);
             }
-            for (int curEdgeId = 0; curEdgeId < graph.nodeOutDegree(curNodeId); curEdgeId++) {
-                int edgeId = graph.nodeOutEdgeId(curNodeId, curEdgeId);
-                int arrivalNodeId = graph.edgeTargetNodeId(edgeId);
+            for (int outEdgeIndex = 0; outEdgeIndex < graph.nodeOutDegree(curNodeId);
+                 outEdgeIndex++) {
+                int edgeId = graph.nodeOutEdgeId(curNodeId, outEdgeIndex);
+                int toNodeId = graph.edgeTargetNodeId(edgeId);
                 float distToStart = curNode.distance + (float) (graph.edgeLength(edgeId)
                         * costFunction.costFactor(curNodeId, edgeId));
-                float distToEnd = (float) graph.nodePoint(arrivalNodeId).distanceTo(endPoint);
-                if (distToStart < distance[arrivalNodeId]) {
-                    distance[arrivalNodeId] = distToStart;
-                    predecessor[arrivalNodeId] = curNodeId;
-                    exploring.add(
-                            new WeightedNode(arrivalNodeId, distToStart, distToStart + distToEnd));
-
+                float distToEnd = (float) graph.nodePoint(toNodeId).distanceTo(endPoint);
+                if (distToStart < distance[toNodeId]) {
+                    distance[toNodeId] = distToStart;
+                    predecessor[toNodeId] = curNodeId;
+                    edgeIds[toNodeId] = edgeId;
+                    exploring.add(new WeightedNode(toNodeId, distToStart, distToStart + distToEnd));
                 }
             }
-            iter++;
             distance[curNodeId] = Float.NEGATIVE_INFINITY;
         }
         return null;
-    }
-
-    // FIXME: allowed to create a Tuple and use it in the hashMap ? nodeId -> (
-    // fromNodeId, edgeId, distance)
-    /**
-     * Represents an edge going from {@code fromNodeId} to a particular node. Used to keep track of
-     * the best edge going to a particular node.
-     *
-     * @param edgeId     id (index) of this edge in the graph
-     * @param fromNodeId starting node of this edge
-     * @param distance   (weighted) distance from {@code startNodeId} to the end of the edge
-     */
-    private record EdgeTo(int edgeId, int fromNodeId, float distance) {
     }
 
 }
