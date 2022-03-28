@@ -25,3 +25,6 @@ hs_err_pid*
 bin
 .vscode
 lausanne
+ch_west
+*.kml
+visualization
