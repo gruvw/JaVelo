@@ -35,7 +35,7 @@ public final class MultiRoute implements Route {
         List<PointCh> points = new ArrayList<PointCh>();
         runningLengths = new double[this.segments.size() + 1];
         runningLengths[0] = 0;
-        for (int i = 0; i < runningLengths.length; i++) {
+        for (int i = 0; i < segments.size(); i++) {
             edges.addAll(this.segments.get(i).edges());
             points.addAll(segments.get(i).points());
             runningLengths[i + 1] = runningLengths[i] + this.segments.get(i).length();
@@ -53,7 +53,13 @@ public final class MultiRoute implements Route {
     @Override
     public int indexOfSegmentAt(double position) {
         int index = indexAt(position);
-        return index + this.segments.get(index).indexOfSegmentAt(position - runningLengths[index]);
+        int indexCount = 0;
+        for (int i = 0; i < index; i++) {
+            indexCount += segments.get(i).indexOfSegmentAt(position - runningLengths[index]) + 1;
+        }
+        indexCount += segments.get(index).indexOfSegmentAt(position - runningLengths[index]);
+        System.out.println(indexCount);
+        return indexCount;
     }
 
     @Override
