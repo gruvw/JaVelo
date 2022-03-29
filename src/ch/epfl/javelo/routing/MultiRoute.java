@@ -45,6 +45,7 @@ public final class MultiRoute implements Route {
     }
 
     private int indexAt(double position) {
+        // FIXME: Allowed to use binary search with runningLengths ?
         int index = Arrays.binarySearch(runningLengths, position);
         // binarySearch starts at -1, goes up to length (included)
         return Math2.clamp(0, index >= 0 ? index : (-index - 2), segments.size() - 1);
