@@ -75,14 +75,13 @@ public final class RouteComputer {
 
         Preconditions.checkArgument(startNodeId != endNodeId);
         PriorityQueue<WeightedNode> exploring = new PriorityQueue<>();
-        float[] distance = new float[graph.nodeCount()];
-        int[] predecessor = new int[graph.nodeCount()];
-        int[] edgeIds = new int[graph.nodeCount()];
+        int nodeCount = graph.nodeCount();
+        float[] distance = new float[nodeCount];
+        int[] predecessor = new int[nodeCount];
+        int[] edgeIds = new int[nodeCount];
         PointCh endPoint = graph.nodePoint(endNodeId);
-        for (int i = 0; i < graph.nodeCount(); i++) {
+        for (int i = 0; i < nodeCount; i++) {
             distance[i] = Float.POSITIVE_INFINITY;
-            predecessor[i] = 0;
-            edgeIds[i] = -1;
         }
         distance[startNodeId] = 0;
         exploring.add(new WeightedNode(startNodeId, 0,
