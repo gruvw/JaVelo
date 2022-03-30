@@ -94,7 +94,7 @@ public final class RouteComputer {
         toVisit.add(new WeightedNode(startNodeId, 0));
         PointCh endPoint = graph.nodePoint(endNodeId);
 
-        // FIXME: split in multi methods
+        // FIXME: split in multi methods ?
         while (!toVisit.isEmpty()) {
             WeightedNode current = toVisit.poll();
             if (distances[current.nodeId] == Float.NEGATIVE_INFINITY)
