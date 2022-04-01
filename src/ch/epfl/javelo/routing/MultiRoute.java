@@ -2,9 +2,7 @@ package ch.epfl.javelo.routing;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.Preconditions;
 import ch.epfl.javelo.projection.PointCh;
@@ -34,18 +32,20 @@ public final class MultiRoute implements Route {
         Preconditions.checkArgument(!segments.isEmpty());
         this.segments = List.copyOf(segments);
         List<Edge> edges = new ArrayList<>();
-        // FIXME: Check if it is a good way to do it
-        Set<PointCh> points = new LinkedHashSet<>();
+        List<PointCh> points = new ArrayList<>();
         runningLengths = new double[this.segments.size() + 1];
         runningLengths[0] = 0;
         for (int i = 0; i < segments.size(); i++) {
             Route segment = this.segments.get(i);
             edges.addAll(segment.edges());
             points.addAll(segment.points());
+            points.remove(points.size() - 1);
             runningLengths[i + 1] = runningLengths[i] + segment.length();
         }
+        Route lastSegment = segments.get(segments.size() - 1);
+        points.add(lastSegment.points().get(lastSegment.points().size() - 1));
         this.edges = List.copyOf(edges);
-        this.points = List.copyOf(new ArrayList<>(points));
+        this.points = List.copyOf(points);
     }
 
     private int indexAt(double position) {
@@ -64,7 +64,6 @@ public final class MultiRoute implements Route {
             indexCount += segment.indexOfSegmentAt(segment.length()) + 1;
         }
         indexCount += segments.get(index).indexOfSegmentAt(position - runningLengths[index]);
-        System.out.println(indexCount);
         return indexCount;
     }
 
