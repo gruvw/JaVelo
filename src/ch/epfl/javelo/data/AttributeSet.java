@@ -10,6 +10,7 @@ import ch.epfl.javelo.Preconditions;
  *             the attribute b is in the set
  *
  * @author Lucas Jung (324724)
+ * @author Florian Kolly (328313)
  */
 public record AttributeSet(long bits) {
 

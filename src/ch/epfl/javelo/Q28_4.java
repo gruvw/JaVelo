@@ -6,6 +6,7 @@ package ch.epfl.javelo;
  * Non-instantiable.
  *
  * @author Lucas Jung (324724)
+ * @author Florian Kolly (328313)
  */
 public final class Q28_4 {
 

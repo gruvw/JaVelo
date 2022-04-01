@@ -8,6 +8,7 @@ import ch.epfl.javelo.Math2;
  * Non-instantiable. Arguments are not checked.
  *
  * @author Lucas Jung (324724)
+ * @author Florian Kolly (328313)
  */
 public final class WebMercator {
 

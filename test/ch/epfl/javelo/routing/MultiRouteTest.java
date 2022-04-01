@@ -224,7 +224,7 @@ public class MultiRouteTest {
                         Arrays.asList(point1, point2, point3, point4, point5, point6, point7,
                                 point8, point9, point10, point11, point12, point13)),
                 Arguments.of(mrOneSegment, Arrays.asList(point1, point2)),
-                Arguments.of(mrLoop, Arrays.asList(point1, point2, point1)), // FIXME
+                Arguments.of(mrLoop, Arrays.asList(point1, point2, point1)),
                 Arguments.of(mrSingleAndMulti, Arrays.asList(point1, point2, point3, point4, point5,
                         point6, point7, point8, point9)));
     }

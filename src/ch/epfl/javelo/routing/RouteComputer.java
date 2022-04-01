@@ -1,8 +1,10 @@
 package ch.epfl.javelo.routing;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
+import ch.epfl.javelo.Bits;
 import ch.epfl.javelo.Preconditions;
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.projection.PointCh;
@@ -34,18 +36,21 @@ public final class RouteComputer {
     /**
      * Generates the route/path ending at {@code currentNodeId}.
      *
-     * @param previous      map linking a node id to the id of the previous node
-     * @param previousEdge  map linking a node id to the id of the edge reaching it
-     * @param currentNodeId last node of the route we want to reconstruct
+     * @param previous      map linking a node id to the id of the previous node packed with the
+     *                      outgoing edge index to follow (U4 U28)
+     * @param currentNodeId last node id (index) of the route to reconstruct
      * @return the route ending at {@code currentNodeId}
      */
-    private Route reconstructRoute(int[] previous, int[] previousEdge, int currentNodeId) {
+    private Route reconstructRoute(int[] previous, int currentNodeId) {
         List<Edge> edges = new LinkedList<Edge>();
         int toNodeId = currentNodeId;
-        while (previous[toNodeId] != 0) {
-            Edge edge = Edge.of(graph, previousEdge[toNodeId], previous[toNodeId], toNodeId);
-            edges.add(0, edge);
-            toNodeId = previous[toNodeId];
+        while (previous[toNodeId] != -1) {
+            int previousNodeId = Bits.extractUnsigned(previous[toNodeId], 0, 28);
+            int outGoingEdgeIndex = Bits.extractUnsigned(previous[toNodeId], 28, 4);
+            int edgeId = graph.nodeOutEdgeId(previousNodeId, outGoingEdgeIndex);
+            Edge edge = Edge.of(graph, edgeId, previousNodeId, toNodeId);
+            edges.add(0, edge); // prepend
+            toNodeId = previousNodeId;
         }
         return new SingleRoute(edges);
     }
@@ -82,30 +87,28 @@ public final class RouteComputer {
         PriorityQueue<WeightedNode> toVisit = new PriorityQueue<WeightedNode>();
         int nodeCount = graph.nodeCount();
         float[] distances = new float[nodeCount];
+        // Packed outgoing edge index with previous node id (U4 U28)
         int[] previous = new int[nodeCount];
-        // FIXME: Using list of previousEdge ?
-        int[] previousEdge = new int[nodeCount];
-        // FIXME: set distance to inf for every node ?
-        for (int i = 0; i < distances.length; i++)
-            distances[i] = Float.POSITIVE_INFINITY;
-
-        // Score is not 0 but it is the only element in toVisit so it does not matter
+        Arrays.fill(distances, Float.POSITIVE_INFINITY);
         distances[startNodeId] = 0;
+        previous[startNodeId] = -1;
+        // Score is not 0 but it is the only element in toVisit so it does not matter
         toVisit.add(new WeightedNode(startNodeId, 0));
         PointCh endPoint = graph.nodePoint(endNodeId);
 
-        // FIXME: split in multi methods ?
         while (!toVisit.isEmpty()) {
             WeightedNode current = toVisit.poll();
+            // In case node was added twice in toVisit
             if (distances[current.nodeId] == Float.NEGATIVE_INFINITY)
                 continue;
             if (current.nodeId == endNodeId) // path found
-                return reconstructRoute(previous, previousEdge, current.nodeId);
+                return reconstructRoute(previous, current.nodeId);
 
             int outDegree = graph.nodeOutDegree(current.nodeId);
             for (int edgeIndex = 0; edgeIndex < outDegree; edgeIndex++) {
                 int edgeId = graph.nodeOutEdgeId(current.nodeId, edgeIndex);
                 int toNodeId = graph.edgeTargetNodeId(edgeId);
+                // Don't evaluate cost function if node has already been visited
                 if (distances[toNodeId] == Float.NEGATIVE_INFINITY)
                     continue;
                 double cost = costFunction.costFactor(current.nodeId, edgeId);
@@ -116,8 +119,7 @@ public final class RouteComputer {
                     PointCh toPoint = graph.nodePoint(toNodeId);
                     float score = distance + (float) toPoint.distanceTo(endPoint);
                     distances[toNodeId] = distance;
-                    previous[toNodeId] = current.nodeId;
-                    previousEdge[toNodeId] = edgeId;
+                    previous[toNodeId] = (edgeIndex << 28) | current.nodeId;
                     toVisit.add(new WeightedNode(toNodeId, score));
                 }
             }
