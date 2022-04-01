@@ -39,11 +39,10 @@ public final class MultiRoute implements Route {
             Route segment = this.segments.get(i);
             edges.addAll(segment.edges());
             points.addAll(segment.points());
-            points.remove(points.size() - 1);
+            if (i != segments.size() - 1) // remove duplicates (don't remove last)
+                points.remove(points.size() - 1);
             runningLengths[i + 1] = runningLengths[i] + segment.length();
         }
-        Route lastSegment = segments.get(segments.size() - 1);
-        points.add(lastSegment.points().get(lastSegment.points().size() - 1));
         this.edges = List.copyOf(edges);
         this.points = List.copyOf(points);
     }
@@ -103,10 +102,9 @@ public final class MultiRoute implements Route {
     @Override
     public RoutePoint pointClosestTo(PointCh point) {
         RoutePoint closest = RoutePoint.NONE;
-        for (int i = 0; i < segments.size(); i++) {
-            closest = closest.min(segments.get(i).pointClosestTo(point))
-                             .withPositionShiftedBy(runningLengths[i]);
-        }
+        for (int i = 0; i < segments.size(); i++)
+            closest = closest.min(
+                    segments.get(i).pointClosestTo(point).withPositionShiftedBy(runningLengths[i]));
         return closest;
     }
 
