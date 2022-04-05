@@ -1,3 +1,4 @@
+// TODO: read Florian
 package ch.epfl.javelo.data;
 
 import java.io.IOException;
@@ -31,10 +32,10 @@ public final class Graph {
     private final List<AttributeSet> attributeSets;
 
     /**
-     * Loads and creates the graph.
+     * Loads and creates a graph.
      * <p>
-     * WARNING: Calling this method with {@code GraphNodes}, {@code GraphSectors} or
-     * {@code GraphEdges} generated with modifiable buffers violates immutability.
+     * WARNING: Creating a graph with {@code GraphNodes}, {@code GraphSectors} or {@code GraphEdges}
+     * generated with modifiable buffers violates immutability.
      *
      * @param nodes         graph's nodes
      * @param sectors       graph's sectors
@@ -57,14 +58,14 @@ public final class Graph {
     }
 
     /**
-     * Retrieves the graph from the files in the directory indicated by {@code basePath}.
+     * Generates a graph from the files in the directory indicated by {@code basePath}.
      * <p>
-     * The following files are required: nodes.bin, sectors.bin, edges.bin, profile_ids.bin,
-     * elevations.bin, attributes.bin.
+     * The following files are required: {@code nodes.bin}, {@code sectors.bin}, {@code edges.bin},
+     * {@code profile_ids.bin}, {@code elevations.bin}, {@code attributes.bin}.
      *
-     * @param basePath directory of the files
-     * @return the graph with the nodes, the sectors, the edges and the attribute set
-     * @throws IOException if some input/output error is thrown during file related operations
+     * @param basePath directory containing the files
+     * @return the generated graph
+     * @throws IOException if any input/output error is thrown during file related operations
      */
     public static Graph loadFrom(Path basePath) throws IOException {
         IntBuffer nodesBuffer = mapFileToBuffer(basePath, "nodes.bin").asIntBuffer();
@@ -75,9 +76,8 @@ public final class Graph {
 
         LongBuffer attributesBuffer = mapFileToBuffer(basePath, "attributes.bin").asLongBuffer();
         ArrayList<AttributeSet> attributeSets = new ArrayList<AttributeSet>();
-        while (attributesBuffer.hasRemaining()) {
+        while (attributesBuffer.hasRemaining())
             attributeSets.add(new AttributeSet(attributesBuffer.get()));
-        }
 
         return new Graph(new GraphNodes(nodesBuffer), new GraphSectors(sectorsBuffer),
                 new GraphEdges(edgesBuffer, profileIds, elevations), attributeSets);
@@ -93,7 +93,7 @@ public final class Graph {
     }
 
     /**
-     * Retrieves the position of the given node.
+     * Retrieves the position of a given node.
      *
      * @param nodeId id (index) of the node
      * @return the position of the node corresponding to the given id
@@ -103,32 +103,32 @@ public final class Graph {
     }
 
     /**
-     * Retrieves the number of outgoing edges from the given node.
+     * Retrieves the number of outgoing edges from a given node.
      *
      * @param nodeId id (index) of the node
-     * @return the number of outgoing edges
+     * @return the number of edges going out of the node
      */
     public int nodeOutDegree(int nodeId) {
         return nodes.outDegree(nodeId);
     }
 
     /**
-     * Retrieves the id of the {@code edgeIndex}-th edge going out of the node.
+     * Retrieves the id of the {@code edgeIndex}-th outgoing edge of a node.
      *
      * @param nodeId    id (index) of the node
      * @param edgeIndex id (index) of the edge
-     * @return the id (index) of the outgoing {@code edgeIndex}-th edge of the node corresponding to
-     *         the given id
+     * @return the id (index) of the {@code edgeIndex}-th edge going out of the node corresponding
+     *         to the given id
      */
     public int nodeOutEdgeId(int nodeId, int edgeIndex) {
         return nodes.edgeId(nodeId, edgeIndex);
     }
 
     /**
-     * Retrieves the index of the node closest to the given point within a maximum distance (in
-     * meters) of {@code searchDistance}.
+     * Retrieves the index of the closest node to a given point, within a maximum distance of
+     * {@code searchDistance} (in meters).
      *
-     * @param point          center point around which search is performed
+     * @param point          center point around which the search is performed
      * @param searchDistance maximum search distance around the point (supposed positive or 0)
      * @return the closest node's id (index), -1 if there is no node within the given distance
      */
@@ -140,9 +140,9 @@ public final class Graph {
             // Won't iterate if sector is empty
             for (int nodeId = sector.startNodeId(); nodeId < sector.endNodeId(); nodeId++) {
                 PointCh candidate = nodePoint(nodeId);
-                double distanceToPoint = candidate.squaredDistanceTo(point);
-                if (distanceToPoint < smallestSquaredDistance) {
-                    smallestSquaredDistance = distanceToPoint;
+                double squaredDistanceToPoint = candidate.squaredDistanceTo(point);
+                if (squaredDistanceToPoint < smallestSquaredDistance) {
+                    smallestSquaredDistance = squaredDistanceToPoint;
                     closestNodeId = nodeId;
                 }
             }
@@ -153,7 +153,7 @@ public final class Graph {
      * Retrieves the index of an edge's destination node.
      *
      * @param edgeId id (index) of the edge
-     * @return the index of the destination node
+     * @return the id (index) of the destination node
      */
     public int edgeTargetNodeId(int edgeId) {
         return edges.targetNodeId(edgeId);
@@ -170,17 +170,18 @@ public final class Graph {
     }
 
     /**
-     * Retrieves the OSM attributes' set of an edge.
+     * Retrieves the OSM attributes of an edge.
      *
      * @param edgeId id (index) of the edge
-     * @return the OSM attributes' set of the edge corresponding to the given id
+     * @return the attribute set containing the OSM attributes of the edge corresponding to the
+     *         given id
      */
     public AttributeSet edgeAttributes(int edgeId) {
         return attributeSets.get(edges.attributesIndex(edgeId));
     }
 
     /**
-     * Retrieves the length of the edge in meters.
+     * Retrieves the length of an edge in meters.
      *
      * @param edgeId id (index) of the edge
      * @return the length of the edge corresponding to the given id
@@ -190,7 +191,7 @@ public final class Graph {
     }
 
     /**
-     * Retrieves the elevation gain of the edge, in meters.
+     * Retrieves the elevation gain of an edge, in meters.
      *
      * @param edgeId id (index) of the edge
      * @return the elevation gain of the edge corresponding to the given id
@@ -200,11 +201,10 @@ public final class Graph {
     }
 
     /**
-     * Retrieves the profile of an edge, as a function. If the edge does not have a profile, the
-     * returned function will always return {@code Double.NaN}.
+     * Retrieves the profile of an edge, as a function.
      *
      * @param edgeId id (index) of the edge
-     * @return the profile of the edge corresponding to the given id, as a function or a function
+     * @return the profile of the edge corresponding to the given id as a function, or a function
      *         always returning {@code Double.NaN} if the edge does not have a profile
      */
     public DoubleUnaryOperator edgeProfile(int edgeId) {

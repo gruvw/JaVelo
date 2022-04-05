@@ -1,3 +1,4 @@
+// TODO: read Lucas
 package ch.epfl.javelo.routing;
 
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import ch.epfl.javelo.Preconditions;
 import ch.epfl.javelo.projection.PointCh;
 
 /**
- * Represents a simple route (without intermediate waypoints).
+ * Represents a basic route (without intermediate waypoints).
  * <p>
  * Immutable.
  *

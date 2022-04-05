@@ -1,3 +1,4 @@
+// TODO: read Florian
 package ch.epfl.javelo.data;
 
 import java.nio.ByteBuffer;
@@ -14,17 +15,17 @@ import ch.epfl.javelo.Q28_4;
  * <p>
  * Edge attributes: (int - U1 U31) edge's direction and target node's id, (short - UQ12.4) edge's
  * length in meters, (short - UQ12.4) positive elevation gain in meters, (short - U16) id of the OSM
- * attributes set.
+ * attribute set.
  * <p>
  * Profile attributes: (int - U2 U30) profile type and id/index of the first sample.
  * <p>
- * Elevations: samples value only -> first altitude (short - UQ12.4), type 1 (short - UQ12.4) | type
- * 2 (short - Q4.4 Q4.4) | type 3 (short Q0.4 Q0.4 Q0.4 Q0.4).
+ * Elevations: samples' values only -> initial altitude (short - UQ12.4), type 1 (short - UQ12.4) |
+ * type 2 (short - Q4.4 Q4.4) | type 3 (short Q0.4 Q0.4 Q0.4 Q0.4).
  *
- * @param edgesBuffer buffer memory containing the value of each attributes (fundamental and
- *                    derived) for all edges of the graph (used for route computation)
- * @param profileIds  buffer memory containing the value of each profile attribute for all edges
- * @param elevations  buffer memory containing every samples for each profile (compressed or not)
+ * @param edgesBuffer data buffer containing the value of each attribute (fundamental and derived)
+ *                    for every edge of the graph (used for route computation)
+ * @param profileIds  data buffer containing the value of each profile attribute for every edge
+ * @param elevations  data buffer containing every sample for each profile (compressed or not)
  *
  * @author Lucas Jung (324724)
  * @author Florian Kolly (328313)
@@ -34,8 +35,7 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
     // == EDGES BUFFER ==
 
     /**
-     * Position of the direction and target node's id within a buffer range corresponding to an
-     * edge.
+     * Position of the direction and target node id within a buffer range corresponding to an edge.
      */
     private final static byte OFFSET_DIRECTION_TARGET = 0;
 
@@ -45,7 +45,7 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
     private final static byte OFFSET_LENGTH = OFFSET_DIRECTION_TARGET + Integer.BYTES;
 
     /**
-     * Position of the gain in elevation within a buffer range corresponding to an edge.
+     * Position of the elevation gain within a buffer range corresponding to an edge.
      */
     private final static byte OFFSET_ELEVATION = OFFSET_LENGTH + Short.BYTES;
 
@@ -96,10 +96,10 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
     }
 
     /**
-     * Retrieves the target node's id of an edge.
+     * Retrieves the target node id of an edge.
      *
      * @param edgeId id (index) of the edge
-     * @return the target node's id of the edge corresponding to the given id
+     * @return the target node id of the edge corresponding to the given id
      */
     public int targetNodeId(int edgeId) {
         int targetNode = edgesBuffer.getInt(edgeId * EDGE_SIZE + OFFSET_DIRECTION_TARGET);
@@ -140,12 +140,11 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
     }
 
     /**
-     * Retrieves (and decompresses if needed) the samples of an edge's profile (empty if the edge
-     * does not have a profile).
+     * Retrieves the samples (decompressed if needed) of an edge's profile (empty if the edge does
+     * not have a profile).
      *
      * @param edgeId id (index) of the edge
-     * @return an array of the samples contained in the profile of the edge corresponding to the
-     *         given id
+     * @return an array of the profile's samples of the edge corresponding to the given id
      */
     public float[] profileSamples(int edgeId) {
         if (!hasProfile(edgeId))
@@ -153,17 +152,18 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
 
         int length = Short.toUnsignedInt(edgesBuffer.getShort(edgeId * EDGE_SIZE + OFFSET_LENGTH)); // UQ12.4
         int nbSamples = 1 + Math2.ceilDiv(length, Q28_4.ofInt(2)); // at least one sample
-        float[] profiles = new float[nbSamples];
+        float[] samples = new float[nbSamples];
         int profileIndex = edgeId * PROFILE_INTS + OFFSET_PROFILE_TYPE_ID;
         int profileType = Bits.extractUnsigned(profileIds.get(profileIndex), 30, 2); // U2
         int firstSampleId = Bits.extractUnsigned(profileIds.get(profileIndex), 0, 30); // U30
 
-        // Starting altitude (first sample, full short)
-        profiles[0] = Q28_4.asFloat(Short.toUnsignedInt(elevations.get(firstSampleId))); // UQ12.4
-        if (profileType == 1) {
+        // Starting altitude (first sample, uncompressed short)
+        samples[0] = Q28_4.asFloat(Short.toUnsignedInt(elevations.get(firstSampleId))); // UQ12.4
+
+        if (profileType == 1) // uncompressed
             for (int i = 1; i < nbSamples; i++)
-                profiles[i] = Q28_4.asFloat(Short.toUnsignedInt(elevations.get(firstSampleId + i)));
-        } else {
+                samples[i] = Q28_4.asFloat(Short.toUnsignedInt(elevations.get(firstSampleId + i)));
+        else {
             // Number of samples per short: type 2 -> 2, type 3 -> 4
             final int SAMPLES_PER_SHORT = (profileType - 1) * 2;
             // Size of a sample in bits: type 2 -> 8, type 3 -> 4
@@ -177,25 +177,25 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
                 // nbSamples - 3 / nbSamples - 2, nbSamples - 1
                 for (int i = 1 + SAMPLES_PER_SHORT * (offset - 1);
                      i <= offset * SAMPLES_PER_SHORT && i < nbSamples; i++) {
-                    // (-i mod m = -i & ~-m) when m is a power of 2
+                    // (i mod m = i & ~-m) when m is a power of 2
                     int start = (-i & ~-SAMPLES_PER_SHORT) * SAMPLE_SIZE;
                     float elevationDelta = Q28_4.asFloat(
                             Bits.extractSigned(compressedSamples, start, SAMPLE_SIZE));
-                    profiles[i] = profiles[i - 1] + elevationDelta;
+                    samples[i] = samples[i - 1] + elevationDelta;
                 }
             }
         }
 
         if (isInverted(edgeId))
-            reverseArray(profiles);
-        return profiles;
+            reverseArray(samples);
+        return samples;
     }
 
     /**
      * Retrieves the id of the attribute set attached to an edge.
      *
      * @param edgeId id (index) of the edge
-     * @return the attribute set's id of to the edge corresponding to the given id
+     * @return the id of the attribute set of the edge corresponding to the given id
      */
     public int attributesIndex(int edgeId) {
         return Short.toUnsignedInt(edgesBuffer.getShort(edgeId * EDGE_SIZE + OFFSET_ATTRIBUTES));

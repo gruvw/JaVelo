@@ -1,16 +1,18 @@
+// TODO: read Lucas
 package ch.epfl.javelo.routing;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Queue;
 import ch.epfl.javelo.Bits;
 import ch.epfl.javelo.Preconditions;
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.projection.PointCh;
 
 /**
- * Represents a route planner. Used to compute the best route.
+ * Represents a route planner. Used to compute the best route between two nodes.
  * <p>
  * Immutable.
  *
@@ -24,6 +26,9 @@ public final class RouteComputer {
 
     /**
      * RouteComputer's constructor.
+     * <p>
+     * WARNING: Creating a route computer with a modifiable {@code costFunction} violates
+     * immutability.
      *
      * @param graph        JaVelo graph
      * @param costFunction cost function to consider for the computation of the route
@@ -37,7 +42,7 @@ public final class RouteComputer {
      * Generates the route/path ending at {@code currentNodeId}.
      *
      * @param previous      map linking a node id to the id of the previous node packed with the
-     *                      outgoing edge index to follow (U4 U28)
+     *                      outgoing edge index to follow (int - U4 -> edge index, U28 -> node id)
      * @param currentNodeId last node id (index) of the route to reconstruct
      * @return the route ending at {@code currentNodeId}
      */
@@ -84,7 +89,7 @@ public final class RouteComputer {
         }
 
         Preconditions.checkArgument(startNodeId != endNodeId);
-        PriorityQueue<WeightedNode> toVisit = new PriorityQueue<WeightedNode>();
+        Queue<WeightedNode> toVisit = new PriorityQueue<>();
         int nodeCount = graph.nodeCount();
         float[] distances = new float[nodeCount];
         // Packed outgoing edge index with previous node id (U4 U28)

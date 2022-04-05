@@ -1,3 +1,5 @@
+// TODO: read Lucas
+// TODO: read Florian
 package ch.epfl.javelo.data;
 
 import java.nio.IntBuffer;
@@ -5,14 +7,14 @@ import ch.epfl.javelo.Bits;
 import ch.epfl.javelo.Q28_4;
 
 /**
- * All the nodes of the JaVelo graph. (record)
+ * All the nodes in a buffer of nodes. (record)
  * <p>
  * Arguments are not checked.
  * <p>
  * Node attributes: (int - Q28.4) east coordinate, (int - Q28.4) north coordinate, (int - U4 U28)
  * number of outgoing edges and id of the first one.
  *
- * @param buffer buffer memory containing the value of each attribute for all graph nodes
+ * @param buffer data buffer containing the value of each attribute for every node in the graph
  *
  * @author Lucas Jung (324724)
  * @author Florian Kolly (328313)

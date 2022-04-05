@@ -1,9 +1,10 @@
+// TODO: read Lucas
 package ch.epfl.javelo.routing;
 
 import ch.epfl.javelo.projection.PointCh;
 
 /**
- * A point of a route that is the closest to a point of reference (in Switzerland). (record)
+ * A point on a route that is the closest to a point of reference (in Switzerland). (record)
  *
  * @param point               point on the route
  * @param position            position of the point on the route, in meters
@@ -33,7 +34,7 @@ public record RoutePoint(PointCh point, double position, double distanceToRefere
     }
 
     /**
-     * Returns the point of the route that is the closest to a point of reference between the
+     * Returns the point on the route that is the closest to a point of reference between the
      * current instance and {@code that}.
      *
      * @param that other instance to compare the distance to the point of reference against
@@ -45,7 +46,7 @@ public record RoutePoint(PointCh point, double position, double distanceToRefere
     }
 
     /**
-     * Returns the point of the route that is the closest to a point of reference between the
+     * Returns the point on the route that is the closest to a point of reference between the
      * current instance and a point at {@code thatDistanceToReference} meters away from the point of
      * reference.
      *
@@ -55,7 +56,7 @@ public record RoutePoint(PointCh point, double position, double distanceToRefere
      * @param thatDistanceToReference distance from the point to the point of reference
      * @return a new instance of {@code RoutePoint} corresponding to {@code thatPoint} if
      *         {@code thatDistanceToReference} is strictly smaller than the distance from
-     *         {@code this} to the reference, {@this} otherwise
+     *         {@code this} to the reference, {@code this} otherwise
      */
     public RoutePoint min(PointCh thatPoint, double thatPosition, double thatDistanceToReference) {
         return this.distanceToReference <= thatDistanceToReference ? this

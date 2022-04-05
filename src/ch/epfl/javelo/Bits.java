@@ -1,7 +1,8 @@
+// TODO: read Lucas
 package ch.epfl.javelo;
 
 /**
- * Slice a bit vector.
+ * Slices a bit vector.
  * <p>
  * Non-instantiable.
  *
@@ -14,14 +15,14 @@ public final class Bits {
 
     /**
      * Extracts from the 32 bits vector {@code value} the span of {@code length} bits beginning at
-     * index {@code start} and interpreting it as a 2 complement signed value.
+     * index {@code start} and interprets it as a 2-complement signed value.
      *
      * @param value  32 bits vector, as signed integer
      * @param start  starting bit index
      * @param length size of the slice
      * @return the extracted slice from {@code value} of size {@code length} starting at
      *         {@code start} (signed)
-     * @throws IllegalArgumentException if slice is not between 0 and 31 (included)
+     * @throws IllegalArgumentException if the slice is not between 0 and 31 (included)
      */
     public static int extractSigned(int value, int start, int length) {
         Preconditions.checkArgument(start >= 0);
@@ -33,14 +34,14 @@ public final class Bits {
 
     /**
      * Extracts from the 32 bits vector {@code value} the span of {@code length} bits beginning at
-     * index {@code start} and interpreting it as an unsigned value.
+     * index {@code start} and interprets it as an unsigned value.
      *
      * @param value  32 bits vector, as unsigned integer
      * @param start  starting bit index
      * @param length size of the slice
      * @return the extracted slice from {@code value} of size {@code length} starting at
      *         {@code start} (unsigned)
-     * @throws IllegalArgumentException if slice is not between 0 and 31 (included) or if
+     * @throws IllegalArgumentException if the slice is not between 0 and 31 (included) or if
      *                                  {@code length} is larger than 31
      */
     public static int extractUnsigned(int value, int start, int length) {

@@ -1,9 +1,11 @@
+// TODO: read Lucas
+// TODO: read Florian
 package ch.epfl.javelo;
 
 import java.util.function.DoubleUnaryOperator;
 
 /**
- * Creates objects representing mathematical functions.
+ * Creates objects representing mathematical functions. // TODO: find better formulation
  * <p>
  * Non-instantiable.
  *
@@ -15,8 +17,8 @@ public final class Functions {
     private Functions() {}
 
     /**
-     * Computes the evaluation of a constant function, for which the return value will always be the
-     * {@code y} parameter.
+     * Computes the evaluation of a constant function, for which the returned value will always be
+     * the {@code y} argument.
      *
      * @param y constant value of the function
      * @return a constant function of value {@code y}

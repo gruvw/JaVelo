@@ -1,3 +1,4 @@
+// TODO: read Florian
 package ch.epfl.javelo.data;
 
 import java.util.StringJoiner;
@@ -25,7 +26,7 @@ public record AttributeSet(long bits) {
     }
 
     /**
-     * Creates an attribute set with all the attributes in argument.
+     * Creates an attribute set with all the attributes passed as arguments.
      *
      * @param attributes list of attributes to put in the set
      * @return the set corresponding to the given attributes
@@ -38,7 +39,7 @@ public record AttributeSet(long bits) {
     }
 
     /**
-     * Checks if the given attribute is contained inside the attribute set.
+     * Checks if the given attribute is contained inside this attribute set.
      *
      * @param attribute the checked attribute
      * @return true if this set contains the given attribute, false otherwise
@@ -52,12 +53,19 @@ public record AttributeSet(long bits) {
      * empty.
      *
      * @param that the other set to intersect with
-     * @return true if the intersection of this set with the given one is not empty, false otherwise
+     * @return true if the intersection between this set and the given one is not empty, false
+     *         otherwise
      */
     public boolean intersects(AttributeSet that) {
         return (this.bits & that.bits) != 0;
     }
 
+    /**
+     * String representation of an attribute set.
+     *
+     * @return the string representation of an attribute set: comma separated list of the attributes
+     *         between curly braces
+     */
     @Override
     public String toString() {
         StringJoiner joiner = new StringJoiner(",", "{", "}");

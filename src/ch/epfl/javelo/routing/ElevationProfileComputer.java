@@ -1,3 +1,5 @@
+// TODO: read Lucas
+// TODO: read Florian
 package ch.epfl.javelo.routing;
 
 import java.util.Arrays;

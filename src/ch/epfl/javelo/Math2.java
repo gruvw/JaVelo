@@ -1,3 +1,4 @@
+// TODO: read Lucas
 package ch.epfl.javelo;
 
 /**
@@ -17,7 +18,7 @@ public final class Math2 {
      *
      * @param x numerator
      * @param y denominator
-     * @return the ceiling of {@code x}/{@code y} (⌈x/y⌉)
+     * @return the ceiling of {@code x} divided by {@code y} (⌈x/y⌉)
      * @throws IllegalArgumentException if x < 0 or y <= 0
      */
     public static int ceilDiv(int x, int y) {
@@ -28,11 +29,11 @@ public final class Math2 {
 
     /**
      * Computes the y coordinate of the point ({@code x}, y) standing on the line passing by (0,
-     * {@code y0}) and (1, {@code y1})
+     * {@code y0}) and (1, {@code y1}).
      *
      * @param y0 y value of the line where x=0
      * @param y1 y value of the line where x=1
-     * @param x x value to interpolate with the line
+     * @param x  x value to interpolate with the line
      * @return the y coordinate of the point {@code x}
      */
     public static double interpolate(double y0, double y1, double x) {
@@ -40,11 +41,11 @@ public final class Math2 {
     }
 
     /**
-     * Limits the value of v to the interval [min, max].
+     * Limits the value of {@code v} to the closed interval [{@code min}, {@code max}].
      *
-     * @param min minimum value for v
-     * @param v value to limit
-     * @param max maximum value for v
+     * @param min minimum value for {@code v}
+     * @param v   value to limit
+     * @param max maximum value for {@code v}
      * @return {@code min} when {@code v} < {@code min}, {@code max} when {@code v} > {@code max},
      *         {@code v} otherwise
      * @throws IllegalArgumentException if {@code min} > {@code max}
@@ -55,11 +56,11 @@ public final class Math2 {
     }
 
     /**
-     * Limits the value of v to the interval [min, max].
+     * Limits the value of {@code v} to the closed interval [{@code min}, {@code max}].
      *
-     * @param min minimum value for v
-     * @param v value to limit
-     * @param max maximum value for v
+     * @param min minimum value for {@code v}
+     * @param v   value to limit
+     * @param max maximum value for {@code v}
      * @return {@code min} when {@code v} < {@code min}, {@code max} when {@code v} > {@code max},
      *         {@code v} otherwise
      * @throws IllegalArgumentException if {@code min} > {@code max}
@@ -70,7 +71,7 @@ public final class Math2 {
     }
 
     /**
-     * Computes the arsinh of the argument.
+     * Computes the hyperbolic sine of the argument.
      *
      * @param x argument
      * @return arsinh({@code x})
@@ -82,10 +83,10 @@ public final class Math2 {
     /**
      * Computes the dot product between the given vectors.
      *
-     * @param uX x composant of vector u
-     * @param uY y composant of vector u
-     * @param vX x composant of vector v
-     * @param vY y composant of vector v
+     * @param uX x component of vector u
+     * @param uY y component of vector u
+     * @param vX x component of vector v
+     * @param vY y component of vector v
      * @return the dot product of the vector u and v (u·v)
      */
     public static double dotProduct(double uX, double uY, double vX, double vY) {
@@ -93,10 +94,10 @@ public final class Math2 {
     }
 
     /**
-     * Computes the squared norm of the vector through its composants.
+     * Computes the squared norm of the vector through its components.
      *
-     * @param uX x composant of vector u
-     * @param uY y composant of vector u
+     * @param uX x component of vector u
+     * @param uY y component of vector u
      * @return the squared norm of the vector u (‖u‖²)
      */
     public static double squaredNorm(double uX, double uY) {
@@ -104,10 +105,10 @@ public final class Math2 {
     }
 
     /**
-     * Computes the norm of the vector through its composants.
+     * Computes the norm of the vector through its components.
      *
-     * @param uX x composant of vector u
-     * @param uY y composant of vector u
+     * @param uX x component of vector u
+     * @param uY y component of vector u
      * @return the norm of the vector u (‖u‖)
      */
     public static double norm(double uX, double uY) {
@@ -116,7 +117,7 @@ public final class Math2 {
 
     /**
      * Computes the length of the projection of the vector u (going from A to P) on the vector v
-     * (going from A to B)
+     * (going from A to B).
      *
      * @param aX x coordinate of the point A
      * @param aY y coordinate of the point A
