@@ -1,5 +1,4 @@
 // TODO: read Lucas
-// TODO: read Florian
 package ch.epfl.javelo.routing;
 
 import java.util.Arrays;
@@ -8,7 +7,7 @@ import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.Preconditions;
 
 /**
- * Calculator for an elevation profile.
+ * Computer for an elevation profile.
  * <p>
  * Non-instantiable.
  *
@@ -23,8 +22,8 @@ public final class ElevationProfileComputer {
      * Fill holes (i.e. NaN values) in {@code elevations}.
      *
      * @param elevations    array (potentially) containing holes
-     * @param firstValidPos index of first non-NaN value in {@code elevations} (negative if full of
-     *                      NaN)
+     * @param firstValidPos index of first non-NaN value in {@code elevations} (negative if filled
+     *                      with NaN)
      * @param lastValidPos  index of last non-NaN value in {@code elevations}
      */
     private static void fillHoles(float[] elevations, int firstValidPos, int lastValidPos) {
@@ -37,7 +36,7 @@ public final class ElevationProfileComputer {
         Arrays.fill(elevations, 0, firstValidPos, elevations[firstValidPos]);
         // Fill holes at the end of the array
         Arrays.fill(elevations, lastValidPos + 1, elevations.length, elevations[lastValidPos]);
-        // Fill middle holes by interpolating surrounding valid samples
+        // Fill holes in the middle of the array by interpolating surrounding valid samples
         for (int i = firstValidPos + 1; i < lastValidPos; i++)
             if (Float.isNaN(elevations[i])) {
                 // i: index of the first hole (previous sample is valid)
@@ -61,9 +60,9 @@ public final class ElevationProfileComputer {
      * @param route         route from which we extract and compute the profile
      * @param maxStepLength maximum spacing between two samples of the profile
      * @return the elevation profile of the specified route. All samples with the value
-     *         {@code Double.NaN} are replaced by interpolated values (or by 0 if the sample is
+     *         {@code Float.NaN} are replaced by interpolated values (or by 0 if the sample is
      *         located at the beginning of the profile, until a valid sample is found). If the
-     *         elevation contains only {@code Double.NaN}, the profile is filled with 0s.
+     *         elevation contains only {@code Float.NaN}, the profile is filled with 0s.
      * @throws IllegalArgumentException if the spacing {@code maxStepLength} is not strictly
      *                                  positive
      */

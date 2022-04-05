@@ -63,7 +63,7 @@ public final class ElevationProfile {
     /**
      * Retrieves the profile's length in meters.
      *
-     * @return the profile's length in meters
+     * @return the profile's length, in meters
      */
     public double length() {
         return length;
