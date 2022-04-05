@@ -1,4 +1,3 @@
-// TODO: read Lucas
 // TODO: read Florian
 package ch.epfl.javelo.projection;
 
@@ -16,7 +15,7 @@ import ch.epfl.javelo.Preconditions;
 public record PointWebMercator(double x, double y) {
 
     /**
-     * Validates that the given coordinates are inside the Web Mercator projection's coordinates.
+     * Constructor of a Web Mercator point.
      *
      * @throws IllegalArgumentException if given coordinates are less than 0 or larger than 1
      *                                  (strictly)
@@ -40,11 +39,10 @@ public record PointWebMercator(double x, double y) {
     }
 
     /**
-     * Generates the Web Mercator point corresponding to the given swiss coordinates point.
+     * Generates the Web Mercator point corresponding to the given Swiss coordinates point.
      *
-     * @param pointCh in Swiss Coordinates system
-     * @return the point in Web Mercator projection corresponding to the given point in Swiss
-     *         coordinates system
+     * @param pointCh point in the Swiss coordinates system
+     * @return the point in Web Mercator projection corresponding to the given point in Switzerland
      */
     public static PointWebMercator ofPointCh(PointCh pointCh) {
         return new PointWebMercator(WebMercator.x(pointCh.lon()), WebMercator.y(pointCh.lat()));
@@ -71,7 +69,7 @@ public record PointWebMercator(double x, double y) {
     }
 
     /**
-     * Computes the longitude of the x coordinate in WGS 84.
+     * Computes the longitude of the x coordinate in WGS84.
      *
      * @return the longitude of the point (WGS84), in radians
      * @see WebMercator#lon(double)
@@ -81,7 +79,7 @@ public record PointWebMercator(double x, double y) {
     }
 
     /**
-     * Computes the latitude of the y coordinate in WGS 84.
+     * Computes the latitude of the y coordinate in WGS84.
      *
      * @return the latitude of the point (WGS84), in radians
      * @see WebMercator#lat(double)
@@ -91,7 +89,7 @@ public record PointWebMercator(double x, double y) {
     }
 
     /**
-     * Computes the equivalent swiss coordinates point.
+     * Computes the equivalent Swiss coordinates point.
      *
      * @return the point in the Swiss coordinates system corresponding to this point if the point is
      *         inside Switzerland's limits, {@code null} otherwise

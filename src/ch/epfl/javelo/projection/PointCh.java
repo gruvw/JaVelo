@@ -1,4 +1,3 @@
-// TODO: read Lucas
 // TODO: read Florian
 package ch.epfl.javelo.projection;
 
@@ -16,7 +15,7 @@ import ch.epfl.javelo.Preconditions;
 public record PointCh(double e, double n) {
 
     /**
-     * Ensures that the given coordinates are inside the Swiss limits.
+     * Constructor of a point in Switzerland.
      *
      * @throws IllegalArgumentException if the point is outside of Switzerland's limits
      */
