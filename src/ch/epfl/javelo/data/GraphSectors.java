@@ -1,4 +1,3 @@
-// TODO: read Lucas
 // TODO: read Florian
 package ch.epfl.javelo.data;
 
@@ -10,13 +9,13 @@ import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.SwissBounds;
 
 /**
- * All the sectors in JaVelo. (record)
+ * All the sectors in a buffer of sectors. (record)
  * <p>
  * Arguments are not checked.
  * <p>
  * Sector attributes: (int - U32) id of the first node, (short - U16) number of nodes.
  *
- * @param buffer buffer memory containing the value of each attribute for all sectors
+ * @param buffer data buffer containing the value of each attribute for every sector
  *
  * @author Lucas Jung (324724)
  * @author Florian Kolly (328313)
@@ -26,7 +25,7 @@ public record GraphSectors(ByteBuffer buffer) {
     // == BUFFER ==
 
     /**
-     * Position of the first node's id within a buffer range corresponding to a sector.
+     * Position of the first node id within a buffer range corresponding to a sector.
      */
     private final static byte OFFSET_FIRST_NODE = 0;
 
@@ -45,7 +44,7 @@ public record GraphSectors(ByteBuffer buffer) {
 
     /**
      * Number of sectors per axis on the grid covering Switzerland. The total number of sectors is
-     * therefore {@code SECTORS_PER_AXIS}².
+     * therefore {@code SECTORS_PER_AXIS} squared.
      */
     private final static int SECTORS_PER_AXIS = 128;
 
@@ -70,10 +69,10 @@ public record GraphSectors(ByteBuffer buffer) {
     }
 
     /**
-     * Lists all sectors having an intersection with a given {@code center} and of length equal to
-     * twice the given {@code distance}.
+     * Lists all sectors inside the area defined by a square centered at a given {@code center} with
+     * sides of length equal to twice the given {@code distance}.
      * <p>
-     * Top & right expansion in case of border conflicts.
+     * Top and right expansion in case of border conflicts.
      *
      * @param center   point in the middle of the square
      * @param distance distance from the center of a square to any one of its four sides (supposed
@@ -106,8 +105,7 @@ public record GraphSectors(ByteBuffer buffer) {
         for (int y = 0; y <= height; y++)
             for (int x = 0; x <= width; x++) {
                 int sectorNb = firstSector + x + y * SECTORS_PER_AXIS;
-                // As unsigned but small enough -> no need to
-                // convert to unsigned
+                // As unsigned but small enough -> no need to convert to unsigned
                 int startNodeId = buffer.getInt(sectorNb * SECTOR_SIZE);
                 int nodeCount = Short.toUnsignedInt(
                         buffer.getShort(sectorNb * SECTOR_SIZE + OFFSET_NODE_COUNT));

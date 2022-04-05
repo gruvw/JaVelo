@@ -23,7 +23,7 @@ public final class WebMercator {
      * @return the x coordinate (Web Mercator) from given longitude (WGS84)
      */
     public static double x(double lon) {
-        return lon / (2 * Math.PI) + .5;
+        return lon / (2 * Math.PI) + 0.5;
     }
 
     /**
@@ -33,7 +33,7 @@ public final class WebMercator {
      * @return the y coordinate (Web Mercator) from given latitude (WGS84)
      */
     public static double y(double lat) {
-        return .5 - Math2.asinh(Math.tan(lat)) / (2 * Math.PI);
+        return 0.5 - Math2.asinh(Math.tan(lat)) / (2 * Math.PI);
     }
 
     /**

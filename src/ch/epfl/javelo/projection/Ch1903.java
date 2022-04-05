@@ -1,4 +1,3 @@
-// TODO: read Lucas
 // TODO: read Florian
 package ch.epfl.javelo.projection;
 
@@ -64,11 +63,11 @@ public final class Ch1903 {
     public static double e(double lon, double lat) {
         double lon1 = convertLon(lon), lat1 = convertLat(lat);
         return 2_600_072.37 + 211_455.93 * lon1 - 10_938.51 * lon1 * lat1
-                - .36 * lon1 * Math.pow(lat1, 2) - 44.54 * Math.pow(lon1, 3);
+                - 0.36 * lon1 * Math.pow(lat1, 2) - 44.54 * Math.pow(lon1, 3);
     }
 
     /**
-     * Converts from WGS84 to Swiss coordinates system (N).
+     * Converts from WGS84 to the Swiss coordinates system (N).
      *
      * @param lon point's longitude, in radians
      * @param lat point's latitude, in radians
@@ -90,8 +89,8 @@ public final class Ch1903 {
      */
     public static double lon(double e, double n) {
         double x = convertE(e), y = convertN(n);
-        double lon0 = 2.6779094 + 4.728982 * x + .791484 * x * y + .1306 * x * Math.pow(y, 2)
-                - .0436 * Math.pow(x, 3);
+        double lon0 = 2.6779094 + 4.728982 * x + 0.791484 * x * y + 0.1306 * x * Math.pow(y, 2)
+                - 0.0436 * Math.pow(x, 3);
         return Math.toRadians(lon0 * 10 / 3.6);
     }
 
@@ -105,8 +104,8 @@ public final class Ch1903 {
     public static double lat(double e, double n) {
         double x = convertE(e), y = convertN(n);
         double xSquared = Math.pow(x, 2);
-        double lat0 = 16.9023892 + 3.238272 * y - .270978 * xSquared - .002528 * Math.pow(y, 2)
-                - .0447 * xSquared * y - .0140 * Math.pow(y, 3);
+        double lat0 = 16.9023892 + 3.238272 * y - 0.270978 * xSquared - 0.002528 * Math.pow(y, 2)
+                - 0.0447 * xSquared * y - 0.0140 * Math.pow(y, 3);
         return Math.toRadians(lat0 * 10 / 3.6);
     }
 

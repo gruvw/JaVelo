@@ -1,4 +1,3 @@
-// TODO: read Lucas
 // TODO: read Florian
 package ch.epfl.javelo.data;
 
@@ -81,12 +80,12 @@ public record GraphNodes(IntBuffer buffer) {
     }
 
     /**
-     * Retrieves the id of the edge number {@code edgeIndex} (relative to a given node).
+     * Retrieves the id of the edge number {@code edgeIndex} going out of a node.
      *
      * @param nodeId    id (index) of the node
-     * @param edgeIndex index of the edge coming out of the given node, between 0 (included) and the
+     * @param edgeIndex index of the edge going out of the given node, between 0 (included) and the
      *                  total number of outgoing edges of the given node (excluded), supposed valid
-     * @return the id of the {@code edgeIndex}-th edge coming out of the node corresponding to the
+     * @return the id of the {@code edgeIndex}-th edge going out of the node corresponding to the
      *         given id {@code nodeId}
      */
     public int edgeId(int nodeId, int edgeIndex) {
