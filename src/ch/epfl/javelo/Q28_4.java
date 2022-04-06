@@ -2,7 +2,7 @@
 package ch.epfl.javelo;
 
 /**
- * Used to convert numbers between the Q28.4 representation and other representations.
+ * Numbers converter between the Q28.4 representation and other representations.
  * <p>
  * Non-instantiable.
  *
