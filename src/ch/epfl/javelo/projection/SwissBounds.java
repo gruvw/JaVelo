@@ -1,5 +1,4 @@
 // TODO: read Lucas
-// TODO: read Florian
 package ch.epfl.javelo.projection;
 
 /**
@@ -45,7 +44,7 @@ public final class SwissBounds {
     public static final double HEIGHT = MAX_N - MIN_N;
 
     /**
-     * Checks if the given swiss coordinates are inside the swiss boundaries.
+     * Checks if the given Swiss coordinates are inside the Swiss boundaries.
      *
      * @param e east coordinate to verify
      * @param n north coordinate to verify

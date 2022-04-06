@@ -1,11 +1,10 @@
 // TODO: read Lucas
-// TODO: read Florian
 package ch.epfl.javelo.projection;
 
 import ch.epfl.javelo.Math2;
 
 /**
- * Used to convert coordinates between the WGS84 system and the Web Mercator projection.
+ * Coordinates converter between the WGS84 system and the Web Mercator projection.
  * <p>
  * Non-instantiable. Arguments are not checked.
  *
@@ -20,7 +19,7 @@ public final class WebMercator {
      * Converts from WGS84 longitude to Web Mercator projection (x coordinate).
      *
      * @param lon longitude in radians
-     * @return the x coordinate (Web Mercator) from given longitude (WGS84)
+     * @return the x coordinate (Web Mercator) from the given longitude (WGS84)
      */
     public static double x(double lon) {
         return lon / (2 * Math.PI) + 0.5;
@@ -30,7 +29,7 @@ public final class WebMercator {
      * Converts from WGS84 latitude to Web Mercator projection (y coordinate).
      *
      * @param lat latitude in radians
-     * @return the y coordinate (Web Mercator) from given latitude (WGS84)
+     * @return the y coordinate (Web Mercator) from the given latitude (WGS84)
      */
     public static double y(double lat) {
         return 0.5 - Math2.asinh(Math.tan(lat)) / (2 * Math.PI);

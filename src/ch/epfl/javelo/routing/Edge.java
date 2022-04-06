@@ -1,5 +1,4 @@
 // TODO: read Lucas
-// TODO: read Florian
 package ch.epfl.javelo.routing;
 
 import java.util.function.DoubleUnaryOperator;
@@ -43,8 +42,8 @@ public record Edge(int fromNodeId, int toNodeId, PointCh fromPoint, PointCh toPo
     }
 
     /**
-     * Computes the position, in meters, of the closest point to a given point, along this edge (or
-     * the line extending this edge).
+     * Computes the position of the closest point to a given point, along this edge (or the line
+     * extending this edge).
      *
      * @param point point for which the nearest position is sought
      * @return the position along this edge (or the line extending this edge), in meters
@@ -55,7 +54,7 @@ public record Edge(int fromNodeId, int toNodeId, PointCh fromPoint, PointCh toPo
     }
 
     /**
-     * Returns a point at a given position along the edge.
+     * Returns a point at a given position along this edge.
      *
      * @param position position along this edge, in meters
      * @return the point at the given position
@@ -67,10 +66,10 @@ public record Edge(int fromNodeId, int toNodeId, PointCh fromPoint, PointCh toPo
     }
 
     /**
-     * Retrieves the altitude, in meters, at a given position along the edge.
+     * Retrieves the altitude at a given position along this edge.
      *
      * @param position position along this edge, in meters
-     * @return the elevation at the given position
+     * @return the elevation at the given position, in meters
      */
     public double elevationAt(double position) {
         return profile.applyAsDouble(position);

@@ -1,5 +1,4 @@
 // TODO: read Lucas
-// TODO: read Florian
 package ch.epfl.javelo.routing;
 
 import java.util.DoubleSummaryStatistics;
@@ -21,7 +20,7 @@ public final class ElevationProfile {
     private final float[] elevationSamples;
 
     /**
-     * Statistics helper to calculate the minimum and maximum altitude.
+     * Statistics helper to calculate the minimum and maximum altitudes.
      */
     private final DoubleSummaryStatistics stats = new DoubleSummaryStatistics();;
 
@@ -61,7 +60,7 @@ public final class ElevationProfile {
     }
 
     /**
-     * Retrieves the profile's length in meters.
+     * Retrieves the profile's length.
      *
      * @return the profile's length, in meters
      */
