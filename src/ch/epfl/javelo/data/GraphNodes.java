@@ -1,4 +1,3 @@
-// TODO: read Florian
 package ch.epfl.javelo.data;
 
 import java.nio.IntBuffer;
@@ -41,7 +40,7 @@ public record GraphNodes(IntBuffer buffer) {
     private static final int NODE_INTS = OFFSET_OUT_EDGES + 1;
 
     /**
-     * Number of nodes in the buffer.
+     * Computes the number of nodes in the buffer.
      *
      * @return the total number of nodes
      */

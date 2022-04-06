@@ -1,4 +1,3 @@
-// TODO: read Lucas
 package ch.epfl.javelo.routing;
 
 import java.util.ArrayList;
@@ -71,23 +70,23 @@ public final class SingleRoute implements Route {
 
     @Override
     public PointCh pointAt(double position) {
-        position = Math2.clamp(0, position, length());
-        int edgeIndex = indexAt(position);
-        return edges.get(edgeIndex).pointAt(position - runningLengths[edgeIndex]);
+        double clampedPosition = Math2.clamp(0, position, length());
+        int edgeIndex = indexAt(clampedPosition);
+        return edges.get(edgeIndex).pointAt(clampedPosition - runningLengths[edgeIndex]);
     }
 
     @Override
     public double elevationAt(double position) {
-        position = Math2.clamp(0, position, length());
-        int edgeIndex = indexAt(position);
-        return edges.get(edgeIndex).elevationAt(position - runningLengths[edgeIndex]);
+        double clampedPosition = Math2.clamp(0, position, length());
+        int edgeIndex = indexAt(clampedPosition);
+        return edges.get(edgeIndex).elevationAt(clampedPosition - runningLengths[edgeIndex]);
     }
 
     @Override
     public int nodeClosestTo(double position) {
-        position = Math2.clamp(0, position, length());
-        Edge edge = edges.get(indexAt(position));
-        PointCh point = pointAt(position);
+        double clampedPosition = Math2.clamp(0, position, length());
+        Edge edge = edges.get(indexAt(clampedPosition));
+        PointCh point = pointAt(clampedPosition);
         double distFrom = point.distanceTo(edge.fromPoint());
         double distTo = point.distanceTo(edge.toPoint());
         // Returns destination node id when the position is in the middle of the edge

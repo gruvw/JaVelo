@@ -1,4 +1,3 @@
-// TODO: read Lucas
 package ch.epfl.javelo.routing;
 
 import java.util.DoubleSummaryStatistics;
@@ -25,7 +24,7 @@ public final class ElevationProfile {
     private final DoubleSummaryStatistics stats = new DoubleSummaryStatistics();;
 
     /**
-     * Sampled function for the profile.
+     * Sampled function of the profile.
      */
     private final DoubleUnaryOperator profile;
 
@@ -45,9 +44,8 @@ public final class ElevationProfile {
         Preconditions.checkArgument(elevationSamples.length >= 2);
         this.length = length;
         this.elevationSamples = elevationSamples.clone();
-        for (int i = 0; i < this.elevationSamples.length; i++) {
-            stats.accept(this.elevationSamples[i]);
-        }
+        for (float sample : this.elevationSamples)
+            stats.accept(sample);
         this.profile = Functions.sampled(elevationSamples, length);
         double totalAscent = 0, totalDescent = 0;
         for (int i = 0; i < elevationSamples.length - 1; i++)
@@ -69,18 +67,18 @@ public final class ElevationProfile {
     }
 
     /**
-     * Retrieves the minimum altitude in the profile.
+     * Retrieves the minimum altitude of the profile.
      *
-     * @return the minimum altitude in the profile
+     * @return the minimum altitude of the profile
      */
     public double minElevation() {
         return stats.getMin();
     }
 
     /**
-     * Retrieves the maximum altitude in the profile.
+     * Retrieves the maximum altitude of the profile.
      *
-     * @return the maximum altitude in the profile
+     * @return the maximum altitude of the profile
      */
     public double maxElevation() {
         return stats.getMax();
@@ -108,7 +106,7 @@ public final class ElevationProfile {
      * Retrieves the altitude of the profile at a given position.
      *
      * @param position position in the profile
-     * @return the altitude at the given position, clamped between 0 and the maximum position
+     * @return the altitude at the given position (clamped between 0 and the maximum position)
      */
     public double elevationAt(double position) {
         return profile.applyAsDouble(position);

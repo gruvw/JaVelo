@@ -1,4 +1,3 @@
-// TODO: read Lucas
 package ch.epfl.javelo;
 
 /**
@@ -14,8 +13,8 @@ public final class Bits {
     private Bits() {}
 
     /**
-     * Extracts from the 32 bits vector {@code value} the span of {@code length} bits beginning at
-     * index {@code start} and interprets it as a 2-complement signed value.
+     * Extracts from a 32 bits vector {@code value} the span of {@code length} bits beginning at
+     * index {@code start} and interprets it as a 2-complement signed integer.
      *
      * @param value  32 bits vector, as signed integer
      * @param start  starting bit index
@@ -33,7 +32,7 @@ public final class Bits {
     }
 
     /**
-     * Extracts from the 32 bits vector {@code value} the span of {@code length} bits beginning at
+     * Extracts from a 32 bits vector {@code value} the span of {@code length} bits beginning at
      * index {@code start} and interprets it as an unsigned value.
      *
      * @param value  32 bits vector, as unsigned integer

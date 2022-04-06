@@ -1,4 +1,3 @@
-// TODO: read Florian
 package ch.epfl.javelo.data;
 
 import java.util.StringJoiner;

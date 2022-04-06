@@ -1,4 +1,3 @@
-// TODO: read Lucas
 package ch.epfl.javelo.routing;
 
 import java.util.Arrays;
@@ -53,9 +52,12 @@ public final class ElevationProfileComputer {
             }
     }
 
+    // FIXME: warning (allowed to precondition ?)
     /**
      * Computes the elevation profile of a route, ensuring that the spacing between two samples is
-     * maximum {@code maxStepLength} meters.
+     * at most {@code maxStepLength} meters.
+     * <p>
+     * WARNING: The route's length cannot be 0.
      *
      * @param route         route from which we extract and compute the profile
      * @param maxStepLength maximum spacing between two samples of the profile
@@ -68,8 +70,7 @@ public final class ElevationProfileComputer {
      */
     public static ElevationProfile elevationProfile(Route route, double maxStepLength) {
         Preconditions.checkArgument(maxStepLength > 0);
-        // TODO: route length 0 (one edge with length 0) => nbSamples = 1 => sampleSpacing = NaN
-        // (div 0)
+        // Route length of 0 -> nbSamples = 1 -> sampleSpacing = division by 0
         int nbSamples = (int) Math.ceil(route.length() / maxStepLength) + 1;
         double sampleSpacing = route.length() / (nbSamples - 1);
         float[] elevations = new float[nbSamples];

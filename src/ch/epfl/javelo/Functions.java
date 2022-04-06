@@ -1,11 +1,9 @@
-// TODO: read Lucas
-// TODO: read Florian
 package ch.epfl.javelo;
 
 import java.util.function.DoubleUnaryOperator;
 
 /**
- * Creates objects representing mathematical functions. // TODO: find better formulation
+ * Generator for objects representing mathematical functions.
  * <p>
  * Non-instantiable.
  *
@@ -37,8 +35,8 @@ public final class Functions {
      * @param xMax    maximum x value
      * @return the function obtained by linear interpolation of the given {@code samples}, evenly
      *         distributed from 0 to {@code xMax}
-     * @throws IllegalArgumentException if there are less than two samples or if {@code xMax} is
-     *                                  less or equal to 0
+     * @throws IllegalArgumentException if there are strictly less than two samples or if
+     *                                  {@code xMax} is less or equal to 0
      */
     public static DoubleUnaryOperator sampled(float[] samples, double xMax) {
         Preconditions.checkArgument(samples.length >= 2);

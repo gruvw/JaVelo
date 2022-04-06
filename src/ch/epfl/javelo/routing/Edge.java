@@ -1,4 +1,3 @@
-// TODO: read Lucas
 package ch.epfl.javelo.routing;
 
 import java.util.function.DoubleUnaryOperator;
@@ -9,8 +8,8 @@ import ch.epfl.javelo.projection.PointCh;
 /**
  * An edge of a route. (record)
  *
- * @param fromNodeId index (id) of the edge's starting node
- * @param toNodeId   index (id) of the edge's destination node
+ * @param fromNodeId id (index) of the edge's starting node
+ * @param toNodeId   id (index) of the edge's destination node
  * @param fromPoint  edge's starting position
  * @param toPoint    edge's destination position
  * @param length     edge's length, in meters
@@ -24,14 +23,13 @@ public record Edge(int fromNodeId, int toNodeId, PointCh fromPoint, PointCh toPo
 
     /**
      * Generates the edge with the specified {@code fromNodeId} and {@code toNodeId} (the other
-     * attributes are found in the graph).
+     * attributes are retrieved from the given graph).
      *
      * @param graph      graph containing the edge
      * @param edgeId     id (index) of the edge
-     * @param fromNodeId index (id) of the edge's starting node
-     * @param toNodeId   index (id) of the edge's destination node
-     * @return the edge, corresponding to the given id, initialized through the parameters and the
-     *         graph
+     * @param fromNodeId id (index) of the edge's starting node
+     * @param toNodeId   id (index) of the edge's destination node
+     * @return the edge, corresponding to the given id, initialized using the graph
      */
     public static Edge of(Graph graph, int edgeId, int fromNodeId, int toNodeId) {
         PointCh fromPoint = graph.nodePoint(fromNodeId);

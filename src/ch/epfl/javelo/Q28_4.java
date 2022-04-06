@@ -1,8 +1,7 @@
-// TODO: read Lucas
 package ch.epfl.javelo;
 
 /**
- * Numbers converter between the Q28.4 representation and other representations.
+ * Converts numbers between the Q28.4 representation and other representations.
  * <p>
  * Non-instantiable.
  *

@@ -1,4 +1,3 @@
-// TODO: read Florian
 package ch.epfl.javelo.data;
 
 import java.io.IOException;
@@ -75,7 +74,7 @@ public final class Graph {
         ShortBuffer elevations = mapFileToBuffer(basePath, "elevations.bin").asShortBuffer();
 
         LongBuffer attributesBuffer = mapFileToBuffer(basePath, "attributes.bin").asLongBuffer();
-        ArrayList<AttributeSet> attributeSets = new ArrayList<AttributeSet>();
+        ArrayList<AttributeSet> attributeSets = new ArrayList<>();
         while (attributesBuffer.hasRemaining())
             attributeSets.add(new AttributeSet(attributesBuffer.get()));
 
@@ -181,20 +180,20 @@ public final class Graph {
     }
 
     /**
-     * Retrieves the length of an edge in meters.
+     * Retrieves the length of an edge.
      *
      * @param edgeId id (index) of the edge
-     * @return the length of the edge corresponding to the given id
+     * @return the length of the edge corresponding to the given id, in meters
      */
     public double edgeLength(int edgeId) {
         return edges.length(edgeId);
     }
 
     /**
-     * Retrieves the elevation gain of an edge, in meters.
+     * Retrieves the elevation gain of an edge.
      *
      * @param edgeId id (index) of the edge
-     * @return the elevation gain of the edge corresponding to the given id
+     * @return the elevation gain of the edge corresponding to the given id, in meters
      */
     public double edgeElevationGain(int edgeId) {
         return edges.elevationGain(edgeId);

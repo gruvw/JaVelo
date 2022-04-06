@@ -142,7 +142,7 @@ public class GraphTest {
         for (int i = 0; i < Math.ceil((1368 - 7) / 2); i++) {
             elevations.put((short) 0);
         }
-        List<AttributeSet> attributeSets = new ArrayList<AttributeSet>();
+        List<AttributeSet> attributeSets = new ArrayList<>();
         attributeSets.add(new AttributeSet(0L));
         attributeSets.add(new AttributeSet(0b100111L));
         graph = new Graph(new GraphNodes(nodesBuffer), new GraphSectors(sectorsBuffer),

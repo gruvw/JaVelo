@@ -1,4 +1,3 @@
-// TODO: read Lucas
 package ch.epfl.javelo.routing;
 
 import java.util.ArrayList;
@@ -40,7 +39,7 @@ public final class MultiRoute implements Route {
             Route segment = this.segments.get(i);
             edges.addAll(segment.edges());
             points.addAll(segment.points());
-            if (i != segments.size() - 1) // remove duplicates (don't remove last)
+            if (i != segments.size() - 1) // remove "duplicates" (don't remove last)
                 points.remove(points.size() - 1);
             runningLengths[i + 1] = runningLengths[i] + segment.length();
         }

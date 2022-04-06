@@ -1,8 +1,9 @@
-// TODO: read Lucas
 package ch.epfl.javelo.routing;
 
 /**
  * Represents a cost function. (interface)
+ * <p>
+ * Used to calculate the travel cost of an edge.
  *
  * @author Lucas Jung (324724)
  * @author Florian Kolly (328313)

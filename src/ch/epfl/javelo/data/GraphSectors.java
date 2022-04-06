@@ -1,4 +1,3 @@
-// TODO: read Florian
 package ch.epfl.javelo.data;
 
 import java.nio.ByteBuffer;
@@ -101,7 +100,7 @@ public record GraphSectors(ByteBuffer buffer) {
         // Number of sectors above firstSector (included)
         int height = (lastSector - firstSector) / SECTORS_PER_AXIS;
 
-        List<Sector> sectors = new ArrayList<Sector>();
+        List<Sector> sectors = new ArrayList<>();
         for (int y = 0; y <= height; y++)
             for (int x = 0; x <= width; x++) {
                 int sectorNb = firstSector + x + y * SECTORS_PER_AXIS;

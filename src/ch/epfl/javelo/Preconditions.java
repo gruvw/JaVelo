@@ -1,4 +1,3 @@
-// TODO: read Lucas
 package ch.epfl.javelo;
 
 /**
@@ -14,7 +13,7 @@ public final class Preconditions {
     private Preconditions() {}
 
     /**
-     * Tests if the condition given in argument is fulfilled.
+     * Tests if the condition passed as argument is fulfilled.
      *
      * @param shouldBeTrue condition the argument should fulfill
      * @throws IllegalArgumentException if {@code shouldBeTrue} is false

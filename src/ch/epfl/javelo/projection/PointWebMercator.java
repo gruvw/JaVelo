@@ -1,4 +1,3 @@
-// TODO: read Florian
 package ch.epfl.javelo.projection;
 
 import ch.epfl.javelo.Preconditions;
@@ -52,7 +51,7 @@ public record PointWebMercator(double x, double y) {
      * Computes the x coordinate at the specified zoom level.
      *
      * @param zoomLevel map zoom level
-     * @return the x coordinate at given zoom level
+     * @return the x coordinate at the given zoom level
      */
     public double xAtZoomLevel(int zoomLevel) {
         return Math.scalb(x, 8 + zoomLevel);
@@ -62,7 +61,7 @@ public record PointWebMercator(double x, double y) {
      * Computes the y coordinate at the specified zoom level.
      *
      * @param zoomLevel map zoom level
-     * @return the y coordinate at given zoom level
+     * @return the y coordinate at the given zoom level
      */
     public double yAtZoomLevel(int zoomLevel) {
         return Math.scalb(y, 8 + zoomLevel);

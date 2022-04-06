@@ -1,4 +1,3 @@
-// TODO: read Florian
 package ch.epfl.javelo.data;
 
 import java.nio.ByteBuffer;
@@ -9,7 +8,7 @@ import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.Q28_4;
 
 /**
- * All the edges of the JaVelo graph. (record)
+ * All the edges in a buffer of edges. (record)
  * <p>
  * Arguments are not checked.
  * <p>
@@ -73,7 +72,7 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
     private final static int PROFILE_INTS = OFFSET_PROFILE_TYPE_ID + 1;
 
     /**
-     * Reverses a given array (in-place reversal).
+     * Reverses an array (in-place reversal).
      *
      * @param array the array to reverse
      */

@@ -1,8 +1,7 @@
-// TODO: read Florian
 package ch.epfl.javelo.projection;
 
 /**
- * Used to convert coordinates between the WGS84 and the Swiss coordinates system.
+ * Coordinates converter between the WGS84 and the Swiss coordinates system.
  * <p>
  * Non-instantiable. Arguments are not checked.
  *
@@ -16,8 +15,8 @@ public final class Ch1903 {
     /**
      * Computes λ₁ from the longitude.
      *
-     * @param lon initial longitude in radians
-     * @return the converted longitude (after degrees conversion)
+     * @param lon initial longitude, in radians
+     * @return the converted longitude (after conversion to degrees)
      */
     private static double convertLon(double lon) {
         return 1e-4 * (3_600 * Math.toDegrees(lon) - 26_782.5);
@@ -26,8 +25,8 @@ public final class Ch1903 {
     /**
      * Computes φ₁ from the latitude.
      *
-     * @param lat initial latitude in radians
-     * @return the converted latitude (after degrees conversion)
+     * @param lat initial latitude, in radians
+     * @return the converted latitude (after conversion to degrees)
      */
     private static double convertLat(double lat) {
         return 1e-4 * (3_600 * Math.toDegrees(lat) - 169_028.66);

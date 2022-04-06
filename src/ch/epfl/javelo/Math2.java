@@ -1,4 +1,3 @@
-// TODO: read Lucas
 package ch.epfl.javelo;
 
 /**
@@ -28,8 +27,8 @@ public final class Math2 {
     }
 
     /**
-     * Computes the y coordinate of the point ({@code x}, y) standing on the line passing by (0,
-     * {@code y0}) and (1, {@code y1}).
+     * Computes the y coordinate of the point {@code (x, y)} standing on the line passing by
+     * {@code (0, y0)} and {@code (1, y1)}.
      *
      * @param y0 y value of the line where x=0
      * @param y1 y value of the line where x=1
@@ -41,7 +40,7 @@ public final class Math2 {
     }
 
     /**
-     * Limits the value of {@code v} to the closed interval [{@code min}, {@code max}].
+     * Limits the value of {@code v} to the closed interval {@code [min, max]}.
      *
      * @param min minimum value for {@code v}
      * @param v   value to limit
@@ -56,7 +55,7 @@ public final class Math2 {
     }
 
     /**
-     * Limits the value of {@code v} to the closed interval [{@code min}, {@code max}].
+     * Limits the value of {@code v} to the closed interval {@code [min, max]}.
      *
      * @param min minimum value for {@code v}
      * @param v   value to limit

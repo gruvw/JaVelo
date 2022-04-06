@@ -1,4 +1,3 @@
-// TODO: read Lucas
 package ch.epfl.javelo.routing;
 
 import java.util.Arrays;
@@ -31,7 +30,7 @@ public final class RouteComputer {
      * immutability.
      *
      * @param graph        JaVelo graph
-     * @param costFunction cost function to consider for the computation of the route
+     * @param costFunction cost function to consider for the route computation
      */
     public RouteComputer(Graph graph, CostFunction costFunction) {
         this.graph = graph;
@@ -47,7 +46,7 @@ public final class RouteComputer {
      * @return the route ending at {@code currentNodeId}
      */
     private Route reconstructRoute(int[] previous, int currentNodeId) {
-        List<Edge> edges = new LinkedList<Edge>();
+        List<Edge> edges = new LinkedList<>();
         int toNodeId = currentNodeId;
         while (previous[toNodeId] != -1) {
             int previousNodeId = Bits.extractUnsigned(previous[toNodeId], 0, 28);
@@ -61,7 +60,7 @@ public final class RouteComputer {
     }
 
     /**
-     * Computes the route with the minimal total cost between two nodes.
+     * Computes the route minimizing the total cost between two nodes.
      *
      * @param startNodeId id (index) of the route's starting node
      * @param endNodeId   id (index) of the route's destination node
@@ -72,8 +71,11 @@ public final class RouteComputer {
      */
     public Route bestRouteBetween(int startNodeId, int endNodeId) {
 
+        // FIXME allowed to document private ? and inner
         /**
-         * Represents a weighted node (record). Used to determine the best node to visit next.
+         * Represents a weighted node. (record)
+         * <p>
+         * Used to determine the best node to visit next.
          *
          * @param nodeId id (index) of the node
          * @param score  value used to compare two nodes, the one with the smallest score will be

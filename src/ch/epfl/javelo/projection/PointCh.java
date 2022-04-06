@@ -1,4 +1,3 @@
-// TODO: read Florian
 package ch.epfl.javelo.projection;
 
 import ch.epfl.javelo.Preconditions;
