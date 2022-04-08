@@ -47,12 +47,6 @@ public final class MultiRoute implements Route {
         this.points = List.copyOf(points);
     }
 
-    private int indexAt(double position) {
-        int index = Arrays.binarySearch(runningLengths, position);
-        // binarySearch starts at -1, goes up to length (included)
-        return Math2.clamp(0, index >= 0 ? index : (-index - 2), segments.size() - 1);
-    }
-
     @Override
     public int indexOfSegmentAt(double position) {
         int index = indexAt(position);
@@ -105,6 +99,12 @@ public final class MultiRoute implements Route {
             closest = closest.min(
                     segments.get(i).pointClosestTo(point).withPositionShiftedBy(runningLengths[i]));
         return closest;
+    }
+
+    private int indexAt(double position) {
+        int index = Arrays.binarySearch(runningLengths, position);
+        // binarySearch starts at -1, goes up to length (included)
+        return Math2.clamp(0, index >= 0 ? index : (-index - 2), segments.size() - 1);
     }
 
 }

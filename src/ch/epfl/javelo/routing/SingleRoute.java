@@ -62,12 +62,6 @@ public final class SingleRoute implements Route {
         return points;
     }
 
-    private int indexAt(double position) {
-        int index = Arrays.binarySearch(runningLengths, position);
-        // binarySearch starts at -1, goes up to length (included)
-        return Math2.clamp(0, index >= 0 ? index : (-index - 2), edges.size() - 1);
-    }
-
     @Override
     public PointCh pointAt(double position) {
         double clampedPosition = Math2.clamp(0, position, length());
@@ -107,6 +101,12 @@ public final class SingleRoute implements Route {
             closest = closest.min(closestEdgePoint, positionOnRoute, distanceToPoint);
         }
         return closest;
+    }
+
+    private int indexAt(double position) {
+        int index = Arrays.binarySearch(runningLengths, position);
+        // binarySearch starts at -1, goes up to length (included)
+        return Math2.clamp(0, index >= 0 ? index : (-index - 2), edges.size() - 1);
     }
 
 }

@@ -13,46 +13,6 @@ public final class Ch1903 {
     private Ch1903() {}
 
     /**
-     * Computes λ₁ from the longitude.
-     *
-     * @param lon initial longitude, in radians
-     * @return the converted longitude (after conversion to degrees)
-     */
-    private static double convertLon(double lon) {
-        return 1e-4 * (3_600 * Math.toDegrees(lon) - 26_782.5);
-    }
-
-    /**
-     * Computes φ₁ from the latitude.
-     *
-     * @param lat initial latitude, in radians
-     * @return the converted latitude (after conversion to degrees)
-     */
-    private static double convertLat(double lat) {
-        return 1e-4 * (3_600 * Math.toDegrees(lat) - 169_028.66);
-    }
-
-    /**
-     * Computes x from the east coordinate.
-     *
-     * @param e initial east coordinate
-     * @return the converted east coordinate
-     */
-    private static double convertE(double e) {
-        return 1e-6 * (e - 2.6e6);
-    }
-
-    /**
-     * Computes y from the north coordinate.
-     *
-     * @param n initial north coordinate
-     * @return the converted north coordinate
-     */
-    private static double convertN(double n) {
-        return 1e-6 * (n - 1.2e6);
-    }
-
-    /**
      * Converts from WGS84 to Swiss coordinates system (E).
      *
      * @param lon point's longitude, in radians
@@ -106,6 +66,46 @@ public final class Ch1903 {
         double lat0 = 16.9023892 + 3.238272 * y - 0.270978 * xSquared - 0.002528 * Math.pow(y, 2)
                 - 0.0447 * xSquared * y - 0.0140 * Math.pow(y, 3);
         return Math.toRadians(lat0 * 10 / 3.6);
+    }
+
+    /**
+     * Computes λ₁ from the longitude.
+     *
+     * @param lon initial longitude, in radians
+     * @return the converted longitude (after conversion to degrees)
+     */
+    private static double convertLon(double lon) {
+        return 1e-4 * (3_600 * Math.toDegrees(lon) - 26_782.5);
+    }
+
+    /**
+     * Computes φ₁ from the latitude.
+     *
+     * @param lat initial latitude, in radians
+     * @return the converted latitude (after conversion to degrees)
+     */
+    private static double convertLat(double lat) {
+        return 1e-4 * (3_600 * Math.toDegrees(lat) - 169_028.66);
+    }
+
+    /**
+     * Computes x from the east coordinate.
+     *
+     * @param e initial east coordinate
+     * @return the converted east coordinate
+     */
+    private static double convertE(double e) {
+        return 1e-6 * (e - 2.6e6);
+    }
+
+    /**
+     * Computes y from the north coordinate.
+     *
+     * @param n initial north coordinate
+     * @return the converted north coordinate
+     */
+    private static double convertN(double n) {
+        return 1e-6 * (n - 1.2e6);
     }
 
 }

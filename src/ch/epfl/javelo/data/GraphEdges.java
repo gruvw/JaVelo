@@ -72,19 +72,6 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
     private final static int PROFILE_INTS = OFFSET_PROFILE_TYPE_ID + 1;
 
     /**
-     * Reverses an array (in-place reversal).
-     *
-     * @param array the array to reverse
-     */
-    private final static void reverseArray(float[] array) {
-        for (int i = 0; i < array.length / 2; i++) {
-            float temp = array[i];
-            array[i] = array[array.length - i - 1];
-            array[array.length - i - 1] = temp;
-        }
-    }
-
-    /**
      * Indicates if an edge is going the opposite direction to how OSM represents it.
      *
      * @param edgeId id (index) of the edge
@@ -198,6 +185,19 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      */
     public int attributesIndex(int edgeId) {
         return Short.toUnsignedInt(edgesBuffer.getShort(edgeId * EDGE_SIZE + OFFSET_ATTRIBUTES));
+    }
+
+    /**
+     * Reverses an array (in-place reversal).
+     *
+     * @param array the array to reverse
+     */
+    private final static void reverseArray(float[] array) {
+        for (int i = 0; i < array.length / 2; i++) {
+            float temp = array[i];
+            array[i] = array[array.length - i - 1];
+            array[array.length - i - 1] = temp;
+        }
     }
 
 }

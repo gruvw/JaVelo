@@ -49,13 +49,6 @@ public final class Graph {
         this.attributeSets = List.copyOf(attributeSets);
     }
 
-    private static ByteBuffer mapFileToBuffer(Path basePath, String fileName) throws IOException {
-        Path filePath = basePath.resolve(fileName);
-        try (FileChannel channel = FileChannel.open(filePath)) {
-            return channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
-        }
-    }
-
     /**
      * Generates a graph from the files in the directory indicated by {@code basePath}.
      * <p>
@@ -210,6 +203,13 @@ public final class Graph {
         if (!edges.hasProfile(edgeId))
             return Functions.constant(Double.NaN);
         return Functions.sampled(edges.profileSamples(edgeId), edgeLength(edgeId));
+    }
+
+    private static ByteBuffer mapFileToBuffer(Path basePath, String fileName) throws IOException {
+        Path filePath = basePath.resolve(fileName);
+        try (FileChannel channel = FileChannel.open(filePath)) {
+            return channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
+        }
     }
 
 }

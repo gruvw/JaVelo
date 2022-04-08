@@ -38,28 +38,6 @@ public final class RouteComputer {
     }
 
     /**
-     * Generates the route/path ending at {@code currentNodeId}.
-     *
-     * @param previous      map linking a node id to the id of the previous node packed with the
-     *                      outgoing edge index to follow (int - U4 -> edge index, U28 -> node id)
-     * @param currentNodeId last node id (index) of the route to reconstruct
-     * @return the route ending at {@code currentNodeId}
-     */
-    private Route reconstructRoute(int[] previous, int currentNodeId) {
-        List<Edge> edges = new LinkedList<>();
-        int toNodeId = currentNodeId;
-        while (previous[toNodeId] != -1) {
-            int previousNodeId = Bits.extractUnsigned(previous[toNodeId], 0, 28);
-            int outGoingEdgeIndex = Bits.extractUnsigned(previous[toNodeId], 28, 4);
-            int edgeId = graph.nodeOutEdgeId(previousNodeId, outGoingEdgeIndex);
-            Edge edge = Edge.of(graph, edgeId, previousNodeId, toNodeId);
-            edges.add(0, edge); // prepend
-            toNodeId = previousNodeId;
-        }
-        return new SingleRoute(edges);
-    }
-
-    /**
      * Computes the route minimizing the total cost between two nodes.
      *
      * @param startNodeId id (index) of the route's starting node
@@ -133,6 +111,28 @@ public final class RouteComputer {
             distances[current.nodeId] = Float.NEGATIVE_INFINITY;
         }
         return null; // path does not exist
+    }
+
+    /**
+     * Generates the route/path ending at {@code currentNodeId}.
+     *
+     * @param previous      map linking a node id to the id of the previous node packed with the
+     *                      outgoing edge index to follow (int - U4 -> edge index, U28 -> node id)
+     * @param currentNodeId last node id (index) of the route to reconstruct
+     * @return the route ending at {@code currentNodeId}
+     */
+    private Route reconstructRoute(int[] previous, int currentNodeId) {
+        List<Edge> edges = new LinkedList<>();
+        int toNodeId = currentNodeId;
+        while (previous[toNodeId] != -1) {
+            int previousNodeId = Bits.extractUnsigned(previous[toNodeId], 0, 28);
+            int outGoingEdgeIndex = Bits.extractUnsigned(previous[toNodeId], 28, 4);
+            int edgeId = graph.nodeOutEdgeId(previousNodeId, outGoingEdgeIndex);
+            Edge edge = Edge.of(graph, edgeId, previousNodeId, toNodeId);
+            edges.add(0, edge); // prepend
+            toNodeId = previousNodeId;
+        }
+        return new SingleRoute(edges);
     }
 
 }
