@@ -17,7 +17,6 @@ public final class ElevationProfileComputer {
 
     private ElevationProfileComputer() {}
 
-    // FIXME: warning (allowed to precondition ?)
     /**
      * Computes the elevation profile of a route, ensuring that the spacing between two samples is
      * at most {@code maxStepLength} meters.

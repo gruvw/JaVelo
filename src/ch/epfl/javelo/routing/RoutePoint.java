@@ -19,7 +19,7 @@ public record RoutePoint(PointCh point, double position, double distanceToRefere
      * Represents a point that does not exist.
      */
     public static final RoutePoint NONE = new RoutePoint(null, Double.NaN,
-            Double.POSITIVE_INFINITY);
+                                                         Double.POSITIVE_INFINITY);
 
     /**
      * Generates an identical point to the current instance where the position is shifted by

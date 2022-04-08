@@ -41,7 +41,9 @@ public final class Graph {
      * @param edges         graph's edges
      * @param attributeSets graph's set of OSM attributes
      */
-    public Graph(GraphNodes nodes, GraphSectors sectors, GraphEdges edges,
+    public Graph(GraphNodes nodes,
+                 GraphSectors sectors,
+                 GraphEdges edges,
                  List<AttributeSet> attributeSets) {
         this.nodes = nodes;
         this.sectors = sectors;
@@ -72,7 +74,7 @@ public final class Graph {
             attributeSets.add(new AttributeSet(attributesBuffer.get()));
 
         return new Graph(new GraphNodes(nodesBuffer), new GraphSectors(sectorsBuffer),
-                new GraphEdges(edgesBuffer, profileIds, elevations), attributeSets);
+                         new GraphEdges(edgesBuffer, profileIds, elevations), attributeSets);
     }
 
     /**
