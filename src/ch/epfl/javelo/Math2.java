@@ -126,7 +126,11 @@ public final class Math2 {
      * @param pY y coordinate of the point P
      * @return the length of the projected vector u on v
      */
-    public static double projectionLength(double aX, double aY, double bX, double bY, double pX,
+    public static double projectionLength(double aX,
+                                          double aY,
+                                          double bX,
+                                          double bY,
+                                          double pX,
                                           double pY) {
         double vX = bX - aX, vY = bY - aY;
         return dotProduct(pX - aX, pY - aY, vX, vY) / norm(vX, vY);

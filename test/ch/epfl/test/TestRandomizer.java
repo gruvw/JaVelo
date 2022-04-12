@@ -11,8 +11,7 @@ public final class TestRandomizer {
     public final static int RANDOM_ITERATIONS = 1_000;
 
     public static RandomGenerator newRandom() {
-        return RandomGeneratorFactory.getDefault()
-            .create(SEED);
+        return RandomGeneratorFactory.getDefault().create(SEED);
     }
 
 }

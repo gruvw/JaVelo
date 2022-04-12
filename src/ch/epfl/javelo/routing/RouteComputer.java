@@ -49,7 +49,6 @@ public final class RouteComputer {
      */
     public Route bestRouteBetween(int startNodeId, int endNodeId) {
 
-        // FIXME allowed to document private ? and inner
         /**
          * Represents a weighted node. (record)
          * <p>
@@ -102,7 +101,7 @@ public final class RouteComputer {
                 if (distance < distances[toNodeId]) {
                     // Using euclidean distance to destination as heuristic
                     PointCh toPoint = graph.nodePoint(toNodeId);
-                    float score = distance + (float) toPoint.distanceTo(endPoint);
+                    float score = (float) (distance + toPoint.distanceTo(endPoint));
                     distances[toNodeId] = distance;
                     previous[toNodeId] = (edgeIndex << 28) | current.nodeId;
                     toVisit.add(new WeightedNode(toNodeId, score));

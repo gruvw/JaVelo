@@ -38,7 +38,8 @@ public final class TestUtils {
         }
     }
 
-    public static void assertEqualsRoutePoint(RoutePoint expected, RoutePoint actual,
+    public static void assertEqualsRoutePoint(RoutePoint expected,
+                                              RoutePoint actual,
                                               double delta) {
         assertEqualsPointCh(expected.point(), actual.point(), delta);
         assertEquals(expected.position(), actual.position(), delta);

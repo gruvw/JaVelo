@@ -17,3 +17,7 @@ Statics are before non-statics.
    2. Public methods
    3. Public overrides
    4. Private methods
+
+## Styling
+
+The styling rules are defined in the [java-style-rules.xml](java-style-rules.xml) file.

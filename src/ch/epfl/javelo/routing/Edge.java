@@ -18,7 +18,11 @@ import ch.epfl.javelo.projection.PointCh;
  * @author Lucas Jung (324724)
  * @author Florian Kolly (328313)
  */
-public record Edge(int fromNodeId, int toNodeId, PointCh fromPoint, PointCh toPoint, double length,
+public record Edge(int fromNodeId,
+                   int toNodeId,
+                   PointCh fromPoint,
+                   PointCh toPoint,
+                   double length,
                    DoubleUnaryOperator profile) {
 
     /**
@@ -60,7 +64,7 @@ public record Edge(int fromNodeId, int toNodeId, PointCh fromPoint, PointCh toPo
     public PointCh pointAt(double position) {
         double ratio = position / length;
         return new PointCh(Math2.interpolate(fromPoint.e(), toPoint.e(), ratio),
-                Math2.interpolate(fromPoint.n(), toPoint.n(), ratio));
+                           Math2.interpolate(fromPoint.n(), toPoint.n(), ratio));
     }
 
     /**
