@@ -1,10 +1,10 @@
 package ch.epfl.javelo.gui;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
@@ -34,7 +34,7 @@ public final class TileManager {
      * @param x    x index of the tile
      * @param y    y index of the tile
      */
-    public record TileId(int zoom, double x, double y) {
+    public record TileId(int zoom, int x, int y) {
 
         /**
          * Constructor of a tile.
@@ -54,7 +54,12 @@ public final class TileManager {
             return (0 <= x && x < Math.pow(4, zoom)) && (0 <= y && y < Math.pow(4, zoom));
         }
 
-        private String path() {
+        /**
+         * Form the string path of a tile's image.
+         *
+         * @return the string path of a tile's image.
+         */
+        private String imagePath() {
             return String.format("%d/%d/%d.png", zoom, x, y);
         }
 
@@ -69,45 +74,47 @@ public final class TileManager {
     public TileManager(Path tilesDirectory, String serverName) {
         this.tilesDirectory = tilesDirectory;
         this.serverBaseUrl = "https://" + serverName + "/";
-        this.cacheMemory = new LinkedHashMap<>(100, 0, true);
+        this.cacheMemory = new LinkedHashMap<>(100, 0.75f, true);
     }
 
     /**
-     * Retrieves the image with the given tile.
+     * Retrieves the image of a given tile.
      * <p>
      * The image is first sought in the cache memory, then in the disk memory. If the image is not
-     * found in either of them, it is downloaded from the tiles server and loaded in the memory
-     * cache (also saved on the disk).
+     * found in either of them, it is downloaded from the tiles server and loaded in the cache
+     * memory (and also saved on the disk memory).
      *
      * @param tile tile to retrieve
      * @return the JavaFX image corresponding to the given tile
-     * @throws IOException if an error occurs when retrieving the image from the server
+     * @throws IOException if an IO error occurs while accessing the disk memory or the server
      */
     public Image imageForTileAt(TileId tile) throws IOException {
         if (cacheMemory.containsKey(tile))
             return cacheMemory.get(tile);
-        if (Files.exists(pathOf(tile)))
-            return new Image(pathOf(tile).toString());
-        return getImageFromServer(tile);
+        if (!Files.exists(pathOf(tile)))
+            downloadImageFromServer(tile);
+        try (InputStream in = new FileInputStream(pathOf(tile).toFile())) {
+            Image tileImage = new Image(in);
+            cacheMemory.put(tile, tileImage);
+            return tileImage;
+        }
     }
 
     /**
-     * Retrieves a tile's image from the tiles server. Saves the retrieved image to the disk memory.
+     * Retrieves a tile's image from the tiles server and saves it to the disk memory.
      *
-     * @param tile the tile of which we want the image
-     * @return the image of the tile (retrieved from the tiles server)
+     * @param tile the tile of which we download the image
      * @throws IOException if any IO error occurs
      */
-    private Image getImageFromServer(TileId tile) throws IOException {
-        URL u = urlOf(tile);
-        URLConnection c = u.openConnection();
-        c.setRequestProperty("User-Agent", "JaVelo");
+    private void downloadImageFromServer(TileId tile) throws IOException {
+        URL imageURL = new URL(serverBaseUrl + tile.imagePath());
+        URLConnection connection = imageURL.openConnection();
+        connection.setRequestProperty("User-Agent", "JaVelo");
         Path filePath = pathOf(tile);
         Files.createDirectories(filePath.getParent());
-        try (InputStream in = c.getInputStream();
+        try (InputStream in = connection.getInputStream();
              OutputStream out = new FileOutputStream(filePath.toFile())) {
             in.transferTo(out);
-            return new Image(in); // TODO in is empty !
         }
     }
 
@@ -117,17 +124,7 @@ public final class TileManager {
      * @return path of the tile's image on the disk
      */
     private Path pathOf(TileId tile) {
-        return tilesDirectory.resolve(tile.path());
-    }
-
-    /**
-     * Creates the url of the tile image on the tiles server.
-     *
-     * @return url of the tile's image on the tile server
-     * @throws MalformedURLException (should never occur)
-     */
-    private URL urlOf(TileId tile) throws MalformedURLException {
-        return new URL(serverBaseUrl + tile.path());
+        return tilesDirectory.resolve(tile.imagePath());
     }
 
 }

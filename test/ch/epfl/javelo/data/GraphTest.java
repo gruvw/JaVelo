@@ -275,7 +275,7 @@ public class GraphTest {
 
     @Test
     void graphLoadFromWorksOnLausanneData() throws IOException {
-        var graph = Graph.loadFrom(Path.of("lausanne"));
+        var graph = Graph.loadFrom(Path.of("data/lausanne"));
 
         // Check that nodes.bin was properly loaded
         var actual1 = graph.nodeCount();
@@ -401,7 +401,7 @@ public class GraphTest {
 
     @Test
     void graphNodeClosestToWorksOnLausanneData() throws IOException {
-        var graph = Graph.loadFrom(Path.of("lausanne"));
+        var graph = Graph.loadFrom(Path.of("data/lausanne"));
 
         var actual1 = graph.nodeClosestTo(new PointCh(2_532_734.8, 1_152_348.0), 100);
         var expected1 = 159049;

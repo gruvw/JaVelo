@@ -26,7 +26,7 @@ public class EdgeTest {
 
     @BeforeAll
     static void initGlobalVars() throws IOException {
-        graph = Graph.loadFrom(Path.of("lausanne"));
+        graph = Graph.loadFrom(Path.of("data/lausanne"));
     }
 
     @Test
@@ -89,7 +89,7 @@ public class EdgeTest {
 
     @Test
     void edgeOfWorksOnLausanneData() throws IOException {
-        var graph = Graph.loadFrom(Path.of("lausanne"));
+        var graph = Graph.loadFrom(Path.of("data/lausanne"));
 
         var edge = Edge.of(graph, 4095, 2022, 2021);
 
