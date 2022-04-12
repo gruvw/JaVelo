@@ -10,12 +10,16 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
+import ch.epfl.javelo.Preconditions;
 import javafx.scene.image.Image;
 
 /**
  * Represents an OSM tiles manager.
  * <p>
  * Arguments are not checked.
+ *
+ * @author Lucas Jung (324724)
+ * @author Florian Kolly (328313)
  */
 public final class TileManager {
 
@@ -33,12 +37,21 @@ public final class TileManager {
     public record TileId(int zoom, double x, double y) {
 
         /**
+         * Constructor of a tile.
+         *
+         * @throws IllegalArgumentException if the tile is invalid
+         */
+        public TileId {
+            Preconditions.checkArgument(isValid(zoom, x, y));
+        }
+
+        /**
          * Verifies if the given attributes form a valid tile.
          *
          * @return true if the given attributes form a valid OSM tile, false otherwise
          */
         public static boolean isValid(int zoom, double x, double y) {
-            return 0 <= x && x < Math.pow(4, zoom) && 0 <= y && y < Math.pow(4, zoom);
+            return (0 <= x && x < Math.pow(4, zoom)) && (0 <= y && y < Math.pow(4, zoom));
         }
 
         private String path() {
@@ -61,35 +74,48 @@ public final class TileManager {
 
     /**
      * Retrieves the image with the given tile.
+     * <p>
+     * The image is first sought in the cache memory, then in the disk memory. If the image is not
+     * found in either of them, it is downloaded from the tiles server and loaded in the memory
+     * cache (also saved on the disk).
      *
      * @param tile tile to retrieve
-     * @return the JavaFX image corresponding to the tile with identity {@code identity}. The image
-     *         is first sought in the memory cache, then in the disk cache. If the image is not
-     *         found in either of them, it is downloaded from the tile server and loaded in cache
-     *         (disk and then memory cache).
+     * @return the JavaFX image corresponding to the given tile
+     * @throws IOException if an error occurs when retrieving the image from the server
      */
-    public Image imageForTileAt(TileId tile) {
-        Image image = cacheMemory.getOrDefault(tile, null);
-        if (image != null)
-            return image;
+    public Image imageForTileAt(TileId tile) throws IOException {
+        if (cacheMemory.containsKey(tile))
+            return cacheMemory.get(tile);
         if (Files.exists(pathOf(tile)))
             return new Image(pathOf(tile).toString());
-        return getImageFromServer(tile); // FIXME what to do when error
+        return getImageFromServer(tile);
     }
 
-
+    /**
+     * Retrieves a tile's image from the tiles server. Saves the retrieved image to the disk memory.
+     *
+     * @param tile the tile of which we want the image
+     * @return the image of the tile (retrieved from the tiles server)
+     * @throws IOException if any IO error occurs
+     */
     private Image getImageFromServer(TileId tile) throws IOException {
         URL u = urlOf(tile);
         URLConnection c = u.openConnection();
         c.setRequestProperty("User-Agent", "JaVelo");
+        Path filePath = pathOf(tile);
+        Files.createDirectories(filePath.getParent());
         try (InputStream in = c.getInputStream();
-             OutputStream out = new FileOutputStream(String.valueOf(tile.y()))) {
-            Files.createDirectories(pathOf(tile).getParent());
+             OutputStream out = new FileOutputStream(filePath.toFile())) {
             in.transferTo(out);
-            return new Image(in);
+            return new Image(in); // TODO in is empty !
         }
     }
 
+    /**
+     * Retrieves the path of the tile's image (on-disk).
+     *
+     * @return path of the tile's image on the disk
+     */
     private Path pathOf(TileId tile) {
         return tilesDirectory.resolve(tile.path());
     }

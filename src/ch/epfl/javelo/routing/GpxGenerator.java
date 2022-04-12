@@ -6,7 +6,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -18,6 +17,9 @@ import org.w3c.dom.Element;
  * Generator for GPX document representing a route.
  * <p>
  * Non-instantiable.
+ *
+ * @author Lucas Jung (324724)
+ * @author Florian Kolly (328313)
  */
 public class GpxGenerator {
 
@@ -25,7 +27,7 @@ public class GpxGenerator {
 
     /**
      * Generates the GPX document corresponding to the given route and profile.
-     * 
+     *
      * @param route   route to represents in the GPX format
      * @param profile profile of the route
      * @return the GPX document representing the route and its profile
@@ -54,7 +56,7 @@ public class GpxGenerator {
 
     /**
      * Writes the GPX document corresponding to the given route and profile in a file.
-     * 
+     *
      * @param filename name of the file
      * @param route    route to represent in the GPX format
      * @param profile  profile of the route
@@ -76,7 +78,7 @@ public class GpxGenerator {
 
     /**
      * Generates a new XML document.
-     * 
+     *
      * @return the generated document
      */
     private static Document newDocument() {

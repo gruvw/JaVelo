@@ -5,10 +5,12 @@ import javafx.geometry.Point2D;
 
 /**
  * Represents the parameters of the map background.
- * 
+ *
  * @param zoom zoom level
  * @param x    x coordinate of the top left corner of the shown portion of the map
  * @param y    y coordinate of the top left corner of the shown portion of the map
+ * @author Lucas Jung (324724)
+ * @author Florian Kolly (328313)
  */
 public record MapViewParameters(int zoom, double x, double y) {
 
