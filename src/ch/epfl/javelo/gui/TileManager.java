@@ -1,6 +1,7 @@
 package ch.epfl.javelo.gui;
 
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
 import javafx.scene.image.Image;
 
 /**
@@ -12,6 +13,7 @@ public final class TileManager {
 
     private final Path path;
     private final String server;
+    private final LinkedHashMap<> memory;
 
     /**
      * Represents the identity of an OSM tile. (record)
@@ -24,7 +26,7 @@ public final class TileManager {
          * @return true if the given attributes constitute a valid OSM tile, false otherwise
          */
         public static boolean isValid(int zoom, double x, double y) {
-
+            return x >= 0 && y >= 0 && x < Math.pow(4, zoom) && y < Math.pow(4, zoom);
         }
 
     }
@@ -38,6 +40,7 @@ public final class TileManager {
     public TileManager(Path path, String server) {
         this.path = path;
         this.server = server;
+        memory = new LinkedHashMap<>(100, 0, true);
     }
 
     /**
