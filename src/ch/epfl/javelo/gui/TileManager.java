@@ -49,6 +49,13 @@ public final class TileManager {
             Preconditions.checkArgument(isValid(zoomLevel, x, y));
         }
 
+        /**
+         * Creates a tile from a point in Web Mercator projection, at a given zoom level.
+         *
+         * @param point     point inside the tile
+         * @param zoomLevel zoom level
+         * @return the tile at zoom level {@code zoomLevel} containing the given point
+         */
         public static TileId of(PointWebMercator point, int zoomLevel) {
             int tileX = (int) Math.floor(point.xAtZoomLevel(zoomLevel) / 256);
             int tileY = (int) Math.floor(point.yAtZoomLevel(zoomLevel) / 256);

@@ -1,6 +1,6 @@
 # Conception
 
-## Order in code
+## Order In Code
 
 Statics are before non-statics.
 
@@ -21,3 +21,14 @@ Statics are before non-statics.
 ## Styling
 
 The styling rules are defined in the [java-style-rules.xml](java-style-rules.xml) file.
+
+## Public Interface Modifications
+
+### `PointWebMercator`
+
+Created a new static method `of(double lat, double lon)` designed to be human friendly and mainly used in testing.
+It takes a latitude and longitude in degrees and returns the corresponding `PointWebMercator` object.
+
+### `TileManager.TileId`
+
+Created a new static method `of(PointWebMercator point, int zoomLevel)` designed to retrieve the `TileId` containing a point in the Web Mercator projection.
