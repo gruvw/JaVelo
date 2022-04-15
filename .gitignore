@@ -29,6 +29,7 @@ bin
 lausanne
 ch_west
 *.kml
+*.gpx
 visualization
 others
 data

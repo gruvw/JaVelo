@@ -25,6 +25,8 @@ import ch.epfl.javelo.projection.PointCh;
  */
 public class GpxGenerator {
 
+    private static final String DATA_FORMAT = "%.5f";
+
     private GpxGenerator() {}
 
     /**
@@ -59,14 +61,16 @@ public class GpxGenerator {
             // won't treat last point)
             runningLength += previous.distanceTo(point);
             Element rtept = doc.createElement("rtept");
-            rtept.setAttribute("lat", String.valueOf(point.lat()));
-            rtept.setAttribute("lon", String.valueOf(point.lon()));
+            rtept.setAttribute("lat", String.format(DATA_FORMAT, Math.toDegrees(point.lat())));
+            rtept.setAttribute("lon", String.format(DATA_FORMAT, Math.toDegrees(point.lon())));
             Element ele = doc.createElement("ele");
-            ele.setTextContent(String.valueOf(profile.elevationAt(runningLength)));
+            ele.setTextContent(String.format(DATA_FORMAT, profile.elevationAt(runningLength)));
             rtept.appendChild(ele);
             rte.appendChild(rtept);
+            previous = point;
         }
         root.appendChild(rte);
+
         return doc;
     }
 

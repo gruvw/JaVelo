@@ -10,12 +10,12 @@ public class Stage6ManualTest {
         // CH_WEST
         long totalTime = 0;
         int iterations = 40;
-        Graph g_west = Graph.loadFrom(Path.of("data/ch_west"));
-        CostFunction cf_west = new CityBikeCF(g_west);
-        RouteComputer rc_west = new RouteComputer(g_west, cf_west);
+        Graph gWest = Graph.loadFrom(Path.of("data/ch_west"));
+        CostFunction cfWest = new CityBikeCF(gWest);
+        RouteComputer rcWest = new RouteComputer(gWest, cfWest);
         for (int i = 0; i < iterations; i++) {
             long t0 = System.nanoTime();
-            Route r = rc_west.bestRouteBetween(2046055, 2694240);
+            Route r = rcWest.bestRouteBetween(2046055, 2694240);
             totalTime += (System.nanoTime() - t0) / 1_000_000;
             KmlPrinter.write("ch_west-out.kml", r);
         }

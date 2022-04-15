@@ -6,16 +6,16 @@ import javafx.geometry.Point2D;
 /**
  * Represents the parameters of the background map. (record)
  *
- * @param zoom zoom level
- * @param x    x coordinate (Web Mercator) of the top left corner of the displayed portion of the
- *             map
- * @param y    y coordinate (Web Mercator) of the top left corner of the displayed portion of the
- *             map
+ * @param zoomLevel zoom level of the map
+ * @param x         x coordinate (Web Mercator) of the top left corner of the displayed portion of
+ *                  the map
+ * @param y         y coordinate (Web Mercator) of the top left corner of the displayed portion of
+ *                  the map
+ *
  * @author Lucas Jung (324724)
  * @author Florian Kolly (328313)
  */
-public record MapViewParameters(int zoom, double x, double y) {
-
+public record MapViewParameters(int zoomLevel, double x, double y) {
 
     /**
      * Returns a {@code MapViewParameters} with the top left corner positioned at the given
@@ -27,7 +27,7 @@ public record MapViewParameters(int zoom, double x, double y) {
      *         same zoom level as the current instance
      */
     public MapViewParameters withMinXY(double newX, double newY) {
-        return new MapViewParameters(zoom, newX, newY);
+        return new MapViewParameters(zoomLevel, newX, newY);
     }
 
     /**
@@ -48,7 +48,7 @@ public record MapViewParameters(int zoom, double x, double y) {
      *         {@code y})
      */
     public PointWebMercator pointAt(double x, double y) {
-        return PointWebMercator.of(zoom, x, y);
+        return PointWebMercator.of(zoomLevel, x, y);
     }
 
     /**
@@ -58,7 +58,7 @@ public record MapViewParameters(int zoom, double x, double y) {
      * @return the horizontal distance from the top left corner to the given Web Mercator point
      */
     public double viewX(PointWebMercator point) {
-        return point.xAtZoomLevel(zoom) - x;
+        return point.xAtZoomLevel(zoomLevel) - x;
     }
 
     /**
@@ -68,7 +68,7 @@ public record MapViewParameters(int zoom, double x, double y) {
      * @return the vertical distance from the top left corner to the given Web Mercator point
      */
     public double viewY(PointWebMercator point) {
-        return point.yAtZoomLevel(zoom) - y;
+        return point.yAtZoomLevel(zoomLevel) - y;
     }
 
 }
