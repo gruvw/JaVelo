@@ -25,7 +25,7 @@ public record PointWebMercator(double x, double y) {
     }
 
     /**
-     * Generates the point with coordinates x and y for the specified zoom level.
+     * Generates the point with coordinates x and y at the specified zoom level.
      *
      * @param zoomLevel map zoom level
      * @param x         x coordinate at {@code zoomLevel} zoom level
@@ -35,6 +35,20 @@ public record PointWebMercator(double x, double y) {
      */
     public static PointWebMercator of(int zoomLevel, double x, double y) {
         return new PointWebMercator(Math.scalb(x, -8 - zoomLevel), Math.scalb(y, -8 - zoomLevel));
+    }
+
+    /**
+     * Generates the point with the given latitude and longitude (in degrees) in the WGS84 system.
+     * <p>
+     * Utility method used to treat human input GPS longitude and latitude.
+     *
+     * @param lat latitude (in degrees)
+     * @param lon longitude (in degrees)
+     * @return the point converted in the Web Mercator projection
+     */
+    public static PointWebMercator of(double lat, double lon) {
+        return new PointWebMercator(WebMercator.x(Math.toRadians(lon)),
+                                    WebMercator.y(Math.toRadians(lat)));
     }
 
     /**

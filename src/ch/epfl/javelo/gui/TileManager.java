@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import ch.epfl.javelo.Preconditions;
+import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.scene.image.Image;
 
 /**
@@ -33,11 +34,11 @@ public final class TileManager {
     /**
      * Represents an OSM tile. (record)
      *
-     * @param zoom zoom level of the tile
-     * @param x    x index of the tile
-     * @param y    y index of the tile
+     * @param zoomLevel zoom level of the tile
+     * @param x         x index of the tile
+     * @param y         y index of the tile
      */
-    public record TileId(int zoom, int x, int y) {
+    public record TileId(int zoomLevel, int x, int y) {
 
         /**
          * Constructor of a tile.
@@ -45,7 +46,13 @@ public final class TileManager {
          * @throws IllegalArgumentException if the tile is invalid
          */
         public TileId {
-            Preconditions.checkArgument(isValid(zoom, x, y));
+            Preconditions.checkArgument(isValid(zoomLevel, x, y));
+        }
+
+        public static TileId of(PointWebMercator point, int zoomLevel) {
+            int tileX = (int) Math.floor(point.xAtZoomLevel(zoomLevel) / 256);
+            int tileY = (int) Math.floor(point.yAtZoomLevel(zoomLevel) / 256);
+            return new TileId(zoomLevel, tileX, tileY);
         }
 
         /**
@@ -53,9 +60,9 @@ public final class TileManager {
          *
          * @return true if the given attributes form a valid OSM tile, false otherwise
          */
-        public static boolean isValid(int zoom, int x, int y) {
-            double limit = Math.pow(2, zoom);
-            return (zoom >= 0) && (0 <= x && x < limit) && (0 <= y && y < limit);
+        public static boolean isValid(int zoomLevel, int x, int y) {
+            double limit = Math.pow(2, zoomLevel);
+            return (zoomLevel >= 0) && (0 <= x && x < limit) && (0 <= y && y < limit);
         }
 
         /**
@@ -64,7 +71,7 @@ public final class TileManager {
          * @return the string path of a tile's image.
          */
         private String imagePath() {
-            return String.format("%d/%d/%d.png", zoom, x, y);
+            return String.format("%d/%d/%d.png", zoomLevel, x, y);
         }
 
     }
