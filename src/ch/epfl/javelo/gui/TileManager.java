@@ -10,6 +10,7 @@ import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import ch.epfl.javelo.Preconditions;
 import javafx.scene.image.Image;
 
@@ -23,9 +24,11 @@ import javafx.scene.image.Image;
  */
 public final class TileManager {
 
+    private final static int MAX_ENTRIES = 100;
+
     private final Path tilesDirectory;
     private final String serverBaseUrl;
-    private final LinkedHashMap<TileId, Image> cacheMemory;
+    private final Map<TileId, Image> cacheMemory;
 
     /**
      * Represents an OSM tile. (record)
@@ -46,12 +49,13 @@ public final class TileManager {
         }
 
         /**
-         * Verifies if the given attributes form a valid tile.
+         * Checks if the given attributes form a valid tile.
          *
          * @return true if the given attributes form a valid OSM tile, false otherwise
          */
-        public static boolean isValid(int zoom, double x, double y) {
-            return (0 <= x && x < Math.pow(4, zoom)) && (0 <= y && y < Math.pow(4, zoom));
+        public static boolean isValid(int zoom, int x, int y) {
+            double limit = Math.pow(2, zoom);
+            return (zoom >= 0) && (0 <= x && x < limit) && (0 <= y && y < limit);
         }
 
         /**
@@ -66,7 +70,7 @@ public final class TileManager {
     }
 
     /**
-     * Constructor for a tile manager.
+     * Constructor of a tile manager.
      *
      * @param tilesDirectory path to the directory containing the on-disk tiles storage
      * @param serverName     name of the tiles server
@@ -74,19 +78,19 @@ public final class TileManager {
     public TileManager(Path tilesDirectory, String serverName) {
         this.tilesDirectory = tilesDirectory;
         this.serverBaseUrl = "https://" + serverName + "/";
-        this.cacheMemory = new LinkedHashMap<>(100, 0.75f, true);
+        this.cacheMemory = new LinkedHashMap<>(MAX_ENTRIES, 0.75f, true);
     }
 
     /**
      * Retrieves the image of a given tile.
      * <p>
-     * The image is first sought in the cache memory, then in the disk memory. If the image is not
-     * found in either of them, it is downloaded from the tiles server and loaded in the cache
-     * memory (and also saved on the disk memory).
+     * The image is first sought in the cache memory, then on the disk. If the image is not found in
+     * either of them, it is downloaded from the tiles server and loaded in the cache memory (and
+     * also saved on the disk).
      *
      * @param tile tile to retrieve
      * @return the JavaFX image corresponding to the given tile
-     * @throws IOException if an IO error occurs while accessing the disk memory or the server
+     * @throws IOException if any IO error occurs while accessing the disk or the server
      */
     public Image imageForTileAt(TileId tile) throws IOException {
         if (cacheMemory.containsKey(tile))
@@ -95,13 +99,15 @@ public final class TileManager {
             downloadImageFromServer(tile);
         try (InputStream in = new FileInputStream(pathOf(tile).toFile())) {
             Image tileImage = new Image(in);
+            if (cacheMemory.size() >= MAX_ENTRIES)
+                cacheMemory.remove(cacheMemory.entrySet().iterator().next().getKey());
             cacheMemory.put(tile, tileImage);
             return tileImage;
         }
     }
 
     /**
-     * Retrieves a tile's image from the tiles server and saves it to the disk memory.
+     * Retrieves a tile's image from the tiles server and saves it to the disk.
      *
      * @param tile the tile of which we download the image
      * @throws IOException if any IO error occurs

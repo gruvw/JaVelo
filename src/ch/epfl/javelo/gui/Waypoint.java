@@ -1,14 +1,16 @@
 package ch.epfl.javelo.gui;
 
+import ch.epfl.javelo.projection.PointCh;
+
 /**
- * Represents a crossing point. (record)
+ * Represents a waypoint. (record)
  *
- * @param position      position of the crossing point in the Swiss coordinate system
- * @param closestNodeId identity of the closest node for the crossing point
+ * @param position      position in the Swiss coordinate system
+ * @param closestNodeId identity of the closest graph node to the point
  *
  * @author Lucas Jung (324724)
  * @author Florian Kolly (328313)
  */
-public record Waypoint(double position, int closestNodeId) {
-
+public record Waypoint(PointCh position, int closestNodeId) {
+    // FIXME is position a PointCh (Lucas) or double (Florian)
 }

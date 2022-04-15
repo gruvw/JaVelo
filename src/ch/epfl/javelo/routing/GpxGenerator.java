@@ -1,5 +1,6 @@
 package ch.epfl.javelo.routing;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -12,6 +13,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import ch.epfl.javelo.projection.PointCh;
 
 /**
  * Generator for GPX document representing a route.
@@ -28,7 +30,7 @@ public class GpxGenerator {
     /**
      * Generates the GPX document corresponding to the given route and profile.
      *
-     * @param route   route to represents in the GPX format
+     * @param route   route to represent in the GPX format
      * @param profile profile of the route
      * @return the GPX document representing the route and its profile
      */
@@ -37,7 +39,6 @@ public class GpxGenerator {
 
         Element root = doc.createElementNS("http://www.topografix.com/GPX/1/1", "gpx");
         doc.appendChild(root);
-
         root.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance", "xsi:schemaLocation",
                 "http://www.topografix.com/GPX/1/1 " + "http://www.topografix.com/GPX/1/1/gpx.xsd");
         root.setAttribute("version", "1.1");
@@ -50,22 +51,37 @@ public class GpxGenerator {
         metadata.appendChild(name);
         name.setTextContent("Route JaVelo");
 
-
-        // TODO: complete with rte and rtept elements
+        Element rte = doc.createElement("rte");
+        double runningLength = 0;
+        PointCh previous = route.pointAt(0);
+        for (PointCh point : route.points()) {
+            // FIXME recalculate distance to -> other way to iterate ? (can't do over the edges:
+            // won't treat last point)
+            runningLength += previous.distanceTo(point);
+            Element rtept = doc.createElement("rtept");
+            rtept.setAttribute("lat", String.valueOf(point.lat()));
+            rtept.setAttribute("lon", String.valueOf(point.lon()));
+            Element ele = doc.createElement("ele");
+            ele.setTextContent(String.valueOf(profile.elevationAt(runningLength)));
+            rtept.appendChild(ele);
+            rte.appendChild(rtept);
+        }
+        root.appendChild(rte);
+        return doc;
     }
 
     /**
-     * Writes the GPX document corresponding to the given route and profile in a file.
+     * Saves the GPX document, corresponding to a given route and its profile, in a file.
      *
-     * @param filename name of the file
+     * @param fileName name of the file
      * @param route    route to represent in the GPX format
      * @param profile  profile of the route
      * @throws IOException if any input/output error is thrown during file related operations
      */
-    public static void writeGpx(String filename, Route route, ElevationProfile profile)
+    public static void writeGpx(String fileName, Route route, ElevationProfile profile)
             throws IOException {
         Document doc = createGpx(route, profile);
-        Writer w = null; // TODO: correct writer
+        Writer w = new FileWriter(fileName);
 
         try {
             Transformer transformer = TransformerFactory.newDefaultInstance().newTransformer();
@@ -85,7 +101,7 @@ public class GpxGenerator {
         try {
             return DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder().newDocument();
         } catch (ParserConfigurationException e) {
-            throw new Error(e); // Should never happen
+            throw new Error(e); // should never happen
         }
     }
 
