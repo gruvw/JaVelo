@@ -1,0 +1,10 @@
+{
+    "$schema": "https://json.schemastore.org/vsls",
+    "gitignore":"none",
+    "excludeFiles":[
+        "*.env",
+        "bin",
+        "visualization",
+        ".gitignore"
+    ]
+}

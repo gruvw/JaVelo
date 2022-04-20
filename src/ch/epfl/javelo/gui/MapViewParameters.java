@@ -18,16 +18,17 @@ import javafx.geometry.Point2D;
 public record MapViewParameters(int zoomLevel, double x, double y) {
 
     /**
-     * Returns a {@code MapViewParameters} with the top left corner positioned at the given
-     * coordinates, keeps the same zoom level as the current instance.
+     * Returns a {@code MapViewParameters} with the top left corner moved by {@code xDelta} and
+     * {@code yDelta}.
      *
-     * @param newX new top left x coordinate (Web Mercator)
-     * @param newY new top left y coordinate (Web Mercator)
-     * @return the new instance with the top left corner positioned at {@code (newX, newY)} with the
-     *         same zoom level as the current instance
+     * @param xDelta distance to move to the left
+     * @param yDelta distance to move to the top
+     * @return the new instance with the top left corner moved by {@code xDelta} and {@code yDelta}
+     *         with the same zoom level as the current instance
      */
-    public MapViewParameters withMinXY(double newX, double newY) {
-        return new MapViewParameters(zoomLevel, newX, newY);
+    public MapViewParameters withMinXY(double xDelta, double yDelta) {
+        // FIXME: right way ?
+        return new MapViewParameters(zoomLevel, x - xDelta, y - yDelta);
     }
 
     /**
@@ -40,15 +41,16 @@ public record MapViewParameters(int zoomLevel, double x, double y) {
     }
 
     /**
-     * Retrieves the point with the given coordinates as a {@code PointWebMercator}.
+     * Retrieves a point relative to the top left corner {@code PointWebMercator}.
      *
-     * @param x x coordinate of the point
-     * @param y y coordinate of the point
+     * @param x x coordinate of the point relative to the top left corner
+     * @param y y coordinate of the point relative to the top left corner
      * @return a {@code PointWebMercator} representing the point with coordinates ({@code x},
-     *         {@code y})
+     *         {@code y}) relative to the top left corner
      */
     public PointWebMercator pointAt(double x, double y) {
-        return PointWebMercator.of(zoomLevel, x, y);
+        // FIXME: correct way ?
+        return PointWebMercator.of(zoomLevel, this.x + x, this.y + y);
     }
 
     /**

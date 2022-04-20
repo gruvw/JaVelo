@@ -25,7 +25,12 @@ import javafx.scene.image.Image;
  */
 public final class TileManager {
 
-    private final static int MAX_ENTRIES = 100;
+    /**
+     * Side length of a tile image, in pixels.
+     */
+    public static final int TILE_SIDE_LENGTH = 256;
+
+    private static final int MAX_ENTRIES = 100;
 
     private final Path tilesDirectory;
     private final String serverBaseUrl;
@@ -57,8 +62,8 @@ public final class TileManager {
          * @return the tile at zoom level {@code zoomLevel} containing the given point
          */
         public static TileId of(PointWebMercator point, int zoomLevel) {
-            int tileX = (int) Math.floor(point.xAtZoomLevel(zoomLevel) / 256);
-            int tileY = (int) Math.floor(point.yAtZoomLevel(zoomLevel) / 256);
+            int tileX = (int) Math.floor(point.xAtZoomLevel(zoomLevel) / TILE_SIDE_LENGTH);
+            int tileY = (int) Math.floor(point.yAtZoomLevel(zoomLevel) / TILE_SIDE_LENGTH);
             return new TileId(zoomLevel, tileX, tileY);
         }
 
