@@ -1,5 +1,7 @@
 package ch.epfl.javelo.gui;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.projection.PointCh;
@@ -27,6 +29,9 @@ public final class WaypointsManager {
 
     private final Pane pane;
 
+    private Point2D lastMousePosition;
+    private List<Group> pins;
+
     /**
      * Constructor of a waypoints manager.
      *
@@ -43,12 +48,12 @@ public final class WaypointsManager {
         this.mapParametersProperty = mapParametersProperty;
         this.waypoints = waypoints;
         this.errorConsumer = errorConsumer;
+        this.pins = new ArrayList<>();
         this.pane = new Pane();
         this.pane.setPickOnBounds(false);
-        pane.widthProperty().addListener((p, o, n) -> redrawWaypoints());
-        pane.heightProperty().addListener((p, o, n) -> redrawWaypoints());
         mapParametersProperty.addListener((p, o, n) -> redrawWaypoints());
         waypoints.addListener((Change<? extends Waypoint> wp) -> redrawWaypoints());
+        redrawWaypoints();
     }
 
     /**
@@ -82,39 +87,74 @@ public final class WaypointsManager {
         return true;
     }
 
-    private Group createWaypoint() {
-        Group wpGroup = new Group();
-        wpGroup.getStyleClass().add("pin");
-        SVGPath sv1 = new SVGPath();
-        sv1.setContent("M-8-20C-5-14-2-7 0 0 2-7 5-14 8-20 20-40-20-40-8-20");
-        sv1.getStyleClass().add("pin_outside");
-        SVGPath sv2 = new SVGPath();
-        sv2.setContent("M0-23A1 1 0 000-29 1 1 0 000-23");
-        sv2.getStyleClass().add("pin_inside");
-        wpGroup.getChildren().add(sv1);
-        wpGroup.getChildren().add(sv2);
-        pane.getChildren().add(wpGroup);
-        return wpGroup;
+    private void createWaypoints() {
+        for (int i = 0; i < waypoints.size(); i++) {
+            Group pin = new Group();
+            pin.getStyleClass().add("pin");
+            // First SVG child (outside contour)
+            SVGPath sv1 = new SVGPath();
+            sv1.setContent("M-8-20C-5-14-2-7 0 0 2-7 5-14 8-20 20-40-20-40-8-20");
+            sv1.getStyleClass().add("pin_outside");
+            pin.getChildren().add(sv1);
+
+            // Second SVG child (interior white disk)
+            SVGPath sv2 = new SVGPath();
+            sv2.setContent("M0-23A1 1 0 000-29 1 1 0 000-23");
+            sv2.getStyleClass().add("pin_inside");
+            pin.getChildren().add(sv2);
+
+            // Add style to marker
+            if (i == 0)
+                pin.getStyleClass().add("first");
+            else if (i == waypoints.size() - 1)
+                pin.getStyleClass().add("last");
+            else
+                pin.getStyleClass().add("middle");
+
+            // Add marker to pane
+            pane.getChildren().add(pin);
+
+            // Remove marker control
+            int waypointIndex = i;
+            pin.setOnMouseClicked(e -> {
+                if (e.isStillSincePress()) {
+                    pane.getChildren().remove(pin);
+                    waypoints.remove(waypointIndex);
+                }
+            });
+
+            // Move marker control
+            pin.setOnMousePressed(e -> this.lastMousePosition = new Point2D(e.getX(), e.getY()));
+            pin.setOnMouseDragged(e -> {
+                Point2D deltaPosition = new Point2D(e.getX(), e.getY()).subtract(lastMousePosition);
+                System.out.println(deltaPosition);
+                pin.setLayoutX(pin.getLayoutX() + deltaPosition.getX());
+                pin.setLayoutY(pin.getLayoutY() + deltaPosition.getY());
+                this.lastMousePosition = new Point2D(e.getX(), e.getY());
+            });
+
+            pin.setOnMouseReleased(e -> {
+                if (!e.isStillSincePress()) {
+                    // TODO: change position of waypoint
+                }
+            });
+            pins.add(pin);
+        }
     }
 
-    private void positionWaypoint(Group wpGroup, Waypoint wp) {
-        PointWebMercator point = PointWebMercator.ofPointCh(wp.position());
-        wpGroup.setLayoutX(mapParametersProperty.get().viewX(point));
-        wpGroup.setLayoutY(mapParametersProperty.get().viewY(point));
+    private void positionWaypoints() {
+        for (int i = 0; i < pins.size(); i++) {
+            PointWebMercator point = PointWebMercator.ofPointCh(waypoints.get(i).position());
+            pins.get(i).setLayoutX(mapParametersProperty.get().viewX(point));
+            pins.get(i).setLayoutY(mapParametersProperty.get().viewY(point));
+        }
     }
 
     private void redrawWaypoints() {
         pane.getChildren().clear();
-        for (int i = 0; i < waypoints.size(); i++) {
-            Group wpGroup = createWaypoint();
-            if (i == 0)
-                wpGroup.getStyleClass().add("first");
-            else if (i == waypoints.size() - 1)
-                wpGroup.getStyleClass().add("last");
-            else
-                wpGroup.getStyleClass().add("middle");
-            positionWaypoint(wpGroup, waypoints.get(i));
-        }
+        this.pins = new ArrayList<>();
+        createWaypoints();
+        positionWaypoints();
     }
 
 }
