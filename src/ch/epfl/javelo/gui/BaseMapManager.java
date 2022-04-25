@@ -2,6 +2,7 @@ package ch.epfl.javelo.gui;
 
 import java.io.IOException;
 import ch.epfl.javelo.Math2;
+import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
@@ -96,8 +97,13 @@ public final class BaseMapManager {
 
         // New waypoint control
         pane.setOnMouseClicked(e -> {
-            if (e.isStillSincePress())
-                waypointsManager.addWaypoint(e.getX(), e.getY());
+            if (e.isStillSincePress()) {
+                int zoomLevel = mapParametersProperty.get().zoomLevel();
+                PointWebMercator topLeft = mapParametersProperty.get().pointAt(0, 0);
+                waypointsManager.addWaypoint(topLeft.xAtZoomLevel(zoomLevel) + e.getX(),
+                        topLeft.yAtZoomLevel(zoomLevel) + e.getY());
+            }
+
         });
 
         redrawOnNextPulse();

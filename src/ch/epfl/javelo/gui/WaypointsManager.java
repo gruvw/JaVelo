@@ -2,10 +2,16 @@ package ch.epfl.javelo.gui;
 
 import java.util.function.Consumer;
 import ch.epfl.javelo.data.Graph;
+import ch.epfl.javelo.projection.PointCh;
+import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
+import javafx.collections.ListChangeListener.Change;
+import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.SVGPath;
 
 /**
  * Manager for the display and the interaction with the waypoints.
@@ -42,6 +48,9 @@ public final class WaypointsManager {
         this.canvas = new Canvas();
         this.pane = new Pane();
         this.pane.setPickOnBounds(false);
+        canvas.widthProperty().addListener((p, o, n) -> redrawWaypoints());
+        canvas.heightProperty().addListener((p, o, n) -> redrawWaypoints());
+        waypoints.addListener((Change<? extends Waypoint> wp) -> redrawWaypoints());
     }
 
     /**
@@ -61,8 +70,46 @@ public final class WaypointsManager {
      * @return true if the waypoint was added, false otherwise
      */
     public boolean addWaypoint(double x, double y) {
-        System.out.println("New waypoint");
-        return false;
+        PointWebMercator pointWebMercator = PointWebMercator.of(
+                mapParametersProperty.get().zoomLevel(), x, y);
+        PointCh point = pointWebMercator.toPointCh();
+        int closestNodeId = graph.nodeClosestTo(point, 500);
+        if (closestNodeId == -1) {
+            errorConsumer.accept("Aucune route à proximité !");
+            return false;
+        }
+        Waypoint wp = new Waypoint(point, closestNodeId);
+        waypoints.add(wp);
+        return true;
+    }
+
+    private Group createWaypoint() {
+        Group wpGroup = new Group();
+        wpGroup.getStyleClass().add("pin");
+        SVGPath sv1 = new SVGPath();
+        sv1.setContent("M-8-20C-5-14-2-7 0 0 2-7 5-14 8-20 20-40-20-40-8-20");
+        sv1.getStyleClass().add("pin_outside");
+        SVGPath sv2 = new SVGPath();
+        sv2.setContent("M0-23A1 1 0 000-29 1 1 0 000-23");
+        sv2.getStyleClass().add("pin_inside");
+        wpGroup.getChildren().add(sv1);
+        wpGroup.getChildren().add(sv2);
+        pane.getChildren().add(wpGroup);
+        return wpGroup;
+    }
+
+    private void positionWaypoint(Group wpGroup, Waypoint wp) {
+        PointWebMercator pointWebMercator = PointWebMercator.ofPointCh(wp.position());
+        int zoomLevel = mapParametersProperty.get().zoomLevel();
+        wpGroup.setLayoutX(pointWebMercator.xAtZoomLevel(zoomLevel));
+        wpGroup.setLayoutY(pointWebMercator.yAtZoomLevel(zoomLevel));
+    }
+
+    private void redrawWaypoints() {
+        for (Waypoint wp : waypoints) {
+            Group wpGroup = createWaypoint();
+            positionWaypoint(wpGroup, wp);
+        }
     }
 
 }

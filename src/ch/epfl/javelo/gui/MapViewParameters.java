@@ -37,6 +37,7 @@ public record MapViewParameters(int zoomLevel, double x, double y) {
      * @return the 2D point corresponding to the top left corner
      */
     public Point2D topLeft() {
+        // TODO: Lucas fix Point2D (drag)
         return new Point2D(x, y);
     }
 
