@@ -12,5 +12,4 @@ import ch.epfl.javelo.projection.PointCh;
  * @author Florian Kolly (328313)
  */
 public record Waypoint(PointCh position, int closestNodeId) {
-    // FIXME is position a PointCh (Lucas) or double (Florian)
 }

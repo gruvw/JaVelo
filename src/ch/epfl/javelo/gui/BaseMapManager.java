@@ -98,10 +98,7 @@ public final class BaseMapManager {
         // New waypoint control
         pane.setOnMouseClicked(e -> {
             if (e.isStillSincePress()) {
-                int zoomLevel = mapParametersProperty.get().zoomLevel();
-                PointWebMercator topLeft = mapParametersProperty.get().pointAt(0, 0);
-                waypointsManager.addWaypoint(topLeft.xAtZoomLevel(zoomLevel) + e.getX(),
-                        topLeft.yAtZoomLevel(zoomLevel) + e.getY());
+                waypointsManager.addWaypoint(e.getX(), e.getY());
             }
 
         });

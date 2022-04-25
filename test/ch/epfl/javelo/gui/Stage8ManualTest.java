@@ -39,7 +39,8 @@ public final class Stage8ManualTest extends Application {
                                                            mapViewParametersP);
 
         StackPane mainPane = new StackPane(baseMapManager.pane(), waypointsManager.pane());
-        mainPane.getStylesheets().add("map.css");
+        // FIXME: okay to add css like that?
+        mainPane.getStylesheets().add("file:resources/map.css");
         primaryStage.setMinWidth(600);
         primaryStage.setMinHeight(300);
         primaryStage.setScene(new Scene(mainPane));

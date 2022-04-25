@@ -7,9 +7,8 @@ import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.collections.ListChangeListener.Change;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.SVGPath;
 
@@ -27,7 +26,6 @@ public final class WaypointsManager {
     private final Consumer<String> errorConsumer;
 
     private final Pane pane;
-    private final Canvas canvas;
 
     /**
      * Constructor of a waypoints manager.
@@ -45,11 +43,11 @@ public final class WaypointsManager {
         this.mapParametersProperty = mapParametersProperty;
         this.waypoints = waypoints;
         this.errorConsumer = errorConsumer;
-        this.canvas = new Canvas();
         this.pane = new Pane();
         this.pane.setPickOnBounds(false);
-        canvas.widthProperty().addListener((p, o, n) -> redrawWaypoints());
-        canvas.heightProperty().addListener((p, o, n) -> redrawWaypoints());
+        pane.widthProperty().addListener((p, o, n) -> redrawWaypoints());
+        pane.heightProperty().addListener((p, o, n) -> redrawWaypoints());
+        mapParametersProperty.addListener((p, o, n) -> redrawWaypoints());
         waypoints.addListener((Change<? extends Waypoint> wp) -> redrawWaypoints());
     }
 
@@ -70,9 +68,10 @@ public final class WaypointsManager {
      * @return true if the waypoint was added, false otherwise
      */
     public boolean addWaypoint(double x, double y) {
-        PointWebMercator pointWebMercator = PointWebMercator.of(
-                mapParametersProperty.get().zoomLevel(), x, y);
-        PointCh point = pointWebMercator.toPointCh();
+        int zoomLevel = mapParametersProperty.get().zoomLevel();
+        PointWebMercator centerOfClick = PointWebMercator.of(zoomLevel,
+                mapParametersProperty.get().x() + x, mapParametersProperty.get().y() + y);
+        PointCh point = centerOfClick.toPointCh();
         int closestNodeId = graph.nodeClosestTo(point, 500);
         if (closestNodeId == -1) {
             errorConsumer.accept("Aucune route à proximité !");
@@ -99,16 +98,22 @@ public final class WaypointsManager {
     }
 
     private void positionWaypoint(Group wpGroup, Waypoint wp) {
-        PointWebMercator pointWebMercator = PointWebMercator.ofPointCh(wp.position());
-        int zoomLevel = mapParametersProperty.get().zoomLevel();
-        wpGroup.setLayoutX(pointWebMercator.xAtZoomLevel(zoomLevel));
-        wpGroup.setLayoutY(pointWebMercator.yAtZoomLevel(zoomLevel));
+        PointWebMercator point = PointWebMercator.ofPointCh(wp.position());
+        wpGroup.setLayoutX(mapParametersProperty.get().viewX(point));
+        wpGroup.setLayoutY(mapParametersProperty.get().viewY(point));
     }
 
     private void redrawWaypoints() {
-        for (Waypoint wp : waypoints) {
+        pane.getChildren().clear();
+        for (int i = 0; i < waypoints.size(); i++) {
             Group wpGroup = createWaypoint();
-            positionWaypoint(wpGroup, wp);
+            if (i == 0)
+                wpGroup.getStyleClass().add("first");
+            else if (i == waypoints.size() - 1)
+                wpGroup.getStyleClass().add("last");
+            else
+                wpGroup.getStyleClass().add("middle");
+            positionWaypoint(wpGroup, waypoints.get(i));
         }
     }
 
