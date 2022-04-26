@@ -2,7 +2,6 @@ package ch.epfl.javelo.gui;
 
 import java.io.IOException;
 import ch.epfl.javelo.Math2;
-import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
@@ -44,8 +43,6 @@ public final class BaseMapManager {
     public BaseMapManager(TileManager tileManager,
                           WaypointsManager waypointsManager,
                           ObjectProperty<MapViewParameters> mapParametersProperty) {
-        // FIXME: split in other methods ?
-
         this.tileManager = tileManager;
         this.waypointsManager = waypointsManager;
         this.mapParametersProperty = mapParametersProperty;
@@ -53,6 +50,26 @@ public final class BaseMapManager {
         this.pane = new Pane();
         this.canvas = new Canvas();
         pane.getChildren().add(canvas);
+
+        addListener();
+        addHandlers();
+
+        redrawOnNextPulse();
+    }
+
+    /**
+     * Returns the pane rendering the background map.
+     *
+     * @return the pane rendering the background map
+     */
+    public Pane pane() {
+        return pane;
+    }
+
+    /**
+     * Add listeners to the nodes in the scene.
+     */
+    private void addListener() {
         canvas.widthProperty().bind(pane.widthProperty());
         canvas.heightProperty().bind(pane.heightProperty());
 
@@ -67,7 +84,12 @@ public final class BaseMapManager {
             assert oldS == null;
             newS.addPreLayoutPulseListener(this::redrawIfNeeded);
         });
+    }
 
+    /**
+     * Adds handlers to the nodes in the scene.
+     */
+    private void addHandlers() {
         // Zoom control
         pane.setOnScroll(e -> {
             double zoomDelta = Math.signum(e.getDeltaY());
@@ -75,8 +97,8 @@ public final class BaseMapManager {
                     mapParametersProperty.get().zoomLevel() + (int) zoomDelta, 19);
             PointWebMercator centerOfZoom = PointWebMercator.of(
                     mapParametersProperty.get().zoomLevel(),
-                    mapParametersProperty.get().x() + e.getX(),
-                    mapParametersProperty.get().y() + e.getY());
+                    mapParametersProperty.get().minX() + e.getX(),
+                    mapParametersProperty.get().minY() + e.getY());
             mapParametersProperty.set(
                     new MapViewParameters(newZoomLevel,
                                           centerOfZoom.xAtZoomLevel(newZoomLevel) - e.getX(),
@@ -89,30 +111,19 @@ public final class BaseMapManager {
             if (!e.isStillSincePress()) {
                 Point2D newOrigin = new Point2D(e.getX(), e.getY()).subtract(lastMousePosition);
                 mapParametersProperty.set(
-                        mapParametersProperty.get().withMinXY(newOrigin.getX(), newOrigin.getY()));
+                        mapParametersProperty.get().shiftedBy(newOrigin.getX(), newOrigin.getY()));
             }
             this.lastMousePosition = new Point2D(e.getX(), e.getY());
         });
-        // FIXME: pane.setOnMouseReleased ?
+
+        pane.setOnMouseReleased(e -> this.lastMousePosition = null);
 
         // New waypoint control
         pane.setOnMouseClicked(e -> {
             if (e.isStillSincePress()) {
                 waypointsManager.addWaypoint(e.getX(), e.getY());
             }
-
         });
-
-        redrawOnNextPulse();
-    }
-
-    /**
-     * Returns the pane rendering the background map.
-     *
-     * @return the pane rendering the background map
-     */
-    public Pane pane() {
-        return pane;
     }
 
     /**
@@ -141,7 +152,6 @@ public final class BaseMapManager {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         MapViewParameters mapParams = mapParametersProperty.get();
 
-        // FIXME: right way to do it ? Don't use MapViewParameters.topLeft
         int zoomLevel = mapParams.zoomLevel();
         PointWebMercator topLeft = mapParams.pointAt(0, 0);
         TileId topLeftTile = TileId.of(topLeft, zoomLevel);

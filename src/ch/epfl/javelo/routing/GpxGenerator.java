@@ -3,6 +3,7 @@ package ch.epfl.javelo.routing;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Iterator;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -55,11 +56,8 @@ public class GpxGenerator {
 
         Element rte = doc.createElement("rte");
         double runningLength = 0;
-        PointCh previous = route.pointAt(0);
+        Iterator<Edge> edgesIterator = route.edges().iterator();
         for (PointCh point : route.points()) {
-            // FIXME recalculate distance to -> other way to iterate ? (can't do over the edges:
-            // won't treat last point)
-            runningLength += previous.distanceTo(point);
             Element rtept = doc.createElement("rtept");
             rtept.setAttribute("lat", String.format(DATA_FORMAT, Math.toDegrees(point.lat())));
             rtept.setAttribute("lon", String.format(DATA_FORMAT, Math.toDegrees(point.lon())));
@@ -67,7 +65,8 @@ public class GpxGenerator {
             ele.setTextContent(String.format(DATA_FORMAT, profile.elevationAt(runningLength)));
             rtept.appendChild(ele);
             rte.appendChild(rtept);
-            previous = point;
+            if (edgesIterator.hasNext())
+                runningLength += edgesIterator.next().length();
         }
         root.appendChild(rte);
 

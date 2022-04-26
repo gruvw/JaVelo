@@ -17,6 +17,8 @@ Statics are before non-statics.
    2. Public methods
    3. Public overrides
    4. Private methods
+      1. JavaFX related methods
+      2. Other private methods
 
 ## Styling
 
@@ -32,3 +34,9 @@ It takes a latitude and longitude in degrees and returns the corresponding `Poin
 ### `TileManager.TileId`
 
 Created a new static method `of(PointWebMercator point, int zoomLevel)` designed to retrieve the `TileId` containing a point in the Web Mercator projection.
+
+### `MapViewParameters`
+
+Changed the method `withMinXY` to another method `shiftedBy`.
+It allows to shift the map view by a given amount along the X and Y axis.
+We changed the method because we actually want to shift the map view when using `withMinXY` which required to call the getters of the map view.

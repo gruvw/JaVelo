@@ -51,7 +51,7 @@ public final class WaypointsManager {
         this.pins = new ArrayList<>();
         this.pane = new Pane();
         this.pane.setPickOnBounds(false);
-        mapParametersProperty.addListener((p, o, n) -> redrawWaypoints());
+        mapParametersProperty.addListener((p, o, n) -> positionWaypoints());
         waypoints.addListener((Change<? extends Waypoint> wp) -> redrawWaypoints());
         redrawWaypoints();
     }
@@ -75,7 +75,7 @@ public final class WaypointsManager {
     public boolean addWaypoint(double x, double y) {
         int zoomLevel = mapParametersProperty.get().zoomLevel();
         PointWebMercator centerOfClick = PointWebMercator.of(zoomLevel,
-                mapParametersProperty.get().x() + x, mapParametersProperty.get().y() + y);
+                mapParametersProperty.get().minX() + x, mapParametersProperty.get().minY() + y);
         PointCh point = centerOfClick.toPointCh();
         int closestNodeId = graph.nodeClosestTo(point, 500);
         if (closestNodeId == -1) {
@@ -87,6 +87,9 @@ public final class WaypointsManager {
         return true;
     }
 
+    /**
+     * Generates the {@code Group} objects for each waypoints.
+     */
     private void createWaypoints() {
         for (int i = 0; i < waypoints.size(); i++) {
             Group pin = new Group();
@@ -134,14 +137,27 @@ public final class WaypointsManager {
             });
 
             pin.setOnMouseReleased(e -> {
+                this.lastMousePosition = null;
                 if (!e.isStillSincePress()) {
                     // TODO: change position of waypoint
+                    // FIXME: Method to get the PointCh from the mouse position (code is reused from
+                    // constructor)
+                    int zoomLevel = mapParametersProperty.get().zoomLevel();
+                    PointWebMercator centerOfClick = PointWebMercator.of(zoomLevel,
+                            mapParametersProperty.get().minX() + e.getX(),
+                            mapParametersProperty.get().minY() + e.getY());
+                    Waypoint wp = new Waypoint(centerOfClick.toPointCh(),
+                                               waypoints.get(waypointIndex).closestNodeId());
+                    waypoints.set(waypointIndex, wp);
                 }
             });
             pins.add(pin);
         }
     }
 
+    /**
+     * Positions all waypoints on the map.
+     */
     private void positionWaypoints() {
         for (int i = 0; i < pins.size(); i++) {
             PointWebMercator point = PointWebMercator.ofPointCh(waypoints.get(i).position());
