@@ -25,19 +25,19 @@ public class SingleRouteTest {
 
     private static final PointCh point1 = new PointCh(SwissBounds.MIN_E, SwissBounds.MIN_N);
     private static final PointCh point2 = new PointCh(SwissBounds.MIN_E + 10,
-            SwissBounds.MIN_N + 10);
+                                                      SwissBounds.MIN_N + 10);
     private static final PointCh point3 = new PointCh(SwissBounds.MIN_E + 20,
-            SwissBounds.MIN_N + 20);
+                                                      SwissBounds.MIN_N + 20);
     private static final PointCh point4 = new PointCh(SwissBounds.MIN_E + 30,
-            SwissBounds.MIN_N + 30);
-    private final static Edge edge1 = new Edge(0, 1, point1, point2, 10, Functions.constant(1));
-    private final static Edge edge2 = new Edge(2, 3, point2, point3, 20, Functions.constant(2));
-    private final static Edge edge3 = new Edge(4, 5, point3, point4, 0, Functions.constant(3));
-    private final static List<Edge> edges12 = Arrays.asList(new Edge[] {edge1, edge2});
-    private final static List<Edge> edges123 = Arrays.asList(new Edge[] {edge1, edge2, edge3});
-    private final static SingleRoute srTwoEdges = new SingleRoute(edges12);
-    private final static SingleRoute srThreeEdges = new SingleRoute(edges123);
-    private final static DoubleUnaryOperator nanProfile = Functions.constant(Double.NaN);
+                                                      SwissBounds.MIN_N + 30);
+    private static final Edge edge1 = new Edge(0, 1, point1, point2, 10, Functions.constant(1));
+    private static final Edge edge2 = new Edge(2, 3, point2, point3, 20, Functions.constant(2));
+    private static final Edge edge3 = new Edge(4, 5, point3, point4, 0, Functions.constant(3));
+    private static final List<Edge> edges12 = Arrays.asList(new Edge[] {edge1, edge2});
+    private static final List<Edge> edges123 = Arrays.asList(new Edge[] {edge1, edge2, edge3});
+    private static final SingleRoute srTwoEdges = new SingleRoute(edges12);
+    private static final SingleRoute srThreeEdges = new SingleRoute(edges123);
+    private static final DoubleUnaryOperator nanProfile = Functions.constant(Double.NaN);
 
     @Test
     void singleRouteThrowsOnEmptyList() {
@@ -162,15 +162,15 @@ public class SingleRouteTest {
         PointCh pointE = new PointCh(SwissBounds.MIN_E + 10, SwissBounds.MIN_N + 11.5);
         PointCh pointH = new PointCh(SwissBounds.MIN_E + 11, SwissBounds.MIN_N + 19);
         PointCh pointD = new PointCh(SwissBounds.MIN_E + 2.2099318052,
-                SwissBounds.MIN_N + 1.8265412608);
+                                     SwissBounds.MIN_N + 1.8265412608);
         PointCh pointI = new PointCh(SwissBounds.MIN_E + 15.0651487827,
-                SwissBounds.MIN_N + 11.6123760144);
+                                     SwissBounds.MIN_N + 11.6123760144);
         PointCh pointF = new PointCh(SwissBounds.MIN_E + 16.4542380523,
-                SwissBounds.MIN_N + 21.5450856628);
+                                     SwissBounds.MIN_N + 21.5450856628);
         PointCh pointJ = new PointCh(SwissBounds.MIN_E + 12.6003123407,
-                SwissBounds.MIN_N + 10.4189590297);
+                                     SwissBounds.MIN_N + 10.4189590297);
         PointCh pointK = new PointCh(SwissBounds.MIN_E + 21.0173503028,
-                SwissBounds.MIN_N + 9.6174489384);
+                                     SwissBounds.MIN_N + 9.6174489384);
         PointCh pointG = new PointCh(SwissBounds.MIN_E + 2.7, SwissBounds.MIN_N + 4.3);
         // Edges
         Edge edgeAB = new Edge(0, 1, pointA, pointB, 13.0249760077, nanProfile);
@@ -203,12 +203,12 @@ public class SingleRouteTest {
         assertEqualsRoutePoint(expected, sr.pointClosestTo(pointI), DELTA);
         // Point E
         PointCh pointL = new PointCh(SwissBounds.MIN_E + 12.131147541,
-                SwissBounds.MIN_N + 14.0573770492);
+                                     SwissBounds.MIN_N + 14.0573770492);
         expected = new RoutePoint(pointL, 19.3628015643, 3.3289588783);
         assertEqualsRoutePoint(expected, sr.pointClosestTo(pointE), DELTA);
         // Point J
         PointCh pointM = new PointCh(SwissBounds.MIN_E + 13.8069922152,
-                SwissBounds.MIN_N + 8.2354430663);
+                                     SwissBounds.MIN_N + 8.2354430663);
         expected = new RoutePoint(pointM, 9.3768312893, 2.494758161);
         assertEqualsRoutePoint(expected, sr.pointClosestTo(pointJ), DELTA);
     }
@@ -446,7 +446,7 @@ public class SingleRouteTest {
             var p2 = sawToothPoint(i + 1);
             var startingElevation = i * TOOTH_ELEVATION_GAIN;
             edges.add(new Edge(i, i + 1, p1, p2, TOOTH_LENGTH,
-                    x -> startingElevation + x * TOOTH_SLOPE));
+                               x -> startingElevation + x * TOOTH_SLOPE));
         }
         return Collections.unmodifiableList(edges);
     }

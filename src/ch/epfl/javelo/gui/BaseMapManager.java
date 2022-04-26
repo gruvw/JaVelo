@@ -95,10 +95,8 @@ public final class BaseMapManager {
             double zoomDelta = Math.signum(e.getDeltaY());
             int newZoomLevel = Math2.clamp(8,
                     mapParametersProperty.get().zoomLevel() + (int) zoomDelta, 19);
-            PointWebMercator centerOfZoom = PointWebMercator.of(
-                    mapParametersProperty.get().zoomLevel(),
-                    mapParametersProperty.get().minX() + e.getX(),
-                    mapParametersProperty.get().minY() + e.getY());
+            // FIXME: Forced to use pointWebMercator
+            PointWebMercator centerOfZoom = mapParametersProperty.get().pointAt(e.getX(), e.getY());
             mapParametersProperty.set(
                     new MapViewParameters(newZoomLevel,
                                           centerOfZoom.xAtZoomLevel(newZoomLevel) - e.getX(),
@@ -109,9 +107,9 @@ public final class BaseMapManager {
         // Map movement control
         pane.setOnMouseDragged(e -> {
             if (!e.isStillSincePress()) {
-                Point2D newOrigin = new Point2D(e.getX(), e.getY()).subtract(lastMousePosition);
+                Point2D movement = new Point2D(e.getX(), e.getY()).subtract(lastMousePosition);
                 mapParametersProperty.set(
-                        mapParametersProperty.get().shiftedBy(newOrigin.getX(), newOrigin.getY()));
+                        mapParametersProperty.get().shiftedBy(movement.getX(), movement.getY()));
             }
             this.lastMousePosition = new Point2D(e.getX(), e.getY());
         });

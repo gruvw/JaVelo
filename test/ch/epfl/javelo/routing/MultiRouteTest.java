@@ -25,131 +25,131 @@ public class MultiRouteTest {
 
         private static final PointCh point1 = new PointCh(SwissBounds.MIN_E, SwissBounds.MIN_N);
         private static final PointCh point2 = new PointCh(SwissBounds.MIN_E + 10,
-                        SwissBounds.MIN_N + 10);
+                                                          SwissBounds.MIN_N + 10);
         private static final PointCh point3 = new PointCh(SwissBounds.MIN_E + 20,
-                        SwissBounds.MIN_N + 20);
+                                                          SwissBounds.MIN_N + 20);
         private static final PointCh point4 = new PointCh(SwissBounds.MIN_E + 30,
-                        SwissBounds.MIN_N + 30);
+                                                          SwissBounds.MIN_N + 30);
         private static final PointCh point5 = new PointCh(SwissBounds.MIN_E + 40,
-                        SwissBounds.MIN_N + 40);
+                                                          SwissBounds.MIN_N + 40);
         private static final PointCh point6 = new PointCh(SwissBounds.MIN_E + 50,
-                        SwissBounds.MIN_N + 50);
+                                                          SwissBounds.MIN_N + 50);
         private static final PointCh point7 = new PointCh(SwissBounds.MIN_E + 60,
-                        SwissBounds.MIN_N + 60);
+                                                          SwissBounds.MIN_N + 60);
         private static final PointCh point8 = new PointCh(SwissBounds.MIN_E + 70,
-                        SwissBounds.MIN_N + 70);
+                                                          SwissBounds.MIN_N + 70);
         private static final PointCh point9 = new PointCh(SwissBounds.MIN_E + 80,
-                        SwissBounds.MIN_N + 80);
+                                                          SwissBounds.MIN_N + 80);
         private static final PointCh point10 = new PointCh(SwissBounds.MIN_E + 90,
-                        SwissBounds.MIN_N + 90);
+                                                           SwissBounds.MIN_N + 90);
         private static final PointCh point11 = new PointCh(SwissBounds.MIN_E + 100,
-                        SwissBounds.MIN_N + 100);
+                                                           SwissBounds.MIN_N + 100);
         private static final PointCh point12 = new PointCh(SwissBounds.MIN_E + 110,
-                        SwissBounds.MIN_N + 100);
+                                                           SwissBounds.MIN_N + 100);
         private static final PointCh point13 = new PointCh(SwissBounds.MIN_E + 120,
-                        SwissBounds.MIN_N + 120);
+                                                           SwissBounds.MIN_N + 120);
         private static final PointCh pointA = new PointCh(SwissBounds.MIN_E, SwissBounds.MIN_N);
         private static final PointCh pointB = new PointCh(SwissBounds.MIN_E + 1,
-                        SwissBounds.MIN_N + 3);
+                                                          SwissBounds.MIN_N + 3);
         private static final PointCh pointC = new PointCh(SwissBounds.MIN_E + 3,
-                        SwissBounds.MIN_N + 1);
+                                                          SwissBounds.MIN_N + 1);
         private static final PointCh pointD = new PointCh(SwissBounds.MIN_E + 4,
-                        SwissBounds.MIN_N + 4);
+                                                          SwissBounds.MIN_N + 4);
         private static final PointCh pointE = new PointCh(SwissBounds.MIN_E + 4,
-                        SwissBounds.MIN_N + 6);
-        private final static PointCh pointF = new PointCh(SwissBounds.MIN_E + 1.2,
-                        SwissBounds.MIN_N + 1.4);
+                                                          SwissBounds.MIN_N + 6);
+        private static final PointCh pointF = new PointCh(SwissBounds.MIN_E + 1.2,
+                                                          SwissBounds.MIN_N + 1.4);
         private static final PointCh pointQ = new PointCh(SwissBounds.MIN_E + 1.5146938281,
-                        SwissBounds.MIN_N + 2.4853061719);
+                                                          SwissBounds.MIN_N + 2.4853061719);
         private static final PointCh pointR = new PointCh(SwissBounds.MIN_E + 3.25,
-                        SwissBounds.MIN_N + 1.75);
+                                                          SwissBounds.MIN_N + 1.75);
         private static final PointCh pointS = new PointCh(SwissBounds.MIN_E + 4,
-                        SwissBounds.MIN_N + 4.7);
+                                                          SwissBounds.MIN_N + 4.7);
 
-        private final static Edge edge1 = new Edge(1, 2, point1, point2, 400,
-                        Functions.constant(1));
-        private final static Edge edge2 = new Edge(2, 3, point2, point3, 600,
-                        Functions.constant(2));
-        private final static Edge edge3 = new Edge(3, 4, point3, point4, 600,
-                        Functions.constant(3));
-        private final static Edge edge4 = new Edge(4, 5, point4, point5, 400,
-                        Functions.constant(4));
-        private final static Edge edge5 = new Edge(5, 6, point5, point6, 600,
-                        Functions.constant(5));
-        private final static Edge edge6 = new Edge(6, 7, point6, point7, 400,
-                        Functions.constant(6));
-        private final static Edge edge7 = new Edge(7, 8, point7, point8, 400,
-                        Functions.constant(7));
-        private final static Edge edge8 = new Edge(8, 9, point8, point9, 600,
-                        Functions.constant(8));
-        private final static Edge edge9 = new Edge(9, 10, point9, point10, 600,
-                        Functions.constant(9));
-        private final static Edge edge10 = new Edge(10, 11, point10, point11, 400,
-                        Functions.constant(10));
-        private final static Edge edge11 = new Edge(11, 12, point11, point12, 600,
-                        Functions.constant(11));
-        private final static Edge edge12 = new Edge(12, 13, point12, point13, 400,
-                        Functions.constant(12));
-        private final static Edge edgeBC = new Edge(2, 3, pointB, pointC, 2.8284271247,
-                        Functions.constant(0));
-        private final static Edge edgeCD = new Edge(3, 4, pointC, pointD, 3.1622776602,
-                        Functions.constant(0));
-        private final static Edge edgeDE = new Edge(4, 5, pointD, pointE, 2, Functions.constant(0));
-        private final static Edge edgeAF = new Edge(1, 6, pointA, pointF, 1.8439088915,
-                        Functions.constant(0));
-        private final static Edge edgeFB = new Edge(6, 2, pointF, pointB, 1.6124515497,
-                        Functions.constant(0));
-
-        // two edges, length = 400 + 600
-        private final static SingleRoute segment1_1 = new SingleRoute(Arrays.asList(edge1, edge2));
-        // two edges, length = 600 + 400
-        private final static SingleRoute segment1_2 = new SingleRoute(Arrays.asList(edge3, edge4));
-        // two edges, length = 400 + 600
-        private final static SingleRoute segment1_3 = new SingleRoute(Arrays.asList(edge5, edge6));
-
-        private final static MultiRoute mr1 = new MultiRoute(
-                        Arrays.asList(segment1_1, segment1_2, segment1_3));
+        private static final Edge edge1 = new Edge(1, 2, point1, point2, 400,
+                                                   Functions.constant(1));
+        private static final Edge edge2 = new Edge(2, 3, point2, point3, 600,
+                                                   Functions.constant(2));
+        private static final Edge edge3 = new Edge(3, 4, point3, point4, 600,
+                                                   Functions.constant(3));
+        private static final Edge edge4 = new Edge(4, 5, point4, point5, 400,
+                                                   Functions.constant(4));
+        private static final Edge edge5 = new Edge(5, 6, point5, point6, 600,
+                                                   Functions.constant(5));
+        private static final Edge edge6 = new Edge(6, 7, point6, point7, 400,
+                                                   Functions.constant(6));
+        private static final Edge edge7 = new Edge(7, 8, point7, point8, 400,
+                                                   Functions.constant(7));
+        private static final Edge edge8 = new Edge(8, 9, point8, point9, 600,
+                                                   Functions.constant(8));
+        private static final Edge edge9 = new Edge(9, 10, point9, point10, 600,
+                                                   Functions.constant(9));
+        private static final Edge edge10 = new Edge(10, 11, point10, point11, 400,
+                                                    Functions.constant(10));
+        private static final Edge edge11 = new Edge(11, 12, point11, point12, 600,
+                                                    Functions.constant(11));
+        private static final Edge edge12 = new Edge(12, 13, point12, point13, 400,
+                                                    Functions.constant(12));
+        private static final Edge edgeBC = new Edge(2, 3, pointB, pointC, 2.8284271247,
+                                                    Functions.constant(0));
+        private static final Edge edgeCD = new Edge(3, 4, pointC, pointD, 3.1622776602,
+                                                    Functions.constant(0));
+        private static final Edge edgeDE = new Edge(4, 5, pointD, pointE, 2, Functions.constant(0));
+        private static final Edge edgeAF = new Edge(1, 6, pointA, pointF, 1.8439088915,
+                                                    Functions.constant(0));
+        private static final Edge edgeFB = new Edge(6, 2, pointF, pointB, 1.6124515497,
+                                                    Functions.constant(0));
 
         // two edges, length = 400 + 600
-        private final static SingleRoute segment2_1 = new SingleRoute(Arrays.asList(edge7, edge8));
+        private static final SingleRoute segment1_1 = new SingleRoute(Arrays.asList(edge1, edge2));
         // two edges, length = 600 + 400
-        private final static SingleRoute segment2_2 = new SingleRoute(Arrays.asList(edge9, edge10));
+        private static final SingleRoute segment1_2 = new SingleRoute(Arrays.asList(edge3, edge4));
+        // two edges, length = 400 + 600
+        private static final SingleRoute segment1_3 = new SingleRoute(Arrays.asList(edge5, edge6));
+
+        private static final MultiRoute mr1 = new MultiRoute(Arrays.asList(segment1_1, segment1_2,
+                        segment1_3));
+
+        // two edges, length = 400 + 600
+        private static final SingleRoute segment2_1 = new SingleRoute(Arrays.asList(edge7, edge8));
         // two edges, length = 600 + 400
-        private final static SingleRoute segment2_3 = new SingleRoute(
-                        Arrays.asList(edge11, edge12));
+        private static final SingleRoute segment2_2 = new SingleRoute(Arrays.asList(edge9, edge10));
+        // two edges, length = 600 + 400
+        private static final SingleRoute segment2_3 = new SingleRoute(Arrays.asList(edge11,
+                        edge12));
 
-        private final static MultiRoute mr2 = new MultiRoute(
-                        Arrays.asList(segment2_1, segment2_2, segment2_3));
+        private static final MultiRoute mr2 = new MultiRoute(Arrays.asList(segment2_1, segment2_2,
+                        segment2_3));
 
-        private final static MultiRoute route = new MultiRoute(Arrays.asList(mr1, mr2));
+        private static final MultiRoute route = new MultiRoute(Arrays.asList(mr1, mr2));
 
         // One edge, length = 252.252
-        private final static Edge oneEdge = new Edge(1, 2, point1, point2, 252.252,
-                        Functions.constant(100));
-        private final static SingleRoute srOneSegment = new SingleRoute(Arrays.asList(oneEdge));
-        private final static MultiRoute mrOneSegment = new MultiRoute(Arrays.asList(srOneSegment));
+        private static final Edge oneEdge = new Edge(1, 2, point1, point2, 252.252,
+                                                     Functions.constant(100));
+        private static final SingleRoute srOneSegment = new SingleRoute(Arrays.asList(oneEdge));
+        private static final MultiRoute mrOneSegment = new MultiRoute(Arrays.asList(srOneSegment));
 
         // Route making a loop
-        private final static Edge loopEdge1 = new Edge(1, 2, point1, point2, 300,
-                        Functions.constant(0));
-        private final static Edge loopEdge2 = new Edge(2, 1, point2, point1, 300,
-                        Functions.constant(0));
-        private final static SingleRoute srLoop = new SingleRoute(
-                        Arrays.asList(loopEdge1, loopEdge2));
-        private final static MultiRoute mrLoop = new MultiRoute(Arrays.asList(srLoop));
+        private static final Edge loopEdge1 = new Edge(1, 2, point1, point2, 300,
+                                                       Functions.constant(0));
+        private static final Edge loopEdge2 = new Edge(2, 1, point2, point1, 300,
+                                                       Functions.constant(0));
+        private static final SingleRoute srLoop = new SingleRoute(Arrays.asList(loopEdge1,
+                        loopEdge2));
+        private static final MultiRoute mrLoop = new MultiRoute(Arrays.asList(srLoop));
 
         // MultiRoute containing a MultiRoute and a SingleRoute
-        private final static MultiRoute mrSingleAndMulti = new MultiRoute(
-                        Arrays.asList(mr1, segment2_1));
+        private static final MultiRoute mrSingleAndMulti = new MultiRoute(Arrays.asList(mr1,
+                        segment2_1));
 
         // Geogebra routes
-        private final static SingleRoute srAB = new SingleRoute(Arrays.asList(edgeAF, edgeFB));
-        private final static SingleRoute srBC = new SingleRoute(Arrays.asList(edgeBC));
-        private final static SingleRoute srCD = new SingleRoute(Arrays.asList(edgeCD));
-        private final static SingleRoute srDE = new SingleRoute(Arrays.asList(edgeDE));
+        private static final SingleRoute srAB = new SingleRoute(Arrays.asList(edgeAF, edgeFB));
+        private static final SingleRoute srBC = new SingleRoute(Arrays.asList(edgeBC));
+        private static final SingleRoute srCD = new SingleRoute(Arrays.asList(edgeCD));
+        private static final SingleRoute srDE = new SingleRoute(Arrays.asList(edgeDE));
 
-        private final static MultiRoute mrAD = new MultiRoute(Arrays.asList(srAB, srBC, srCD));
-        private final static MultiRoute mrGGB = new MultiRoute(Arrays.asList(mrAD, srDE));
+        private static final MultiRoute mrAD = new MultiRoute(Arrays.asList(srAB, srBC, srCD));
+        private static final MultiRoute mrGGB = new MultiRoute(Arrays.asList(mrAD, srDE));
 
         @Test
         void multiRouteThrowsOnEmptyList() {
@@ -302,10 +302,10 @@ public class MultiRouteTest {
                                 Arguments.of(mr2, -0.65345, point7),
                                 Arguments.of(mrGGB, 1.1933124755,
                                                 new PointCh(SwissBounds.MIN_E + 0.7765974649,
-                                                                SwissBounds.MIN_N + 0.9060303757)),
+                                                            SwissBounds.MIN_N + 0.9060303757)),
                                 Arguments.of(mrGGB, 2.2973600701,
                                                 new PointCh(SwissBounds.MIN_E + 1.1437563034,
-                                                                SwissBounds.MIN_N + 1.8499495727)),
+                                                            SwissBounds.MIN_N + 1.8499495727)),
                                 Arguments.of(mrGGB, 4.1842474334, pointQ),
                                 Arguments.of(mrGGB, 7.0753569809, pointR),
                                 Arguments.of(mrGGB, 10.147065226, pointS));
@@ -360,7 +360,7 @@ public class MultiRouteTest {
                 RoutePoint expected = new RoutePoint(pointQ, 4.1842474334, 0.4909128458);
                 TestUtils.assertEqualsRoutePoint(expected,
                                 mrGGB.pointClosestTo(new PointCh(SwissBounds.MIN_E + 1.8618216304,
-                                                SwissBounds.MIN_N + 2.8324339741)),
+                                                                 SwissBounds.MIN_N + 2.8324339741)),
                                 DELTA);
                 expected = new RoutePoint(pointR, 7.0753569809, 0.790569415);
                 TestUtils.assertEqualsRoutePoint(expected, mrGGB.pointClosestTo(
@@ -583,7 +583,7 @@ public class MultiRouteTest {
                         var dN = rng.nextDouble(1, 10_000);
                         var dE = rng.nextDouble(-1000, 1000);
                         var p = new PointCh(ORIGIN_E + dE,
-                                        ORIGIN_N + edgesCount * EDGE_LENGTH + dN);
+                                            ORIGIN_N + edgesCount * EDGE_LENGTH + dN);
                         var pct = route.pointClosestTo(p);
                         assertEquals(end, pct.point());
                         assertEquals(edgesCount * EDGE_LENGTH, pct.position());
@@ -653,7 +653,7 @@ public class MultiRouteTest {
                                 var point = new PointCh(pointE, pointN);
                                 var position = (i + p) * TOOTH_LENGTH;
                                 var reference = new PointCh(pointE + dE,
-                                                pointN + (upwardEdge ? -dN : dN));
+                                                            pointN + (upwardEdge ? -dN : dN));
                                 var pct = route.pointClosestTo(reference);
                                 assertEquals(point, pct.point());
                                 assertEquals(position, pct.position());
@@ -679,14 +679,14 @@ public class MultiRouteTest {
                         var p2 = sawToothPoint(i + 1);
                         var startingElevation = i * TOOTH_ELEVATION_GAIN;
                         edges.add(new Edge(i, i + 1, p1, p2, TOOTH_LENGTH,
-                                        x -> startingElevation + x * TOOTH_SLOPE));
+                                           x -> startingElevation + x * TOOTH_SLOPE));
                 }
                 return Collections.unmodifiableList(edges);
         }
 
         private static PointCh sawToothPoint(int i) {
                 return new PointCh(ORIGIN_E + TOOTH_EW * i,
-                                ORIGIN_N + ((i & 1) == 0 ? 0 : TOOTH_NS));
+                                   ORIGIN_N + ((i & 1) == 0 ? 0 : TOOTH_NS));
         }
 
 }
