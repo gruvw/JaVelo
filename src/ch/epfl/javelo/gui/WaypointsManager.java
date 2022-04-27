@@ -58,7 +58,7 @@ public final class WaypointsManager {
         this.pins = new ArrayList<>();
         this.pane = new Pane();
 
-        this.pane.setPickOnBounds(false); // Send to background
+        this.pane.setPickOnBounds(false); // don't block background events
         mapParametersProperty.addListener((p, o, n) -> positionPins());
         waypoints.addListener((Change<? extends Waypoint> wp) -> redrawPins());
 
