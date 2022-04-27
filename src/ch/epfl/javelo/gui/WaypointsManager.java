@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.collections.ListChangeListener.Change;
@@ -30,6 +31,7 @@ public final class WaypointsManager {
     private final Pane pane;
 
     private Point2D lastMousePosition;
+    private Point2D lastValidPinPosition;
     private List<Group> pins;
 
     private static final int SEARCH_DISTANCE = 500;
@@ -52,11 +54,14 @@ public final class WaypointsManager {
         this.mapParametersProperty = mapParametersProperty;
         this.waypoints = waypoints;
         this.errorConsumer = errorConsumer;
+
         this.pins = new ArrayList<>();
         this.pane = new Pane();
+
         this.pane.setPickOnBounds(false); // Send to background
         mapParametersProperty.addListener((p, o, n) -> positionPins());
         waypoints.addListener((Change<? extends Waypoint> wp) -> redrawPins());
+
         redrawPins();
     }
 
@@ -121,8 +126,14 @@ public final class WaypointsManager {
                 pin.getStyleClass().add("middle");
 
             pane.getChildren().add(pin);
-            // FIXME: zoom does not work when mouse is over pin (try next line)
-            // pin.setPickOnBounds(false);
+
+            // FIXME: zoom did not work when mouse is over pin: solution below
+            // Cascade zoom event from waypoint to map pane
+            Platform.runLater(() -> pin.setOnScroll(pane.getParent()
+                                                        .getChildrenUnmodifiable()
+                                                        .filtered(n -> n.getId() == "mapPane")
+                                                        .get(0) // map pane always exists
+                                                        .getOnScroll()));
 
             // Remove marker control
             final int waypointIndex = i;
@@ -132,8 +143,10 @@ public final class WaypointsManager {
             });
 
             // Move marker control
-            pin.setOnMousePressed(
-                    e -> this.lastMousePosition = new Point2D(e.getSceneX(), e.getSceneY()));
+            pin.setOnMousePressed(e -> {
+                this.lastMousePosition = new Point2D(e.getSceneX(), e.getSceneY());
+                this.lastValidPinPosition = new Point2D(pin.getLayoutX(), pin.getLayoutY());
+            });
             pin.setOnMouseDragged(e -> {
                 Point2D movement = new Point2D(e.getSceneX(), e.getSceneY()).subtract(
                         lastMousePosition);
@@ -142,18 +155,21 @@ public final class WaypointsManager {
                 this.lastMousePosition = new Point2D(e.getSceneX(), e.getSceneY());
             });
 
-            // FIXME: slight displacement to the top when mouse is released
             pin.setOnMouseReleased(e -> {
                 this.lastMousePosition = null;
                 if (!e.isStillSincePress()) {
+                    // Subtract relative mouse position to drag the waypoint from anywhere inside it
                     PointCh point = mapParametersProperty.get()
                                                          .pointAt(e.getSceneX() - e.getX(),
                                                                  e.getSceneY() - e.getY())
                                                          .toPointCh();
                     Waypoint wp = waypointAt(point);
-                    // TODO: else reposition point to its starting position (currently throws error)
-                    if (wp != null)
+                    if (wp == null) {
+                        pin.setLayoutX(this.lastValidPinPosition.getX());
+                        pin.setLayoutY(this.lastValidPinPosition.getY());
+                    } else
                         waypoints.set(waypointIndex, wp);
+                    this.lastValidPinPosition = null;
                 }
             });
             pins.add(pin);
@@ -176,10 +192,11 @@ public final class WaypointsManager {
      *
      * @param point the position of the waypoint in Switzerland
      * @return the waypoint at the given position in Switzerland if a graph node is found close to
-     *         the position
+     *         the position, null otherwise
      */
     private Waypoint waypointAt(PointCh point) {
-        int closestNodeId = graph.nodeClosestTo(point, SEARCH_DISTANCE);
+        // Point could be null if set outside of Switzerland
+        int closestNodeId = point != null ? graph.nodeClosestTo(point, SEARCH_DISTANCE) : -1;
         if (closestNodeId == -1) {
             errorConsumer.accept("Aucune route à proximité !");
             return null;

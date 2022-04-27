@@ -48,10 +48,11 @@ public final class BaseMapManager {
         this.mapParametersProperty = mapParametersProperty;
 
         this.pane = new Pane();
+        pane.setId("mapPane"); // used to cascade zoom action from waypoint pin
         this.canvas = new Canvas();
         pane.getChildren().add(canvas);
 
-        addListener();
+        addListeners();
         addHandlers();
 
         redrawOnNextPulse();
@@ -67,9 +68,9 @@ public final class BaseMapManager {
     }
 
     /**
-     * Add listeners to the nodes in the scene.
+     * Adds listeners to the nodes in the scene.
      */
-    private void addListener() {
+    private void addListeners() {
         canvas.widthProperty().bind(pane.widthProperty());
         canvas.heightProperty().bind(pane.heightProperty());
 
@@ -92,40 +93,41 @@ public final class BaseMapManager {
     private void addHandlers() {
         // Zoom control
         pane.setOnScroll(e -> {
+            MapViewParameters mapParams = mapParametersProperty.get();
             double zoomDelta = Math.signum(e.getDeltaY());
-            int newZoomLevel = Math2.clamp(8,
-                    mapParametersProperty.get().zoomLevel() + (int) zoomDelta, 19);
-            // FIXME: Forced to use pointWebMercator
-            PointWebMercator centerOfZoom = mapParametersProperty.get().pointAt(e.getX(), e.getY());
+            int newZoomLevel = Math2.clamp(8, mapParams.zoomLevel() + (int) zoomDelta, 19);
+            // FIXME: Forced to use pointWebMercator ?
+            PointWebMercator centerOfZoom = mapParams.pointAt(e.getSceneX(), e.getSceneY());
             mapParametersProperty.set(
                     new MapViewParameters(newZoomLevel,
-                                          centerOfZoom.xAtZoomLevel(newZoomLevel) - e.getX(),
-                                          centerOfZoom.yAtZoomLevel(newZoomLevel) - e.getY()));
+                                          centerOfZoom.xAtZoomLevel(newZoomLevel) - e.getSceneX(),
+                                          centerOfZoom.yAtZoomLevel(newZoomLevel) - e.getSceneY()));
         });
-        pane.setOnMousePressed(e -> this.lastMousePosition = new Point2D(e.getX(), e.getY()));
 
         // Map movement control
+        pane.setOnMousePressed(
+                e -> this.lastMousePosition = new Point2D(e.getSceneX(), e.getSceneY()));
         pane.setOnMouseDragged(e -> {
             if (!e.isStillSincePress()) {
-                Point2D movement = new Point2D(e.getX(), e.getY()).subtract(lastMousePosition);
+                Point2D movement = new Point2D(e.getSceneX(), e.getSceneY()).subtract(
+                        lastMousePosition);
                 mapParametersProperty.set(
                         mapParametersProperty.get().shiftedBy(movement.getX(), movement.getY()));
             }
-            this.lastMousePosition = new Point2D(e.getX(), e.getY());
+            this.lastMousePosition = new Point2D(e.getSceneX(), e.getSceneY());
         });
-
         pane.setOnMouseReleased(e -> this.lastMousePosition = null);
 
         // New waypoint control
+        // FIXME: slight top left movement when mouse is released / when we create point
         pane.setOnMouseClicked(e -> {
-            if (e.isStillSincePress()) {
-                waypointsManager.addWaypoint(e.getX(), e.getY());
-            }
+            if (e.isStillSincePress())
+                waypointsManager.addWaypoint(e.getSceneX(), e.getSceneY());
         });
     }
 
     /**
-     * Called every JavaFX pulse. Redraw the tiles if needed.
+     * Redraws the tiles when needed. Called every JavaFX pulse.
      */
     private void redrawIfNeeded() {
         if (redrawNeeded) {
@@ -168,7 +170,7 @@ public final class BaseMapManager {
                     gc.drawImage(image, x * TileManager.TILE_SIDE_LENGTH + offsetX,
                             y * TileManager.TILE_SIDE_LENGTH + offsetY);
                 } catch (IOException e) {
-                    // Don't draw tile
+                    // Don't draw tile if image not found
                 }
             }
         }
