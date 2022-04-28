@@ -23,13 +23,10 @@
 hs_err_pid*
 
 # Custom
-
-bin
-.vscode
-lausanne
-ch_west
+/bin
+/.vscode
 *.kml
 *.gpx
-visualization
-others
-data
+/visualization
+/others
+/data
