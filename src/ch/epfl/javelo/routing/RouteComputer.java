@@ -33,7 +33,7 @@ public final class RouteComputer {
      * Number of bits taken by the outgoing edge index in the packed previous node id and outgoing
      * edge index.
      */
-    private static final byte EDGE_INDEX_LENGTH = 2;
+    private static final byte EDGE_INDEX_LENGTH = 4;
 
     private final Graph graph;
     private final CostFunction costFunction;
