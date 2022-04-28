@@ -20,6 +20,21 @@ import ch.epfl.javelo.projection.PointCh;
  */
 public final class RouteComputer {
 
+    private static final float DEFAULT_DISTANCE = Float.POSITIVE_INFINITY;
+    private static final float SEEN_DISTANCE = Float.NEGATIVE_INFINITY;
+
+    /**
+     * Number of bits taken by the previous node id in the packed previous node id and outgoing edge
+     * index.
+     */
+    private static final byte NODE_ID_LENGTH = 28;
+
+    /**
+     * Number of bits taken by the outgoing edge index in the packed previous node id and outgoing
+     * edge index.
+     */
+    private static final byte EDGE_INDEX_LENGTH = 2;
+
     private final Graph graph;
     private final CostFunction costFunction;
 
@@ -73,7 +88,7 @@ public final class RouteComputer {
         float[] distances = new float[nodeCount];
         // Packed outgoing edge index with previous node id (U4 U28)
         int[] previous = new int[nodeCount];
-        Arrays.fill(distances, Float.POSITIVE_INFINITY);
+        Arrays.fill(distances, DEFAULT_DISTANCE);
         distances[startNodeId] = 0;
         previous[startNodeId] = -1;
         // Score is not 0 but it is the only element in toVisit so it does not matter
@@ -83,7 +98,7 @@ public final class RouteComputer {
         while (!toVisit.isEmpty()) {
             WeightedNode current = toVisit.poll();
             // In case node was added twice in toVisit
-            if (distances[current.nodeId] == Float.NEGATIVE_INFINITY)
+            if (distances[current.nodeId] == SEEN_DISTANCE)
                 continue;
             if (current.nodeId == endNodeId) // path found
                 return reconstructRoute(previous, current.nodeId);
@@ -93,7 +108,7 @@ public final class RouteComputer {
                 int edgeId = graph.nodeOutEdgeId(current.nodeId, edgeIndex);
                 int toNodeId = graph.edgeTargetNodeId(edgeId);
                 // Don't evaluate cost function if node has already been visited
-                if (distances[toNodeId] == Float.NEGATIVE_INFINITY)
+                if (distances[toNodeId] == SEEN_DISTANCE)
                     continue;
                 double cost = costFunction.costFactor(current.nodeId, edgeId);
                 float distance = (float) (distances[current.nodeId]
@@ -103,11 +118,11 @@ public final class RouteComputer {
                     PointCh toPoint = graph.nodePoint(toNodeId);
                     float score = (float) (distance + toPoint.distanceTo(endPoint));
                     distances[toNodeId] = distance;
-                    previous[toNodeId] = (edgeIndex << 28) | current.nodeId;
+                    previous[toNodeId] = (edgeIndex << NODE_ID_LENGTH) | current.nodeId;
                     toVisit.add(new WeightedNode(toNodeId, score));
                 }
             }
-            distances[current.nodeId] = Float.NEGATIVE_INFINITY;
+            distances[current.nodeId] = SEEN_DISTANCE;
         }
         return null; // path does not exist
     }
@@ -124,8 +139,9 @@ public final class RouteComputer {
         List<Edge> edges = new LinkedList<>();
         int toNodeId = currentNodeId;
         while (previous[toNodeId] != -1) {
-            int previousNodeId = Bits.extractUnsigned(previous[toNodeId], 0, 28);
-            int outGoingEdgeIndex = Bits.extractUnsigned(previous[toNodeId], 28, 4);
+            int previousNodeId = Bits.extractUnsigned(previous[toNodeId], 0, NODE_ID_LENGTH);
+            int outGoingEdgeIndex = Bits.extractUnsigned(previous[toNodeId], NODE_ID_LENGTH,
+                    EDGE_INDEX_LENGTH);
             int edgeId = graph.nodeOutEdgeId(previousNodeId, outGoingEdgeIndex);
             Edge edge = Edge.of(graph, edgeId, previousNodeId, toNodeId);
             edges.add(0, edge); // prepend

@@ -20,7 +20,8 @@ public final class Ch1903 {
      * @return the east coordinate, in meters, of the point of given longitude and latitude (WGS84)
      */
     public static double e(double lon, double lat) {
-        double lon1 = convertLon(lon), lat1 = convertLat(lat);
+        double lon1 = convertLon(lon);
+        double lat1 = convertLat(lat);
         return 2_600_072.37 + 211_455.93 * lon1 - 10_938.51 * lon1 * lat1
                 - 0.36 * lon1 * Math.pow(lat1, 2) - 44.54 * Math.pow(lon1, 3);
     }
@@ -33,7 +34,8 @@ public final class Ch1903 {
      * @return the north coordinate, in meters, of the point of given longitude and latitude (WGS84)
      */
     public static double n(double lon, double lat) {
-        double lon1 = convertLon(lon), lat1 = convertLat(lat);
+        double lon1 = convertLon(lon);
+        double lat1 = convertLat(lat);
         double lon1Squared = Math.pow(lon1, 2);
         return 1_200_147.07 + 308_807.95 * lat1 + 3_745.25 * lon1Squared + 76.63 * Math.pow(lat1, 2)
                 - 194.56 * lon1Squared * lat1 + 119.79 * Math.pow(lat1, 3);
@@ -47,7 +49,8 @@ public final class Ch1903 {
      * @return the longitude (WGS84), in radians, of the point of given east and north coordinates
      */
     public static double lon(double e, double n) {
-        double x = convertE(e), y = convertN(n);
+        double x = convertE(e);
+        double y = convertN(n);
         double lon0 = 2.6779094 + 4.728982 * x + 0.791484 * x * y + 0.1306 * x * Math.pow(y, 2)
                 - 0.0436 * Math.pow(x, 3);
         return Math.toRadians(lon0 * 10 / 3.6);
@@ -61,7 +64,8 @@ public final class Ch1903 {
      * @return the latitude (WGS84), in radians, of the point of given east and north coordinates
      */
     public static double lat(double e, double n) {
-        double x = convertE(e), y = convertN(n);
+        double x = convertE(e);
+        double y = convertN(n);
         double xSquared = Math.pow(x, 2);
         double lat0 = 16.9023892 + 3.238272 * y - 0.270978 * xSquared - 0.002528 * Math.pow(y, 2)
                 - 0.0447 * xSquared * y - 0.0140 * Math.pow(y, 3);

@@ -29,6 +29,8 @@ public record RoutePoint(PointCh point, double position, double distanceToRefere
      * @return a shifted copy of the current instance
      */
     public RoutePoint withPositionShiftedBy(double positionDifference) {
+        if (positionDifference == 0)
+            return this;
         return new RoutePoint(point, position + positionDifference, distanceToReference);
     }
 

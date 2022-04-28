@@ -36,27 +36,38 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
     /**
      * Position of the direction and target node id within a buffer range corresponding to an edge.
      */
-    private final static byte OFFSET_DIRECTION_TARGET = 0;
+    private static final byte OFFSET_DIRECTION_TARGET = 0;
 
     /**
      * Position of the length within a buffer range corresponding to an edge.
      */
-    private final static byte OFFSET_LENGTH = OFFSET_DIRECTION_TARGET + Integer.BYTES;
+    private static final byte OFFSET_LENGTH = OFFSET_DIRECTION_TARGET + Integer.BYTES;
 
     /**
      * Position of the elevation gain within a buffer range corresponding to an edge.
      */
-    private final static byte OFFSET_ELEVATION = OFFSET_LENGTH + Short.BYTES;
+    private static final byte OFFSET_ELEVATION = OFFSET_LENGTH + Short.BYTES;
 
     /**
      * Position of the set of attributes within a buffer range corresponding to an edge.
      */
-    private final static byte OFFSET_ATTRIBUTES = OFFSET_ELEVATION + Short.BYTES;
+    private static final byte OFFSET_ATTRIBUTES = OFFSET_ELEVATION + Short.BYTES;
 
     /**
      * Size of an edge range within the buffer (in bytes).
      */
-    private final static byte EDGE_SIZE = OFFSET_ATTRIBUTES + Short.BYTES;
+    private static final byte EDGE_SIZE = OFFSET_ATTRIBUTES + Short.BYTES;
+
+    /**
+     * Number of bits taken by a profile's first elevation id in the packed profile type and first
+     * elevation id.
+     */
+    private static final byte ELEVATION_ID_LENGTH = 30;
+
+    /**
+     * Number of bits taken by a profile's type in the packed profile type and first elevation id.
+     */
+    private static final byte PROFILE_TYPE_LENGTH = 2;
 
     // == PROFILES BUFFER ==
 
@@ -64,12 +75,12 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      * Position of the profile's type and id of the first elevation sample within a buffer range
      * corresponding to a profile.
      */
-    private final static int OFFSET_PROFILE_TYPE_ID = 0;
+    private static final int OFFSET_PROFILE_TYPE_ID = 0;
 
     /**
      * Number of integers contained inside a buffer range corresponding to a profile.
      */
-    private final static int PROFILE_INTS = OFFSET_PROFILE_TYPE_ID + 1;
+    private static final int PROFILE_INTS = OFFSET_PROFILE_TYPE_ID + 1;
 
     /**
      * Indicates if an edge is going the opposite direction to how OSM represents it.
@@ -89,6 +100,8 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      */
     public int targetNodeId(int edgeId) {
         int targetNode = edgesBuffer.getInt(edgeId * EDGE_SIZE + OFFSET_DIRECTION_TARGET);
+        // FIXME: how not to use isInverted ? on sait que on recalcute targetNode mais comment faire
+        // autrement avec l'api actuelle ?
         return isInverted(edgeId) ? ~targetNode : targetNode;
     }
 
@@ -122,7 +135,8 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      */
     public boolean hasProfile(int edgeId) {
         int profileIndex = edgeId * PROFILE_INTS + OFFSET_PROFILE_TYPE_ID;
-        return Bits.extractUnsigned(profileIds.get(profileIndex), 30, 2) != 0;
+        return Bits.extractUnsigned(profileIds.get(profileIndex), ELEVATION_ID_LENGTH,
+                PROFILE_TYPE_LENGTH) != 0;
     }
 
     /**
@@ -140,8 +154,10 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
         int nbSamples = 1 + Math2.ceilDiv(length, Q28_4.ofInt(2)); // at least one sample
         float[] samples = new float[nbSamples];
         int profileIndex = edgeId * PROFILE_INTS + OFFSET_PROFILE_TYPE_ID;
-        int profileType = Bits.extractUnsigned(profileIds.get(profileIndex), 30, 2); // U2
-        int firstSampleId = Bits.extractUnsigned(profileIds.get(profileIndex), 0, 30); // U30
+        int profileType = Bits.extractUnsigned(profileIds.get(profileIndex), ELEVATION_ID_LENGTH,
+                PROFILE_TYPE_LENGTH); // U2
+        int firstSampleId = Bits.extractUnsigned(profileIds.get(profileIndex), 0,
+                ELEVATION_ID_LENGTH); // U30
 
         // Starting altitude (first sample, uncompressed short)
         samples[0] = Q28_4.asFloat(Short.toUnsignedInt(elevations.get(firstSampleId))); // UQ12.4
@@ -150,6 +166,8 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
             for (int i = 1; i < nbSamples; i++)
                 samples[i] = Q28_4.asFloat(Short.toUnsignedInt(elevations.get(firstSampleId + i)));
         else {
+            // FIXME: Est-ce que ne pas changer les modifications qui ne nous ont pas fait perdre de
+            // point peut nous faire perdre des points par la suite ?
             // Number of samples per short: type 2 -> 2, type 3 -> 4
             final int SAMPLES_PER_SHORT = (profileType - 1) * 2;
             // Size of a sample in bits: type 2 -> 8, type 3 -> 4
@@ -194,7 +212,7 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      *
      * @param array the array to reverse
      */
-    private final static void reverseArray(float[] array) {
+    private static final void reverseArray(float[] array) {
         for (int i = 0; i < array.length / 2; i++) {
             float temp = array[i];
             array[i] = array[array.length - i - 1];

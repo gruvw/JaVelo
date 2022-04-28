@@ -26,18 +26,18 @@ public record GraphSectors(ByteBuffer buffer) {
     /**
      * Position of the first node id within a buffer range corresponding to a sector.
      */
-    private final static byte OFFSET_FIRST_NODE = 0;
+    private static final byte OFFSET_FIRST_NODE = 0;
 
     /**
      * Position of the number of nodes (in the sector) within a buffer range corresponding to a
      * sector.
      */
-    private final static byte OFFSET_NODE_COUNT = OFFSET_FIRST_NODE + Integer.BYTES;
+    private static final byte OFFSET_NODE_COUNT = OFFSET_FIRST_NODE + Integer.BYTES;
 
     /**
      * Size of a sector range within the buffer (in bytes).
      */
-    private final static byte SECTOR_SIZE = OFFSET_NODE_COUNT + Short.BYTES;
+    private static final byte SECTOR_SIZE = OFFSET_NODE_COUNT + Short.BYTES;
 
     // == SECTORS GRID ==
 
@@ -45,17 +45,17 @@ public record GraphSectors(ByteBuffer buffer) {
      * Number of sectors per axis on the grid covering Switzerland. The total number of sectors is
      * therefore {@code SECTORS_PER_AXIS} squared.
      */
-    private final static int SECTORS_PER_AXIS = 128;
+    private static final int SECTORS_PER_AXIS = 128;
 
     /**
      * The width (along the x-axis) of a sector.
      */
-    private final static double SECTOR_WIDTH = SwissBounds.WIDTH / SECTORS_PER_AXIS;
+    private static final double SECTOR_WIDTH = SwissBounds.WIDTH / SECTORS_PER_AXIS;
 
     /**
      * The height (along the y-axis) of a sector.
      */
-    private final static double SECTOR_HEIGHT = SwissBounds.HEIGHT / SECTORS_PER_AXIS;
+    private static final double SECTOR_HEIGHT = SwissBounds.HEIGHT / SECTORS_PER_AXIS;
 
     /**
      * A single sector.

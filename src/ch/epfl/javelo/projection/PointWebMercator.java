@@ -13,6 +13,8 @@ import ch.epfl.javelo.Preconditions;
  */
 public record PointWebMercator(double x, double y) {
 
+    private static final int BASE_ZOOM_EXPONENT = 8;
+
     /**
      * Constructor of a Web Mercator point.
      *
@@ -34,7 +36,8 @@ public record PointWebMercator(double x, double y) {
      *         {@code zoomLevel} map zoom level
      */
     public static PointWebMercator of(int zoomLevel, double x, double y) {
-        return new PointWebMercator(Math.scalb(x, -8 - zoomLevel), Math.scalb(y, -8 - zoomLevel));
+        return new PointWebMercator(Math.scalb(x, -BASE_ZOOM_EXPONENT - zoomLevel),
+                                    Math.scalb(y, -BASE_ZOOM_EXPONENT - zoomLevel));
     }
 
     /**
@@ -68,7 +71,7 @@ public record PointWebMercator(double x, double y) {
      * @return the x coordinate at the given zoom level
      */
     public double xAtZoomLevel(int zoomLevel) {
-        return Math.scalb(x, 8 + zoomLevel);
+        return Math.scalb(x, BASE_ZOOM_EXPONENT + zoomLevel);
     }
 
     /**
@@ -78,7 +81,7 @@ public record PointWebMercator(double x, double y) {
      * @return the y coordinate at the given zoom level
      */
     public double yAtZoomLevel(int zoomLevel) {
-        return Math.scalb(y, 8 + zoomLevel);
+        return Math.scalb(y, BASE_ZOOM_EXPONENT + zoomLevel);
     }
 
     /**
@@ -108,8 +111,10 @@ public record PointWebMercator(double x, double y) {
      *         inside Switzerland's limits, {@code null} otherwise
      */
     public PointCh toPointCh() {
-        double lon = lon(), lat = lat();
-        double e = Ch1903.e(lon, lat), n = Ch1903.n(lon, lat);
+        double lon = lon();
+        double lat = lat();
+        double e = Ch1903.e(lon, lat);
+        double n = Ch1903.n(lon, lat);
         return SwissBounds.containsEN(e, n) ? new PointCh(e, n) : null;
     }
 

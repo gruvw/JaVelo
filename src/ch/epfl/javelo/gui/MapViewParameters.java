@@ -27,6 +27,8 @@ public record MapViewParameters(int zoomLevel, double minX, double minY) {
      *         with the same zoom level as the current instance
      */
     public MapViewParameters shiftedBy(double xDelta, double yDelta) {
+        if (xDelta == 0 && yDelta == 0)
+            return this;
         return new MapViewParameters(zoomLevel, minX - xDelta, minY - yDelta);
     }
 

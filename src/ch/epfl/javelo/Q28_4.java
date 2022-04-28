@@ -10,6 +10,8 @@ package ch.epfl.javelo;
  */
 public final class Q28_4 {
 
+    private static final int FIXED_POINT_POSITION = 4;
+
     private Q28_4() {}
 
     /**
@@ -19,7 +21,7 @@ public final class Q28_4 {
      * @return the value (Q28.4) corresponding to the given integer {@code i}
      */
     public static int ofInt(int i) {
-        return i << 4;
+        return i << FIXED_POINT_POSITION;
     }
 
     /**
@@ -29,7 +31,7 @@ public final class Q28_4 {
      * @return the double value corresponding to the given Q28.4 number
      */
     public static double asDouble(int q28_4) {
-        return Math.scalb((double) q28_4, -4);
+        return Math.scalb((double) q28_4, -FIXED_POINT_POSITION);
     }
 
     /**
@@ -39,7 +41,7 @@ public final class Q28_4 {
      * @return the float value corresponding to the given Q28.4 number
      */
     public static float asFloat(int q28_4) {
-        return Math.scalb((float) q28_4, -4);
+        return Math.scalb((float) q28_4, -FIXED_POINT_POSITION);
     }
 
 }

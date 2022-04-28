@@ -44,15 +44,18 @@ public final class ElevationProfile {
         Preconditions.checkArgument(elevationSamples.length >= 2);
         this.length = length;
         this.elevationSamples = elevationSamples.clone();
-        for (float sample : this.elevationSamples)
-            stats.accept(sample);
         this.profile = Functions.sampled(elevationSamples, length);
+
         double totalAscent = 0, totalDescent = 0;
-        for (int i = 0; i < elevationSamples.length - 1; i++)
-            if (elevationSamples[i + 1] > elevationSamples[i])
-                totalAscent += elevationSamples[i + 1] - elevationSamples[i];
+        for (int i = 0; i < this.elevationSamples.length - 1; i++) {
+            stats.accept(this.elevationSamples[i]);
+            if (this.elevationSamples[i + 1] > this.elevationSamples[i])
+                totalAscent += this.elevationSamples[i + 1] - this.elevationSamples[i];
             else
-                totalDescent += elevationSamples[i] - elevationSamples[i + 1];
+                totalDescent += this.elevationSamples[i] - this.elevationSamples[i + 1];
+        }
+        // Didn't iterate over the last sample above
+        stats.accept(this.elevationSamples[this.elevationSamples.length - 1]);
         this.totalAscent = totalAscent;
         this.totalDescent = totalDescent;
     }

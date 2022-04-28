@@ -30,6 +30,7 @@ public final class Graph {
     private final GraphEdges edges;
     private final List<AttributeSet> attributeSets;
 
+    // FIXME: <p> n'est pas superflu
     /**
      * Loads and creates a graph.
      * <p>
@@ -129,7 +130,7 @@ public final class Graph {
     public int nodeClosestTo(PointCh point, double searchDistance) {
         List<Sector> closeSectors = sectors.sectorsInArea(point, searchDistance);
         int closestNodeId = -1;
-        double smallestSquaredDistance = Double.MAX_VALUE;
+        double smallestSquaredDistance = Double.MAX_VALUE; // FIXME: don't understand mistake ??
         for (Sector sector : closeSectors)
             // Won't iterate if sector is empty
             for (int nodeId = sector.startNodeId(); nodeId < sector.endNodeId(); nodeId++) {

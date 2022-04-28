@@ -35,9 +35,20 @@ public record GraphNodes(IntBuffer buffer) {
     private static final int OFFSET_OUT_EDGES = OFFSET_N + 1;
 
     /**
+     * Number of bits taken by the edge id inside the packed edge id and out degree.
+     */
+    private static final int EDGE_ID_LENGTH = 28;
+
+    /**
+     * Number of bits taken by the out degree inside the packed edge id and out degree.
+     */
+    private static final int OUT_DEGREE_LENGTH = 4;
+
+    /**
      * Number of integers contained inside a buffer range corresponding to a node.
      */
     private static final int NODE_INTS = OFFSET_OUT_EDGES + 1;
+
 
     /**
      * Computes the number of nodes in the buffer.
@@ -75,7 +86,8 @@ public record GraphNodes(IntBuffer buffer) {
      * @return the number of outgoing edges of the node corresponding to the given id
      */
     public int outDegree(int nodeId) {
-        return Bits.extractUnsigned(buffer.get(nodeId * NODE_INTS + OFFSET_OUT_EDGES), 28, 4); // U4
+        return Bits.extractUnsigned(buffer.get(nodeId * NODE_INTS + OFFSET_OUT_EDGES),
+                EDGE_ID_LENGTH, OUT_DEGREE_LENGTH); // U4
     }
 
     /**
@@ -88,8 +100,8 @@ public record GraphNodes(IntBuffer buffer) {
      *         given id {@code nodeId}
      */
     public int edgeId(int nodeId, int edgeIndex) {
-        return Bits.extractUnsigned(buffer.get(nodeId * NODE_INTS + OFFSET_OUT_EDGES), 0, 28) // U28
-                + edgeIndex;
+        return Bits.extractUnsigned(buffer.get(nodeId * NODE_INTS + OFFSET_OUT_EDGES), 0,
+                EDGE_ID_LENGTH) + edgeIndex; // U28
     }
 
 }

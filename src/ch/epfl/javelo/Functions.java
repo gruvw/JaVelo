@@ -41,14 +41,16 @@ public final class Functions {
     public static DoubleUnaryOperator sampled(float[] samples, double xMax) {
         Preconditions.checkArgument(samples.length >= 2);
         Preconditions.checkArgument(xMax > 0);
+        float[] samplesCopy = samples.clone(); // immutable DoubleUnaryOperator
         return value -> {
             if (value <= 0)
-                return samples[0];
+                return samplesCopy[0];
             if (value >= xMax)
-                return samples[samples.length - 1];
-            double dx = xMax / (samples.length - 1), xPos = value / dx;
+                return samplesCopy[samplesCopy.length - 1];
+            double dx = xMax / (samplesCopy.length - 1);
+            double xPos = value / dx;
             int offset = (int) (xPos);
-            return Math2.interpolate(samples[offset], samples[offset + 1], xPos - offset);
+            return Math2.interpolate(samplesCopy[offset], samplesCopy[offset + 1], xPos - offset);
         };
     }
 

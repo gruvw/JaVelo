@@ -100,7 +100,7 @@ public final class Math2 {
      * @return the squared norm of the vector u (‖u‖²)
      */
     public static double squaredNorm(double uX, double uY) {
-        return Math.pow(uX, 2) + Math.pow(uY, 2);
+        return dotProduct(uX, uY, uX, uY);
     }
 
     /**
@@ -132,7 +132,8 @@ public final class Math2 {
                                           double bY,
                                           double pX,
                                           double pY) {
-        double vX = bX - aX, vY = bY - aY;
+        double vX = bX - aX;
+        double vY = bY - aY;
         return dotProduct(pX - aX, pY - aY, vX, vY) / norm(vX, vY);
     }
 
