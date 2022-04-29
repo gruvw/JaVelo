@@ -19,6 +19,7 @@ Statics are before non-statics.
    4. Private methods
       1. JavaFX related methods
       2. Other private methods
+6. Private Inner Classes
 
 ## Styling
 

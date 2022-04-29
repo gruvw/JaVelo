@@ -100,8 +100,6 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
      */
     public int targetNodeId(int edgeId) {
         int targetNode = edgesBuffer.getInt(edgeId * EDGE_SIZE + OFFSET_DIRECTION_TARGET);
-        // FIXME RENDU: how not to use isInverted ? on sait que on recalcute targetNode mais comment
-        // faire autrement avec l'api actuelle ?
         return isInverted(edgeId) ? ~targetNode : targetNode;
     }
 
@@ -166,8 +164,6 @@ public record GraphEdges(ByteBuffer edgesBuffer, IntBuffer profileIds, ShortBuff
             for (int i = 1; i < nbSamples; i++)
                 samples[i] = Q28_4.asFloat(Short.toUnsignedInt(elevations.get(firstSampleId + i)));
         else {
-            // FIXME RENDU: Est-ce que ne pas changer les modifications qui ne nous ont pas fait
-            // perdre de point peut nous faire perdre des points par la suite ?
             // Number of samples per short: type 2 -> 2, type 3 -> 4
             final int SAMPLES_PER_SHORT = (profileType - 1) * 2;
             // Size of a sample in bits: type 2 -> 8, type 3 -> 4

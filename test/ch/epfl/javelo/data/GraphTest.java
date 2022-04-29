@@ -35,16 +35,16 @@ public class GraphTest {
 
     // PointCh[e=2485100.0, n=1075100.0]
     private static final PointCh node0 = new PointCh(SwissBounds.MIN_E + 100,
-            SwissBounds.MIN_N + 100);
+                                                     SwissBounds.MIN_N + 100);
     // PointCh[e=2487826.5625, n=1078553.125]
     private static final PointCh node1 = new PointCh(SwissBounds.MIN_E + SECTOR_WIDTH + 100,
-            SwissBounds.MIN_N + SECTOR_HEIGHT * 2 + 100);
+                                                     SwissBounds.MIN_N + SECTOR_HEIGHT * 2 + 100);
     // PointCh[e=2490553.125, n=1078353.125]
     private static final PointCh node2 = new PointCh(SwissBounds.MIN_E + SECTOR_WIDTH * 2 + 100,
-            SwissBounds.MIN_N + SECTOR_HEIGHT * 2 - 100);
+                                                     SwissBounds.MIN_N + SECTOR_HEIGHT * 2 - 100);
     // PointCh[e=2495806.25, n=1076826.5625]
     private static final PointCh node3 = new PointCh(SwissBounds.MIN_E + SECTOR_WIDTH * 4 - 100,
-            SwissBounds.MIN_N + SECTOR_HEIGHT + 100);
+                                                     SwissBounds.MIN_N + SECTOR_HEIGHT + 100);
 
     private static void addEmptySectors(ByteBuffer buffer, int nb) {
         for (int i = 0; i < nb; i++) {
@@ -146,7 +146,7 @@ public class GraphTest {
         attributeSets.add(new AttributeSet(0L));
         attributeSets.add(new AttributeSet(0b100111L));
         graph = new Graph(new GraphNodes(nodesBuffer), new GraphSectors(sectorsBuffer),
-                new GraphEdges(edgesBuffer, profileIds, elevations), attributeSets);
+                          new GraphEdges(edgesBuffer, profileIds, elevations), attributeSets);
     }
 
     @Test
@@ -185,13 +185,19 @@ public class GraphTest {
     @Test
     void nodeClosestToTest() {
         assertEquals(2, graph.nodeClosestTo(node2, 1.5 * SECTOR_WIDTH));
-        assertEquals(2, graph.nodeClosestTo(node2, 0));
-        assertEquals(-1, graph.nodeClosestTo(new PointCh(SwissBounds.MIN_E + 1.5 * SECTOR_WIDTH,
-                SwissBounds.MIN_N + 0.5 * SECTOR_HEIGHT), 200));
-        assertEquals(0, graph.nodeClosestTo(new PointCh(SwissBounds.MIN_E + 1.1 * SECTOR_WIDTH,
-                SwissBounds.MIN_N + 0.3 * SECTOR_HEIGHT), 2 * SECTOR_WIDTH));
-        assertEquals(3, graph.nodeClosestTo(new PointCh(SwissBounds.MIN_E + 3 * SECTOR_WIDTH + 100,
-                SwissBounds.MIN_N + SECTOR_HEIGHT), 2 * SECTOR_WIDTH));
+        assertEquals(2, graph.nodeClosestTo(node2, -1));
+        assertEquals(-1,
+                graph.nodeClosestTo(new PointCh(SwissBounds.MIN_E + 1.5 * SECTOR_WIDTH,
+                                                SwissBounds.MIN_N + 0.5 * SECTOR_HEIGHT),
+                        200));
+        assertEquals(0,
+                graph.nodeClosestTo(new PointCh(SwissBounds.MIN_E + 1.1 * SECTOR_WIDTH,
+                                                SwissBounds.MIN_N + 0.3 * SECTOR_HEIGHT),
+                        2 * SECTOR_WIDTH));
+        assertEquals(3,
+                graph.nodeClosestTo(new PointCh(SwissBounds.MIN_E + 3 * SECTOR_WIDTH + 100,
+                                                SwissBounds.MIN_N + SECTOR_HEIGHT),
+                        2 * SECTOR_WIDTH));
     }
 
     @Test
@@ -614,7 +620,8 @@ public class GraphTest {
             edgesBuffer.putShort(4, (short) edgeLength_q28_4);
             profileIds.put(0, (1 << 30) | firstSampleIndex);
             var graphEdges = new GraphEdges(edgesBuffer.asReadOnlyBuffer(),
-                    profileIds.asReadOnlyBuffer(), elevations.asReadOnlyBuffer());
+                                            profileIds.asReadOnlyBuffer(),
+                                            elevations.asReadOnlyBuffer());
             var graph = new Graph(graphNodes, graphSectors, graphEdges, List.of());
             var edgeProfile = graph.edgeProfile(0);
 
