@@ -59,8 +59,8 @@ public final class WaypointsManager {
         this.pane = new Pane();
 
         this.pane.setPickOnBounds(false); // don't block background events
-        mapParametersProperty.addListener((p, o, n) -> positionPins());
-        waypoints.addListener((Change<? extends Waypoint> wp) -> redrawPins());
+        this.mapParametersProperty.addListener((p, o, n) -> positionPins());
+        this.waypoints.addListener((Change<? extends Waypoint> wp) -> redrawPins());
 
         redrawPins();
     }
@@ -127,7 +127,8 @@ public final class WaypointsManager {
 
             pane.getChildren().add(pin);
 
-            // FIXME: zoom did not work when mouse is over pin: solution below
+            // FIXME: zoom did not work when mouse is over pin: solution below + mapPane inside
+            // constant (static ?) ?
             // Cascade zoom event from waypoint to map pane
             Platform.runLater(() -> pin.setOnScroll(pane.getParent()
                                                         .getChildrenUnmodifiable()
@@ -192,7 +193,7 @@ public final class WaypointsManager {
      *
      * @param point the position of the waypoint in Switzerland
      * @return the waypoint at the given position in Switzerland if a graph node is found close to
-     *         the position, null otherwise
+     *         the position, {@code null} otherwise
      */
     private Waypoint waypointAt(PointCh point) {
         // Point could be null if set outside of Switzerland
