@@ -38,7 +38,6 @@ public record MapViewParameters(int zoomLevel, double minX, double minY) {
      * @return the 2D point corresponding to the top left corner
      */
     public Point2D topLeft() {
-        // FIXME: not needed
         return new Point2D(minX, minY);
     }
 

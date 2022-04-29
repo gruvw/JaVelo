@@ -24,7 +24,7 @@ import javafx.scene.shape.SVGPath;
 public final class WaypointsManager {
 
     private final Graph graph;
-    private final ObjectProperty<MapViewParameters> mapParametersProperty;
+    private final ObjectProperty<MapViewParameters> mapParamsProperty;
     private final ObservableList<Waypoint> waypoints;
     private final Consumer<String> errorConsumer;
 
@@ -44,14 +44,14 @@ public final class WaypointsManager {
      * @param graph         graph of the routes
      * @param mapParameters property containing the parameters of the background map
      * @param waypoints     list of all the waypoints
-     * @param errorConsumer consumer to handle errors
+     * @param errorConsumer handles errors
      */
     public WaypointsManager(Graph graph,
-                            ObjectProperty<MapViewParameters> mapParametersProperty,
+                            ObjectProperty<MapViewParameters> mapParamsProperty,
                             ObservableList<Waypoint> waypoints,
                             Consumer<String> errorConsumer) {
         this.graph = graph;
-        this.mapParametersProperty = mapParametersProperty;
+        this.mapParamsProperty = mapParamsProperty;
         this.waypoints = waypoints;
         this.errorConsumer = errorConsumer;
 
@@ -59,7 +59,7 @@ public final class WaypointsManager {
         this.pane = new Pane();
 
         this.pane.setPickOnBounds(false); // don't block background events
-        this.mapParametersProperty.addListener((p, o, n) -> positionPins());
+        this.mapParamsProperty.addListener((p, o, n) -> positionPins());
         this.waypoints.addListener((Change<? extends Waypoint> wp) -> redrawPins());
 
         redrawPins();
@@ -82,7 +82,9 @@ public final class WaypointsManager {
      * @return true if the waypoint was added, false otherwise
      */
     public boolean addWaypoint(double x, double y) {
-        PointCh point = mapParametersProperty.get().pointAt(x, y).toPointCh();
+        // ASK: slight top left movement when mouse is released / when we create point (maybe
+        // because of conversion to pointch)
+        PointCh point = mapParamsProperty.get().pointAt(x, y).toPointCh();
         Waypoint wp = waypointAt(point);
         if (wp == null)
             return false;
@@ -90,9 +92,12 @@ public final class WaypointsManager {
         return true;
     }
 
+    /**
+     * Recreates and positions every pin (one for each waypoint).
+     */
     private void redrawPins() {
-        this.pane.getChildren().clear();
-        this.pins.clear();
+        pane.getChildren().clear();
+        pins.clear();
         createPins();
         positionPins();
     }
@@ -101,6 +106,7 @@ public final class WaypointsManager {
      * Generates the {@code Group} objects for each waypoint.
      */
     private void createPins() {
+        // TODO: split in other method (createPin(waypoint), ...)
         for (int i = 0; i < waypoints.size(); i++) {
             Group pin = new Group();
             pin.getStyleClass().add("pin");
@@ -127,8 +133,7 @@ public final class WaypointsManager {
 
             pane.getChildren().add(pin);
 
-            // FIXME: zoom did not work when mouse is over pin: solution below + mapPane inside
-            // constant (static ?) ?
+            // CHANGE: remove part that zooms over waypoint
             // Cascade zoom event from waypoint to map pane
             Platform.runLater(() -> pin.setOnScroll(pane.getParent()
                                                         .getChildrenUnmodifiable()
@@ -145,25 +150,23 @@ public final class WaypointsManager {
 
             // Move marker control
             pin.setOnMousePressed(e -> {
-                this.lastMousePosition = new Point2D(e.getSceneX(), e.getSceneY());
+                this.lastMousePosition = new Point2D(e.getX(), e.getY());
                 this.lastValidPinPosition = new Point2D(pin.getLayoutX(), pin.getLayoutY());
             });
             pin.setOnMouseDragged(e -> {
-                Point2D movement = new Point2D(e.getSceneX(), e.getSceneY()).subtract(
-                        lastMousePosition);
+                Point2D movement = new Point2D(e.getX(), e.getY()).subtract(lastMousePosition);
                 pin.setLayoutX(pin.getLayoutX() + movement.getX());
                 pin.setLayoutY(pin.getLayoutY() + movement.getY());
-                this.lastMousePosition = new Point2D(e.getSceneX(), e.getSceneY());
             });
 
             pin.setOnMouseReleased(e -> {
-                this.lastMousePosition = null;
+                Point2D movement = new Point2D(e.getX(), e.getY()).subtract(lastMousePosition);
                 if (!e.isStillSincePress()) {
                     // Subtract relative mouse position to drag the waypoint from anywhere inside it
-                    PointCh point = mapParametersProperty.get()
-                                                         .pointAt(e.getSceneX() - e.getX(),
-                                                                 e.getSceneY() - e.getY())
-                                                         .toPointCh();
+                    PointCh point = mapParamsProperty.get()
+                                                     .pointAt(pin.getLayoutX() + movement.getX(),
+                                                             pin.getLayoutY() + movement.getY())
+                                                     .toPointCh();
                     Waypoint wp = waypointAt(point);
                     if (wp == null) {
                         pin.setLayoutX(this.lastValidPinPosition.getX());
@@ -172,6 +175,7 @@ public final class WaypointsManager {
                         waypoints.set(waypointIndex, wp);
                     this.lastValidPinPosition = null;
                 }
+                this.lastMousePosition = null;
             });
             pins.add(pin);
         }
@@ -182,9 +186,9 @@ public final class WaypointsManager {
      */
     private void positionPins() {
         for (int i = 0; i < pins.size(); i++) {
-            PointWebMercator point = PointWebMercator.ofPointCh(waypoints.get(i).position());
-            pins.get(i).setLayoutX(mapParametersProperty.get().viewX(point));
-            pins.get(i).setLayoutY(mapParametersProperty.get().viewY(point));
+            PointWebMercator point = PointWebMercator.ofPointCh(waypoints.get(i).point());
+            pins.get(i).setLayoutX(mapParamsProperty.get().viewX(point));
+            pins.get(i).setLayoutY(mapParamsProperty.get().viewY(point));
         }
     }
 

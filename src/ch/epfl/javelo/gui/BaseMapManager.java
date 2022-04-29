@@ -6,6 +6,7 @@ import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -25,7 +26,7 @@ public final class BaseMapManager {
 
     private final TileManager tileManager;
     private final WaypointsManager waypointsManager;
-    private final ObjectProperty<MapViewParameters> mapParametersProperty;
+    private final ObjectProperty<MapViewParameters> mapParamsProperty;
 
     private final Pane pane;
     private final Canvas canvas;
@@ -36,24 +37,27 @@ public final class BaseMapManager {
     /**
      * Constructor of a background map manager.
      *
-     * @param tileManager           OSM tiles manager
-     * @param waypointsManager      waypoints manager
-     * @param mapParametersProperty JavaFx property containing the parameters of the background map
+     * @param tileManager       OSM tiles manager
+     * @param waypointsManager  waypoints manager
+     * @param mapParamsProperty JavaFx property containing the parameters of the background map
      */
     public BaseMapManager(TileManager tileManager,
                           WaypointsManager waypointsManager,
-                          ObjectProperty<MapViewParameters> mapParametersProperty) {
+                          ObjectProperty<MapViewParameters> mapParamsProperty) {
         this.tileManager = tileManager;
         this.waypointsManager = waypointsManager;
-        this.mapParametersProperty = mapParametersProperty;
+        this.mapParamsProperty = mapParamsProperty;
 
         this.pane = new Pane();
-        pane.setId("mapPane"); // used to cascade zoom action from waypoint pin
-        this.canvas = new Canvas();
-        pane.getChildren().add(canvas);
 
-        addListeners();
-        addHandlers();
+        // CHANGE: remove part that zooms over waypoint
+        this.pane.setId("mapPane"); // used to cascade zoom action from waypoint pin
+
+        this.canvas = new Canvas();
+        this.pane.getChildren().add(this.canvas);
+
+        registerListeners();
+        registerHandlers();
 
         redrawOnNextPulse();
     }
@@ -68,9 +72,9 @@ public final class BaseMapManager {
     }
 
     /**
-     * Adds listeners to the nodes in the scene.
+     * Registers listeners to the nodes in the scene.
      */
-    private void addListeners() {
+    private void registerListeners() {
         canvas.widthProperty().bind(pane.widthProperty());
         canvas.heightProperty().bind(pane.heightProperty());
 
@@ -78,7 +82,7 @@ public final class BaseMapManager {
         canvas.widthProperty().addListener((p, o, n) -> redrawOnNextPulse());
         canvas.heightProperty().addListener((p, o, n) -> redrawOnNextPulse());
         // Redraw when anchor point moved or zoom changed
-        this.mapParametersProperty.addListener((p, o, n) -> redrawOnNextPulse());
+        this.mapParamsProperty.addListener((p, o, n) -> redrawOnNextPulse());
 
         // Redraw if needed at every pulse
         canvas.sceneProperty().addListener((p, oldS, newS) -> {
@@ -88,41 +92,40 @@ public final class BaseMapManager {
     }
 
     /**
-     * Adds handlers to the nodes in the scene.
+     * Registers event handlers to the nodes in the scene.
      */
-    private void addHandlers() {
+    private void registerHandlers() {
         // Zoom control
         pane.setOnScroll(e -> {
-            MapViewParameters mapParams = mapParametersProperty.get();
+            MapViewParameters mapParams = mapParamsProperty.get();
             double zoomDelta = Math.signum(e.getDeltaY());
             int newZoomLevel = Math2.clamp(8, mapParams.zoomLevel() + (int) zoomDelta, 19);
-            // FIXME: Forced to use pointWebMercator ?
-            PointWebMercator centerOfZoom = mapParams.pointAt(e.getSceneX(), e.getSceneY());
-            mapParametersProperty.set(
-                    new MapViewParameters(newZoomLevel,
-                                          centerOfZoom.xAtZoomLevel(newZoomLevel) - e.getSceneX(),
-                                          centerOfZoom.yAtZoomLevel(newZoomLevel) - e.getSceneY()));
+            // CHANGE: remove zooms over waypoint (remove position, position.getX() -> e.getX())
+            Point2D position = ((Node) e.getSource()).localToParent(e.getX(), e.getY());
+            PointWebMercator centerOfZoom = mapParams.pointAt(position.getX(), position.getY());
+            mapParamsProperty.set(new MapViewParameters(newZoomLevel,
+                                                        centerOfZoom.xAtZoomLevel(newZoomLevel)
+                                                                - position.getX(),
+                                                        centerOfZoom.yAtZoomLevel(newZoomLevel)
+                                                                - position.getY()));
         });
 
         // Map movement control
-        pane.setOnMousePressed(
-                e -> this.lastMousePosition = new Point2D(e.getSceneX(), e.getSceneY()));
+        pane.setOnMousePressed(e -> this.lastMousePosition = new Point2D(e.getX(), e.getX()));
         pane.setOnMouseDragged(e -> {
             if (!e.isStillSincePress()) {
-                Point2D movement = new Point2D(e.getSceneX(), e.getSceneY()).subtract(
-                        lastMousePosition);
-                mapParametersProperty.set(
-                        mapParametersProperty.get().shiftedBy(movement.getX(), movement.getY()));
+                Point2D movement = new Point2D(e.getX(), e.getY()).subtract(lastMousePosition);
+                mapParamsProperty.set(
+                        mapParamsProperty.get().shiftedBy(movement.getX(), movement.getY()));
             }
-            this.lastMousePosition = new Point2D(e.getSceneX(), e.getSceneY());
+            this.lastMousePosition = new Point2D(e.getX(), e.getY());
         });
         pane.setOnMouseReleased(e -> this.lastMousePosition = null);
 
         // New waypoint control
-        // FIXME: slight top left movement when mouse is released / when we create point
         pane.setOnMouseClicked(e -> {
             if (e.isStillSincePress())
-                waypointsManager.addWaypoint(e.getSceneX(), e.getSceneY());
+                waypointsManager.addWaypoint(e.getX(), e.getY());
         });
     }
 
@@ -150,7 +153,7 @@ public final class BaseMapManager {
      */
     private void drawTiles() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        MapViewParameters mapParams = mapParametersProperty.get();
+        MapViewParameters mapParams = mapParamsProperty.get();
 
         int zoomLevel = mapParams.zoomLevel();
         PointWebMercator topLeft = mapParams.pointAt(0, 0);

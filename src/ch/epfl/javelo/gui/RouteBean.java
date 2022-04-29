@@ -18,7 +18,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ListChangeListener.Change;
-import javafx.util.Pair;
 
 /**
  * Beans containing the properties about the waypoints and the corresponding route. (JavaFX Bean)
@@ -34,7 +33,10 @@ public final class RouteBean {
     private final ObjectProperty<ElevationProfile> elevationProfileProperty;
     private final DoubleProperty highlightedPositionProperty;
 
-    private final HashMap<Pair<Integer, Integer>, Route> computedRoutes;
+    /**
+     * Cache memory storing the every {@code SingleRoute} used in the current route.
+     */
+    private final HashMap<NodeIdPair, Route> computedRoutes;
 
     private static final int MAX_STEP_LENGTH = 5;
 
@@ -50,7 +52,7 @@ public final class RouteBean {
         this.elevationProfileProperty = new SimpleObjectProperty<>();
         this.highlightedPositionProperty = new SimpleDoubleProperty();
 
-        this.waypoints.addListener((Change<? extends Waypoint> wp) -> computeBestRoute());
+        this.waypoints.addListener((Change<? extends Waypoint> wp) -> computeRoute());
     }
 
     /**
@@ -72,6 +74,15 @@ public final class RouteBean {
     }
 
     /**
+     * Returns the route from the corresponding property.
+     *
+     * @return the route from the corresponding property
+     */
+    public Route route() {
+        return routeProperty.get();
+    }
+
+    /**
      * Returns the property containing the elevationProfile.
      *
      * @return the property containing the elevationProfile
@@ -90,21 +101,38 @@ public final class RouteBean {
     }
 
     /**
+     * Returns the highlighted position from the corresponding property.
+     *
+     * @return the highlighted position from the corresponding property
+     */
+    public double highlightedPosition() {
+        return highlightedPositionProperty.get();
+    }
+
+    /**
+     * Changes the value stored inside the {@code highlightedPositionProperty}.
+     */
+    public void setHighlightedPosition(double val) {
+        highlightedPositionProperty.set(val);
+    }
+
+    /**
      * Computes the best routes between every waypoint and combine them into a {@code MultiRoute}.
      * If any of the route is {@code null} or if there are strictly less than 2 waypoints, the route
      * and its profile are set to {@code null}.
      */
-    private void computeBestRoute() {
+    private void computeRoute() {
         if (waypoints.size() < 2) {
             emptyRoute();
+            computedRoutes.clear();
             return;
         }
         List<Route> segments = new ArrayList<>();
-        Set<Pair<Integer, Integer>> keysToKeep = new HashSet<>();
+        Set<NodeIdPair> keysToKeep = new HashSet<>();
         for (int i = 0; i < waypoints.size() - 1; i++) {
             int startNodeId = waypoints.get(i).closestNodeId();
             int destinationNodeId = waypoints.get(i + 1).closestNodeId();
-            Pair<Integer, Integer> key = new Pair<>(startNodeId, destinationNodeId);
+            NodeIdPair key = new NodeIdPair(startNodeId, destinationNodeId);
             Route bestRoute;
             if (computedRoutes.containsKey(key))
                 bestRoute = computedRoutes.get(key);
@@ -112,7 +140,8 @@ public final class RouteBean {
                 bestRoute = routeComputer.bestRouteBetween(startNodeId, destinationNodeId);
                 computedRoutes.put(key, bestRoute);
             }
-            if (bestRoute == null) {
+            if (bestRoute == null) { // route could not be found
+                // ASK: when no route is found -> generate an error
                 emptyRoute();
                 return;
             }
@@ -120,9 +149,9 @@ public final class RouteBean {
             segments.add(bestRoute);
         }
         computedRoutes.keySet().retainAll(keysToKeep);
-        Route finalRoute = new MultiRoute(segments);
-        routeProperty.set(finalRoute);
-        ElevationProfile profile = ElevationProfileComputer.elevationProfile(finalRoute,
+        Route combinedRoute = new MultiRoute(segments);
+        routeProperty.set(combinedRoute);
+        ElevationProfile profile = ElevationProfileComputer.elevationProfile(combinedRoute,
                 MAX_STEP_LENGTH);
         elevationProfileProperty.set(profile);
     }
@@ -130,6 +159,13 @@ public final class RouteBean {
     private void emptyRoute() {
         elevationProfileProperty.set(null);
         routeProperty.set(null);
+    }
+
+    /**
+     * Pair of node id representing the start and the end of a route between two waypoints.
+     */
+    private record NodeIdPair(int startNodeId, int destinationNodeId) {
+
     }
 
 }
