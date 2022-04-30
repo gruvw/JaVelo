@@ -82,7 +82,7 @@ public final class BaseMapManager {
         canvas.widthProperty().addListener((p, o, n) -> redrawOnNextPulse());
         canvas.heightProperty().addListener((p, o, n) -> redrawOnNextPulse());
         // Redraw when anchor point moved or zoom changed
-        this.mapParamsProperty.addListener((p, o, n) -> redrawOnNextPulse());
+        mapParamsProperty.addListener((p, o, n) -> redrawOnNextPulse());
 
         // Redraw if needed at every pulse
         canvas.sceneProperty().addListener((p, oldS, newS) -> {
@@ -111,16 +111,16 @@ public final class BaseMapManager {
         });
 
         // Map movement control
-        pane.setOnMousePressed(e -> this.lastMousePosition = new Point2D(e.getX(), e.getX()));
+        pane.setOnMousePressed(e -> lastMousePosition = new Point2D(e.getX(), e.getX()));
         pane.setOnMouseDragged(e -> {
             if (!e.isStillSincePress()) {
                 Point2D movement = new Point2D(e.getX(), e.getY()).subtract(lastMousePosition);
                 mapParamsProperty.set(
                         mapParamsProperty.get().shiftedBy(movement.getX(), movement.getY()));
             }
-            this.lastMousePosition = new Point2D(e.getX(), e.getY());
+            lastMousePosition = new Point2D(e.getX(), e.getY());
         });
-        pane.setOnMouseReleased(e -> this.lastMousePosition = null);
+        pane.setOnMouseReleased(e -> lastMousePosition = null);
 
         // New waypoint control
         pane.setOnMouseClicked(e -> {

@@ -111,8 +111,10 @@ public final class RouteManager {
         });
     }
 
-    // TODO: document private methods
-
+    /**
+     * Draws and positions the line representing the route and the circle when a valid route is
+     * found, hides them otherwise.
+     */
     private void draw() {
         if (!isRouteValid()) {
             line.setVisible(false);
@@ -126,6 +128,9 @@ public final class RouteManager {
         circle.setVisible(true);
     }
 
+    /**
+     * Computes and draws the line from the route.
+     */
     private void drawLine() {
         List<PointCh> points = routeBean.route().points();
         Double[] positions = new Double[points.size() * 2];
@@ -140,6 +145,9 @@ public final class RouteManager {
         placeLine();
     }
 
+    /**
+     * Moves the line to the correct location on the pane.
+     */
     private void placeLine() {
         MapViewParameters mapParams = mapParamsProperty.getValue();
         int zoomLevel = mapParams.zoomLevel();
@@ -148,6 +156,9 @@ public final class RouteManager {
         line.setLayoutY(-topLeft.yAtZoomLevel(zoomLevel));
     }
 
+    /**
+     * Move the circle to the correct location on the pane.
+     */
     private void placeCircle() {
         MapViewParameters mapParams = mapParamsProperty.getValue();
         int zoomLevel = mapParams.zoomLevel();
@@ -158,6 +169,11 @@ public final class RouteManager {
         circle.setCenterY(point.yAtZoomLevel(zoomLevel) - topLeft.yAtZoomLevel(zoomLevel));
     }
 
+    /**
+     * Checks if the route in the {@code routeBean} exists or not.
+     *
+     * @return true if a route exists, false otherwise
+     */
     private boolean isRouteValid() {
         return routeBean.route() != null;
     }

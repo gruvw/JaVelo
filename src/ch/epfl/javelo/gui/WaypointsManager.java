@@ -103,10 +103,9 @@ public final class WaypointsManager {
     }
 
     /**
-     * Generates the {@code Group} objects for each waypoint.
+     * Generates the pins ({@code Group} objects) for every waypoint.
      */
     private void createPins() {
-        // TODO: split in other method (createPin(waypoint), ...)
         for (int i = 0; i < waypoints.size(); i++) {
             Group pin = new Group();
             pin.getStyleClass().add("pin");
@@ -123,14 +122,6 @@ public final class WaypointsManager {
             interiorSvg.getStyleClass().add("pin_inside");
             pin.getChildren().add(interiorSvg);
 
-            // Add style to marker
-            if (i == 0)
-                pin.getStyleClass().add("first");
-            else if (i == waypoints.size() - 1)
-                pin.getStyleClass().add("last");
-            else
-                pin.getStyleClass().add("middle");
-
             pane.getChildren().add(pin);
 
             // CHANGE: remove part that zooms over waypoint
@@ -141,44 +132,59 @@ public final class WaypointsManager {
                                                         .get(0) // map pane always exists
                                                         .getOnScroll()));
 
-            // Remove marker control
-            final int waypointIndex = i;
-            pin.setOnMouseClicked(e -> {
-                if (e.isStillSincePress())
-                    waypoints.remove(waypointIndex);
-            });
+            registerPinHandlers(pin, i);
 
-            // Move marker control
-            pin.setOnMousePressed(e -> {
-                this.lastMousePosition = new Point2D(e.getX(), e.getY());
-                this.lastValidPinPosition = new Point2D(pin.getLayoutX(), pin.getLayoutY());
-            });
-            pin.setOnMouseDragged(e -> {
-                Point2D movement = new Point2D(e.getX(), e.getY()).subtract(lastMousePosition);
-                pin.setLayoutX(pin.getLayoutX() + movement.getX());
-                pin.setLayoutY(pin.getLayoutY() + movement.getY());
-            });
-
-            pin.setOnMouseReleased(e -> {
-                Point2D movement = new Point2D(e.getX(), e.getY()).subtract(lastMousePosition);
-                if (!e.isStillSincePress()) {
-                    // Subtract relative mouse position to drag the waypoint from anywhere inside it
-                    PointCh point = mapParamsProperty.get()
-                                                     .pointAt(pin.getLayoutX() + movement.getX(),
-                                                             pin.getLayoutY() + movement.getY())
-                                                     .toPointCh();
-                    Waypoint wp = waypointAt(point);
-                    if (wp == null) {
-                        pin.setLayoutX(this.lastValidPinPosition.getX());
-                        pin.setLayoutY(this.lastValidPinPosition.getY());
-                    } else
-                        waypoints.set(waypointIndex, wp);
-                    this.lastValidPinPosition = null;
-                }
-                this.lastMousePosition = null;
-            });
+            // Add style to marker
+            if (i == 0)
+                pin.getStyleClass().add("first");
+            else if (i == waypoints.size() - 1)
+                pin.getStyleClass().add("last");
+            else
+                pin.getStyleClass().add("middle");
             pins.add(pin);
         }
+    }
+
+    /**
+     * Registers event handlers to a given pin.
+     *
+     * @param pin           the pin that will register the event handlers
+     * @param waypointIndex the index of the waypoint that the given pin represents
+     */
+    private void registerPinHandlers(Group pin, int waypointIndex) {
+        // Remove marker control
+        pin.setOnMouseClicked(e -> {
+            if (e.isStillSincePress())
+                waypoints.remove(waypointIndex);
+        });
+
+        // Move marker control
+        pin.setOnMousePressed(e -> {
+            lastMousePosition = new Point2D(e.getX(), e.getY());
+            lastValidPinPosition = new Point2D(pin.getLayoutX(), pin.getLayoutY());
+        });
+        pin.setOnMouseDragged(e -> {
+            Point2D movement = new Point2D(e.getX(), e.getY()).subtract(lastMousePosition);
+            pin.setLayoutX(pin.getLayoutX() + movement.getX());
+            pin.setLayoutY(pin.getLayoutY() + movement.getY());
+        });
+        pin.setOnMouseReleased(e -> {
+            Point2D movement = new Point2D(e.getX(), e.getY()).subtract(lastMousePosition);
+            if (!e.isStillSincePress()) {
+                PointCh point = mapParamsProperty.get()
+                                                 .pointAt(pin.getLayoutX() + movement.getX(),
+                                                         pin.getLayoutY() + movement.getY())
+                                                 .toPointCh();
+                Waypoint wp = waypointAt(point);
+                if (wp == null) {
+                    pin.setLayoutX(lastValidPinPosition.getX());
+                    pin.setLayoutY(lastValidPinPosition.getY());
+                } else
+                    waypoints.set(waypointIndex, wp);
+            }
+            lastValidPinPosition = null;
+            lastMousePosition = null;
+        });
     }
 
     /**

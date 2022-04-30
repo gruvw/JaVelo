@@ -1,7 +1,6 @@
 package ch.epfl.javelo.gui;
 
 import java.nio.file.Path;
-import java.util.function.Consumer;
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.routing.CityBikeCF;
 import ch.epfl.javelo.routing.CostFunction;
