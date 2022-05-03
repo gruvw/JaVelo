@@ -38,7 +38,7 @@ Created a new static method `of(PointWebMercator point, int zoomLevel)` designed
 
 ### `MapViewParameters`
 
-Changed the method `withMinXY` to another method `shiftedBy`.
+Changed the method `withMinXY` to another method `withShiftedBy`.
 It allows to shift the map view by a given amount along the X and Y axis.
 We changed the method because we actually want to shift the map view when using `withMinXY` which required to call the getters of the map view.
 

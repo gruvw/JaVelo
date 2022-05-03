@@ -30,6 +30,7 @@ public final class Stage9ManualTest extends Application {
 
         CostFunction costFunction = new CityBikeCF(graph);
         RouteComputer routeComputer = new RouteComputer(graph, costFunction);
+
         RouteBean routeBean = new RouteBean(routeComputer);
 
         WaypointsManager waypointsManager = new WaypointsManager(graph, mapViewParametersP,

@@ -26,7 +26,7 @@ public record MapViewParameters(int zoomLevel, double minX, double minY) {
      * @return the new instance with the top left corner moved by {@code xDelta} and {@code yDelta}
      *         with the same zoom level as the current instance
      */
-    public MapViewParameters shiftedBy(double xDelta, double yDelta) {
+    public MapViewParameters withShiftedBy(double xDelta, double yDelta) {
         if (xDelta == 0 && yDelta == 0)
             return this;
         return new MapViewParameters(zoomLevel, minX - xDelta, minY - yDelta);

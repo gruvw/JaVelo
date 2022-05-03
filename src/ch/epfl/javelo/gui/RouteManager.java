@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
 import ch.epfl.javelo.routing.Route;
-import javafx.beans.property.ReadOnlyProperty;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
@@ -22,7 +22,7 @@ import javafx.scene.shape.Polyline;
 public final class RouteManager {
 
     private final RouteBean routeBean;
-    private final ReadOnlyProperty<MapViewParameters> mapParamsProperty;
+    private final ReadOnlyObjectProperty<MapViewParameters> mapParamsProperty;
     private final Consumer<String> errorConsumer;
 
     private final Pane pane;
@@ -40,7 +40,7 @@ public final class RouteManager {
      * @param errorConsumer     handles errors
      */
     public RouteManager(RouteBean routeBean,
-                        ReadOnlyProperty<MapViewParameters> mapParamsProperty,
+                        ReadOnlyObjectProperty<MapViewParameters> mapParamsProperty,
                         Consumer<String> errorConsumer) {
         this.routeBean = routeBean;
         this.mapParamsProperty = mapParamsProperty;
@@ -55,8 +55,7 @@ public final class RouteManager {
 
         this.circle = new Circle(CIRCLE_RADIUS);
         this.circle.setId("highlight");
-        this.circle.setVisible(false);
-        this.pane.getChildren().add(circle);
+        this.pane.getChildren().add(this.circle);
 
         registerListeners();
         registerHandlers();
@@ -78,7 +77,7 @@ public final class RouteManager {
      */
     private void registerListeners() {
         mapParamsProperty.addListener((p, o, n) -> {
-            // Re-draw line only when zoom changes
+            // Redraw line only when zoom changes, reposition it otherwise
             if (o.zoomLevel() == n.zoomLevel() && isRouteValid()) {
                 placeLine();
                 placeCircle();
@@ -103,7 +102,7 @@ public final class RouteManager {
                     return;
                 }
             Point2D position = circle.localToParent(e.getX(), e.getY());
-            PointCh point = mapParamsProperty.getValue()
+            PointCh point = mapParamsProperty.get()
                                              .pointAt(position.getX(), position.getY())
                                              .toPointCh();
             Waypoint wp = new Waypoint(point, closestNodeId);
@@ -134,7 +133,7 @@ public final class RouteManager {
     private void drawLine() {
         List<PointCh> points = routeBean.route().points();
         Double[] positions = new Double[points.size() * 2];
-        int zoomLevel = mapParamsProperty.getValue().zoomLevel();
+        int zoomLevel = mapParamsProperty.get().zoomLevel();
         for (int i = 0; i < points.size(); i++) {
             PointWebMercator point = PointWebMercator.ofPointCh(points.get(i));
             positions[i * 2] = point.xAtZoomLevel(zoomLevel);
@@ -149,28 +148,26 @@ public final class RouteManager {
      * Moves the line to the correct location on the pane.
      */
     private void placeLine() {
-        MapViewParameters mapParams = mapParamsProperty.getValue();
-        int zoomLevel = mapParams.zoomLevel();
-        PointWebMercator topLeft = mapParams.pointAt(0, 0);
-        line.setLayoutX(-topLeft.xAtZoomLevel(zoomLevel));
-        line.setLayoutY(-topLeft.yAtZoomLevel(zoomLevel));
+        Point2D topLeft = mapParamsProperty.get().topLeft();
+        line.setLayoutX(-topLeft.getX());
+        line.setLayoutY(-topLeft.getY());
     }
 
     /**
      * Move the circle to the correct location on the pane.
      */
     private void placeCircle() {
-        MapViewParameters mapParams = mapParamsProperty.getValue();
+        MapViewParameters mapParams = mapParamsProperty.get();
         int zoomLevel = mapParams.zoomLevel();
-        PointWebMercator topLeft = mapParams.pointAt(0, 0);
+        Point2D topLeft = mapParams.topLeft();
         PointCh pointCh = routeBean.route().pointAt(routeBean.highlightedPosition());
         PointWebMercator point = PointWebMercator.ofPointCh(pointCh);
-        circle.setCenterX(point.xAtZoomLevel(zoomLevel) - topLeft.xAtZoomLevel(zoomLevel));
-        circle.setCenterY(point.yAtZoomLevel(zoomLevel) - topLeft.yAtZoomLevel(zoomLevel));
+        circle.setCenterX(point.xAtZoomLevel(zoomLevel) - topLeft.getX());
+        circle.setCenterY(point.yAtZoomLevel(zoomLevel) - topLeft.getY());
     }
 
     /**
-     * Checks if the route in the {@code routeBean} exists or not.
+     * Checks wether the route in the {@code routeBean} exists or not.
      *
      * @return true if a route exists, false otherwise
      */

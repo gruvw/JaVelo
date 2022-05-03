@@ -24,6 +24,9 @@ import static ch.epfl.javelo.gui.TileManager.TileId;
  */
 public final class BaseMapManager {
 
+    private static final int MIN_ZOOM_LEVEL = 8;
+    private static final int MAX_ZOOM_LEVEL = 19;
+
     private final TileManager tileManager;
     private final WaypointsManager waypointsManager;
     private final ObjectProperty<MapViewParameters> mapParamsProperty;
@@ -33,6 +36,7 @@ public final class BaseMapManager {
 
     private boolean redrawNeeded;
     private Point2D lastMousePosition;
+
 
     /**
      * Constructor of a background map manager.
@@ -99,7 +103,8 @@ public final class BaseMapManager {
         pane.setOnScroll(e -> {
             MapViewParameters mapParams = mapParamsProperty.get();
             double zoomDelta = Math.signum(e.getDeltaY());
-            int newZoomLevel = Math2.clamp(8, mapParams.zoomLevel() + (int) zoomDelta, 19);
+            int newZoomLevel = Math2.clamp(MIN_ZOOM_LEVEL, mapParams.zoomLevel() + (int) zoomDelta,
+                    MAX_ZOOM_LEVEL);
             // CHANGE: remove zooms over waypoint (remove position, position.getX() -> e.getX())
             Point2D position = ((Node) e.getSource()).localToParent(e.getX(), e.getY());
             PointWebMercator centerOfZoom = mapParams.pointAt(position.getX(), position.getY());
@@ -111,13 +116,11 @@ public final class BaseMapManager {
         });
 
         // Map movement control
-        pane.setOnMousePressed(e -> lastMousePosition = new Point2D(e.getX(), e.getX()));
+        pane.setOnMousePressed(e -> lastMousePosition = new Point2D(e.getX(), e.getY()));
         pane.setOnMouseDragged(e -> {
-            if (!e.isStillSincePress()) {
-                Point2D movement = new Point2D(e.getX(), e.getY()).subtract(lastMousePosition);
-                mapParamsProperty.set(
-                        mapParamsProperty.get().shiftedBy(movement.getX(), movement.getY()));
-            }
+            Point2D movement = new Point2D(e.getX(), e.getY()).subtract(lastMousePosition);
+            mapParamsProperty.set(
+                    mapParamsProperty.get().withShiftedBy(movement.getX(), movement.getY()));
             lastMousePosition = new Point2D(e.getX(), e.getY());
         });
         pane.setOnMouseReleased(e -> lastMousePosition = null);

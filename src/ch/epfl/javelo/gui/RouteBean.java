@@ -65,7 +65,7 @@ public final class RouteBean {
     }
 
     /**
-     * Returns the property containing the route, as read only.
+     * Returns the property containing the route, as read-only.
      *
      * @return the property containing the route
      */
@@ -133,15 +133,10 @@ public final class RouteBean {
             int startNodeId = waypoints.get(i).closestNodeId();
             int destinationNodeId = waypoints.get(i + 1).closestNodeId();
             NodeIdPair key = new NodeIdPair(startNodeId, destinationNodeId);
-            Route bestRoute;
-            if (computedRoutes.containsKey(key))
-                bestRoute = computedRoutes.get(key);
-            else {
-                bestRoute = routeComputer.bestRouteBetween(startNodeId, destinationNodeId);
-                computedRoutes.put(key, bestRoute);
-            }
+            Route bestRoute = computedRoutes.containsKey(key) ? computedRoutes.get(key)
+                    : routeComputer.bestRouteBetween(startNodeId, destinationNodeId);
+            computedRoutes.putIfAbsent(key, bestRoute);
             if (bestRoute == null) { // route could not be found
-                // ASK: when no route is found -> generate an error
                 emptyRoute();
                 return;
             }
@@ -157,8 +152,8 @@ public final class RouteBean {
     }
 
     private void emptyRoute() {
-        elevationProfileProperty.set(null);
         routeProperty.set(null);
+        elevationProfileProperty.set(null);
     }
 
     /**
