@@ -37,7 +37,6 @@ public final class BaseMapManager {
     private boolean redrawNeeded;
     private Point2D lastMousePosition;
 
-
     /**
      * Constructor of a background map manager.
      *
