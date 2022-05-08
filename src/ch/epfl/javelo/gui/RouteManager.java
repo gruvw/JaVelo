@@ -60,7 +60,7 @@ public final class RouteManager {
         registerListeners();
         registerHandlers();
 
-        draw();
+        draw(); // TODO: remove
     }
 
     /**

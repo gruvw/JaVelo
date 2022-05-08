@@ -62,7 +62,7 @@ public final class WaypointsManager {
         this.mapParamsProperty.addListener((p, o, n) -> positionPins());
         this.waypoints.addListener((Change<? extends Waypoint> wp) -> redrawPins());
 
-        redrawPins();
+        redrawPins(); // TODO: remove
     }
 
     /**
@@ -82,8 +82,6 @@ public final class WaypointsManager {
      * @return true if the waypoint was added, false otherwise
      */
     public boolean addWaypoint(double x, double y) {
-        // ASK: slight top left movement when mouse is released / when we create point (maybe
-        // because of conversion to pointch)
         PointCh point = mapParamsProperty.get().pointAt(x, y).toPointCh();
         Waypoint wp = waypointAt(point);
         if (wp == null)

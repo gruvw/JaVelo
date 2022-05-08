@@ -129,7 +129,7 @@ public final class RouteBean {
             return;
         }
         List<Route> segments = new ArrayList<>();
-        Set<NodeIdPair> keysToKeep = new HashSet<>();
+        Set<NodeIdPair> keysToKeep = new HashSet<>(); // ASK correct way to cache ?
         for (int i = 0; i < waypoints.size() - 1; i++) {
             int startNodeId = waypoints.get(i).closestNodeId();
             int destinationNodeId = waypoints.get(i + 1).closestNodeId();

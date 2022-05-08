@@ -1,7 +1,6 @@
 package ch.epfl.javelo.gui;
 
 import java.util.Arrays;
-import java.util.concurrent.Callable;
 import ch.epfl.javelo.routing.ElevationProfile;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
@@ -22,7 +21,6 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
-import javafx.scene.shape.PathElement;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -77,6 +75,11 @@ public final class ElevationProfileManager {
     private static final String STATS_TEXT = "Longueur : %.1f km" + "     Montée : %.0f m"
             + "     Descente : %.0f m" + "     Altitude : de %.0f m à %.0f m";
 
+    /**
+     * Distance between two elevation measurements.
+     */
+    private static final int ELEVATION_STEP = 5; // ASK
+
     private final ReadOnlyObjectProperty<ElevationProfile> profileProperty;
     private final ReadOnlyDoubleProperty highlightedPositionProperty;
 
@@ -111,6 +114,7 @@ public final class ElevationProfileManager {
 
         this.pane = new BorderPane();
         // TODO: Find a way to automatically add to bin directory at runtime
+        // ASK: do this here
         this.pane.getStylesheets().add("file:resources/elevation_profile.css");
 
         this.centerPane = new Pane();
@@ -136,19 +140,15 @@ public final class ElevationProfileManager {
 
         this.pane.getChildren().addAll(centerPane, bottomBox);
 
-        this.surroundingRectangleProperty = new SimpleObjectProperty<>();
-        this.surroundingRectangleProperty.set(createRectangle());
+        this.surroundingRectangleProperty = new SimpleObjectProperty<>(Rectangle2D.EMPTY);
 
-        this.screenToWorldProperty = new SimpleObjectProperty<>();
+        this.screenToWorldProperty = new SimpleObjectProperty<>(new Affine());
         this.worldToScreenProperty = new SimpleObjectProperty<>();
-        this.screenToWorldProperty.set(createScreenToWorldTransform());
 
         this.mousePositionOnProfileProperty = new SimpleDoubleProperty();
 
         registerBindings();
         registerHandlers();
-
-        draw(); // ASK: should we call draw in ctor
     }
 
     /**
@@ -173,9 +173,12 @@ public final class ElevationProfileManager {
 
     private void registerBindings() {
         screenToWorldProperty.bind(Bindings.createObjectBinding(
-                () -> createScreenToWorldTransform(), surroundingRectangleProperty));
+                () -> createScreenToWorldTransform(surroundingRectangleProperty.get()),
+                surroundingRectangleProperty));
         worldToScreenProperty.bind(Bindings.createObjectBinding(
-                () -> screenToWorldProperty.get().createInverse(), screenToWorldProperty));
+                // () -> createWorldToScreenTransform(surroundingRectangleProperty.get()),
+                () -> screenToWorldProperty.get().createInverse(), screenToWorldProperty,
+                screenToWorldProperty));
 
         highlightedLine.layoutXProperty()
                        .bind(Bindings.createDoubleBinding(
@@ -188,8 +191,9 @@ public final class ElevationProfileManager {
         highlightedLine.endYProperty().bind(Bindings.select(surroundingRectangleProperty, "maxY"));
         highlightedLine.visibleProperty().bind(highlightedPositionProperty.greaterThanOrEqualTo(0));
 
-        surroundingRectangleProperty.bind(Bindings.createObjectBinding(() -> createRectangle(),
-                pane.widthProperty(), pane.heightProperty()));
+        surroundingRectangleProperty.bind(Bindings.createObjectBinding(
+                () -> createRectangle(pane.getWidth(), pane.getHeight()), pane.widthProperty(),
+                pane.heightProperty()));
     }
 
     private void registerHandlers() {
@@ -209,8 +213,8 @@ public final class ElevationProfileManager {
 
         // Horizontal lines (Elevations)
         int elevationStep = Arrays.stream(ELEVATION_STEPS)
-                                  .filter((e) -> worldToScreen.deltaTransform(0, e)
-                                                              .getY() >= MIN_HORIZONTAL_SPACING)
+                                  .filter((e) -> -worldToScreen.deltaTransform(0, e)
+                                                               .getY() >= MIN_HORIZONTAL_SPACING)
                                   .findFirst()
                                   .orElse(ELEVATION_STEPS[ELEVATION_STEPS.length - 1]);
         int startElevation = (int) (Math.ceil(profile.minElevation() / elevationStep)
@@ -232,11 +236,27 @@ public final class ElevationProfileManager {
                                  .findFirst()
                                  .orElse(POSITION_STEPS[POSITION_STEPS.length - 1]);
         for (int position = 0; position <= profile.length(); position += positionStep) {
-            Point2D start = worldToScreen.transform(position, 0);
+            Point2D start = worldToScreen.transform(position, profile.minElevation());
             Point2D end = worldToScreen.transform(position, profile.maxElevation());
             gridPath.getElements()
                     .addAll(new MoveTo(start.getX(), start.getY()),
                             new LineTo(end.getX(), end.getY()));
+        }
+    }
+
+    private void drawPolygon() {
+        ElevationProfile profile = profileProperty.get();
+        Transform worldToScreen = worldToScreenProperty.get();
+        graphPolygon.getPoints().clear();
+
+        Point2D bottomLeft = worldToScreen.transform(profile.length(), profile.minElevation());
+        Point2D bottomRight = worldToScreen.transform(0, profile.minElevation());
+        graphPolygon.getPoints()
+                    .addAll(bottomLeft.getX(), bottomLeft.getY(), bottomRight.getX(),
+                            bottomRight.getY());
+        for (double p = 0; p <= profile.length(); p += ELEVATION_STEP) {
+            Point2D converted = worldToScreen.transform(p, profile.elevationAt(p));
+            graphPolygon.getPoints().addAll(converted.getX(), converted.getY());
         }
     }
 
@@ -265,28 +285,28 @@ public final class ElevationProfileManager {
         textLabels.getChildren().forEach(child -> ((Text) child).getStyleClass().add("grid_label"));
     }
 
-    private Rectangle2D createRectangle() {
+    private Rectangle2D createRectangle(double paneWidth, double paneHeight) {
         double width = Math.max(
-                pane.getWidth() - (PROFILE_PADDING.getLeft() + PROFILE_PADDING.getRight()), 0);
+                paneWidth - (PROFILE_PADDING.getLeft() + PROFILE_PADDING.getRight()), 0);
         double height = Math.max(
-                pane.getHeight() - (PROFILE_PADDING.getBottom() + PROFILE_PADDING.getTop()), 0);
+                paneHeight - (PROFILE_PADDING.getBottom() + PROFILE_PADDING.getTop()), 0);
         return new Rectangle2D(PROFILE_PADDING.getLeft(), PROFILE_PADDING.getTop(), width, height);
     }
 
-    private Transform createScreenToWorldTransform() {
+    private Transform createScreenToWorldTransform(Rectangle2D rectangle) {
         ElevationProfile profile = profileProperty.get();
-        Rectangle2D rectangle = surroundingRectangleProperty.get();
         Affine screenToWorldTransform = new Affine();
         screenToWorldTransform.prependTranslation(-PROFILE_PADDING.getLeft(),
                 -PROFILE_PADDING.getTop());
         screenToWorldTransform.prependScale(profile.length() / rectangle.getWidth(),
-                (profile.maxElevation() - profile.minElevation()) / rectangle.getHeight());
-        screenToWorldTransform.prependTranslation(0, profile.minElevation());
+                (profile.minElevation() - profile.maxElevation()) / rectangle.getHeight());
+        screenToWorldTransform.prependTranslation(0, profile.maxElevation());
         return screenToWorldTransform;
     }
 
     private void draw() {
         drawGrid();
+        drawPolygon();
         // draw the labels (if not in grid)
         // set statistic text
     }

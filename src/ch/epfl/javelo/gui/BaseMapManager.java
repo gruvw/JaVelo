@@ -62,7 +62,7 @@ public final class BaseMapManager {
         registerListeners();
         registerHandlers();
 
-        redrawOnNextPulse();
+        redrawOnNextPulse(); // TODO remove
     }
 
     /**
