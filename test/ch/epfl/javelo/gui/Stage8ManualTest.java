@@ -39,8 +39,7 @@ public final class Stage8ManualTest extends Application {
                                                            mapViewParametersP);
 
         StackPane mainPane = new StackPane(baseMapManager.pane(), waypointsManager.pane());
-        // TODO: Find a way to automatically add to bin directory at runtime
-        mainPane.getStylesheets().add("file:resources/map.css");
+        mainPane.getStylesheets().add("map.css");
         primaryStage.setMinWidth(600);
         primaryStage.setMinHeight(300);
         primaryStage.setScene(new Scene(mainPane));

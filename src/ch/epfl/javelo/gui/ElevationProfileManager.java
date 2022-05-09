@@ -58,7 +58,6 @@ public final class ElevationProfileManager {
      */
     private static final int MIN_HORIZONTAL_SPACING = 50;
 
-
     /**
      * Distances between the center pane and its parent.
      */
@@ -113,9 +112,8 @@ public final class ElevationProfileManager {
         this.highlightedPositionProperty = highlightedPositionProperty;
 
         this.pane = new BorderPane();
-        // TODO: Find a way to automatically add to bin directory at runtime
         // ASK: do this here
-        this.pane.getStylesheets().add("file:resources/elevation_profile.css");
+        this.pane.getStylesheets().add("elevation_profile.css");
 
         this.centerPane = new Pane();
         this.bottomBox = new VBox();

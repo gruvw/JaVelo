@@ -81,7 +81,7 @@ public final class BaseMapManager {
         canvas.widthProperty().bind(pane.widthProperty());
         canvas.heightProperty().bind(pane.heightProperty());
 
-        // Redraw when resize
+        // Redraw when resized
         canvas.widthProperty().addListener((p, o, n) -> redrawOnNextPulse());
         canvas.heightProperty().addListener((p, o, n) -> redrawOnNextPulse());
         // Redraw when anchor point moved or zoom changed
