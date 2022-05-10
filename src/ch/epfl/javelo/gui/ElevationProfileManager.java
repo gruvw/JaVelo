@@ -114,6 +114,7 @@ public final class ElevationProfileManager {
         this.pane = new BorderPane();
         // ASK: do this here
         this.pane.getStylesheets().add("elevation_profile.css");
+        // this.pane.setPickOnBounds(false); // ASK: needed or not ?
 
         this.centerPane = new Pane();
         this.bottomBox = new VBox();
@@ -136,7 +137,8 @@ public final class ElevationProfileManager {
         this.centerPane.getChildren().addAll(gridPath, textLabels, graphPolygon, highlightedLine);
         this.bottomBox.getChildren().add(statsText);
 
-        this.pane.getChildren().addAll(centerPane, bottomBox);
+        this.pane.setCenter(centerPane);
+        this.pane.setBottom(bottomBox);
 
         this.surroundingRectangleProperty = new SimpleObjectProperty<>(Rectangle2D.EMPTY);
 
@@ -170,37 +172,44 @@ public final class ElevationProfileManager {
     }
 
     private void registerBindings() {
+        surroundingRectangleProperty.bind(Bindings.createObjectBinding(
+                () -> createRectangle(centerPane.getWidth(), centerPane.getHeight()),
+                centerPane.widthProperty(), centerPane.heightProperty()));
+
         screenToWorldProperty.bind(Bindings.createObjectBinding(
                 () -> createScreenToWorldTransform(surroundingRectangleProperty.get()),
                 surroundingRectangleProperty));
         worldToScreenProperty.bind(Bindings.createObjectBinding(
-                // () -> createWorldToScreenTransform(surroundingRectangleProperty.get()),
-                () -> screenToWorldProperty.get().createInverse(), screenToWorldProperty,
-                screenToWorldProperty));
+                () -> screenToWorldProperty.get().createInverse(), screenToWorldProperty));
 
+        // TODO: FIX LINE
         highlightedLine.layoutXProperty()
                        .bind(Bindings.createDoubleBinding(
-                               worldToScreenProperty.get()
-                                                    .transform(highlightedPositionProperty.get(),
-                                                            0)::getX,
+                               () -> worldToScreenProperty.get()
+                                                          .transform(
+                                                                  highlightedPositionProperty.get(),
+                                                                  0)
+                                                          .getX(),
                                highlightedPositionProperty, worldToScreenProperty));
         highlightedLine.startYProperty()
                        .bind(Bindings.select(surroundingRectangleProperty, "minY"));
         highlightedLine.endYProperty().bind(Bindings.select(surroundingRectangleProperty, "maxY"));
         highlightedLine.visibleProperty().bind(highlightedPositionProperty.greaterThanOrEqualTo(0));
 
-        surroundingRectangleProperty.bind(Bindings.createObjectBinding(
-                () -> createRectangle(pane.getWidth(), pane.getHeight()), pane.widthProperty(),
-                pane.heightProperty()));
+        statsText.textProperty().bind(Bindings.createStringBinding(() -> {
+            ElevationProfile profile = profileProperty.get();
+            return STATS_TEXT.formatted(profile.length() / 1000, profile.totalAscent(),
+                    profile.totalDescent(), profile.minElevation(), profile.maxElevation());
+        }, profileProperty));
     }
 
     private void registerHandlers() {
-        pane.setOnMouseMoved(e -> mousePositionOnProfileProperty.set(
+        surroundingRectangleProperty.addListener((p, o, n) -> draw());
+
+        centerPane.setOnMouseMoved(e -> mousePositionOnProfileProperty.set(
                 surroundingRectangleProperty.get().contains(e.getX(), e.getY()) ? e.getX()
                         : Double.NaN));
-        pane.setOnMouseExited(e -> mousePositionOnProfileProperty.set(Double.NaN));
-
-        surroundingRectangleProperty.addListener((p, o, n) -> draw());
+        centerPane.setOnMouseExited(e -> mousePositionOnProfileProperty.set(Double.NaN));
     }
 
     private void drawGrid() {
@@ -303,10 +312,9 @@ public final class ElevationProfileManager {
     }
 
     private void draw() {
+        // draw the labels (if not in grid)
         drawGrid();
         drawPolygon();
-        // draw the labels (if not in grid)
-        // set statistic text
     }
 
 }
