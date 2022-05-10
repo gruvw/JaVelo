@@ -20,6 +20,7 @@ public final class Stage9ManualTest extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        // ASK no connection => weird
         Graph graph = Graph.loadFrom(Path.of("data/lausanne"));
         Path cacheBasePath = Path.of("data/tiles");
         String tileServerHost = "tile.openstreetmap.org";

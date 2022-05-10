@@ -46,16 +46,14 @@ public final class RouteManager {
         this.mapParamsProperty = mapParamsProperty;
         this.errorConsumer = errorConsumer;
 
-        this.pane = new Pane();
-        this.pane.setPickOnBounds(false); // don't block background events
-
         this.line = new Polyline();
         this.line.setId("route");
-        this.pane.getChildren().add(this.line);
 
         this.circle = new Circle(CIRCLE_RADIUS);
         this.circle.setId("highlight");
-        this.pane.getChildren().add(this.circle);
+
+        this.pane = new Pane(this.line, this.circle);
+        this.pane.setPickOnBounds(false); // don't block background events
 
         registerListeners();
         registerHandlers();
@@ -73,7 +71,7 @@ public final class RouteManager {
     }
 
     /**
-     * Registers listeners to the nodes in the scene.
+     * Registers listeners.
      */
     private void registerListeners() {
         mapParamsProperty.addListener((p, o, n) -> {
@@ -89,7 +87,7 @@ public final class RouteManager {
     }
 
     /**
-     * Registers event handlers to the nodes in the scene.
+     * Registers event handlers.
      */
     private void registerHandlers() {
         circle.setOnMouseClicked(e -> {

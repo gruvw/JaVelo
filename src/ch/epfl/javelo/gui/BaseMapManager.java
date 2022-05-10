@@ -51,13 +51,11 @@ public final class BaseMapManager {
         this.waypointsManager = waypointsManager;
         this.mapParamsProperty = mapParamsProperty;
 
-        this.pane = new Pane();
+        this.canvas = new Canvas();
 
+        this.pane = new Pane(this.canvas);
         // CHANGE: remove part that zooms over waypoint
         this.pane.setId("mapPane"); // used to cascade zoom action from waypoint pin
-
-        this.canvas = new Canvas();
-        this.pane.getChildren().add(this.canvas);
 
         registerListeners();
         registerHandlers();
@@ -75,7 +73,7 @@ public final class BaseMapManager {
     }
 
     /**
-     * Registers listeners to the nodes in the scene.
+     * Registers listeners.
      */
     private void registerListeners() {
         canvas.widthProperty().bind(pane.widthProperty());
@@ -95,7 +93,7 @@ public final class BaseMapManager {
     }
 
     /**
-     * Registers event handlers to the nodes in the scene.
+     * Registers event handlers.
      */
     private void registerHandlers() {
         // Zoom control
