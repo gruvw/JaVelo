@@ -60,7 +60,7 @@ public final class BaseMapManager {
         registerListeners();
         registerHandlers();
 
-        redrawOnNextPulse(); // TODO remove
+        redrawOnNextPulse();
     }
 
     /**
@@ -73,7 +73,7 @@ public final class BaseMapManager {
     }
 
     /**
-     * Registers listeners.
+     * Registers listeners and bindings.
      */
     private void registerListeners() {
         canvas.widthProperty().bind(pane.widthProperty());

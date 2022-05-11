@@ -54,6 +54,8 @@ public final class RouteBean {
         this.highlightedPositionProperty = new SimpleDoubleProperty();
 
         this.waypoints.addListener((Change<? extends Waypoint> wp) -> computeRoute());
+
+        computeRoute();
     }
 
     /**

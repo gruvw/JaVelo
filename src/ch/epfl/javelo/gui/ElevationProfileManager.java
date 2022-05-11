@@ -190,7 +190,7 @@ public final class ElevationProfileManager {
     }
 
     /**
-     * Registers event handlers.
+     * Registers event handlers and listeners.
      */
     private void registerHandlers() {
         surroundingRectangleProperty.addListener((p, o, n) -> draw());
