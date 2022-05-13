@@ -23,6 +23,7 @@ import javafx.scene.shape.SVGPath;
  */
 public final class WaypointsManager {
 
+    // BUG move waypoint end on waypoint start -> waypoint end deletes
     private final Graph graph;
     private final ObjectProperty<MapViewParameters> mapParamsProperty;
     private final ObservableList<Waypoint> waypoints;

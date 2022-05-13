@@ -86,18 +86,27 @@ public final class RouteBean {
     }
 
     /**
-     * Returns the property containing the elevationProfile.
+     * Returns the property containing the elevation profile.
      *
-     * @return the property containing the elevationProfile
+     * @return the property containing the elevation profile
      */
     public ReadOnlyObjectProperty<ElevationProfile> elevationProfileProperty() {
         return elevationProfileProperty;
     }
 
     /**
-     * Returns the property containing the highlightedPosition, as read-only.
+     * Returns the profile from the corresponding property.
      *
-     * @return the property containing the highlightedPosition
+     * @return the profile from the corresponding property
+     */
+    public ElevationProfile elevationProfile() {
+        return elevationProfileProperty.get();
+    }
+
+    /**
+     * Returns the property containing the highlighted position, as read-only.
+     *
+     * @return the property containing the highlighted position
      */
     public ReadOnlyDoubleProperty highlightedPositionProperty() {
         return highlightedPositionProperty;
@@ -148,7 +157,7 @@ public final class RouteBean {
             return;
         }
         List<Route> segments = new ArrayList<>();
-        Set<NodeIdPair> keysToKeep = new HashSet<>(); // ASK correct way to cache ?
+        Set<NodeIdPair> keysToKeep = new HashSet<>();
         for (int i = 0; i < waypoints.size() - 1; i++) {
             int startNodeId = waypoints.get(i).closestNodeId();
             int destinationNodeId = waypoints.get(i + 1).closestNodeId();

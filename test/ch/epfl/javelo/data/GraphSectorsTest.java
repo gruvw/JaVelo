@@ -18,27 +18,27 @@ class GraphSectorsTest {
     private static GraphSectors gs;
     private static List<GraphSectors.Sector> sectors = new ArrayList<>();
 
-    private final static double SECTOR_WIDTH = 2726.5625;
-    private final static double SECTOR_HEIGHT = 1726.5625;
+    private static final double SECTOR_WIDTH = 2726.5625;
+    private static final double SECTOR_HEIGHT = 1726.5625;
 
-    private final static PointCh bottomLeft = new PointCh(SwissBounds.MIN_E, SwissBounds.MIN_N);
-    private final static PointCh bottomRight = new PointCh(SwissBounds.MAX_E, SwissBounds.MIN_N);
-    private final static PointCh topRight = new PointCh(SwissBounds.MAX_E, SwissBounds.MAX_N);
-    private final static PointCh topLeft = new PointCh(SwissBounds.MIN_E, SwissBounds.MAX_N);
-    private final static PointCh pointOnS1Border = new PointCh(SECTOR_WIDTH + SwissBounds.MIN_E,
-            SECTOR_HEIGHT + SwissBounds.MIN_N);
-    private final static PointCh pointUnderS1Border = new PointCh(
-            SECTOR_WIDTH + SwissBounds.MIN_E - 1e-8, SECTOR_HEIGHT + SwissBounds.MIN_N - 1e-8);
-    private final static PointCh pointCloseToBottomLeft = new PointCh(SwissBounds.MIN_E + 1,
-            SwissBounds.MIN_N + 1);
-    private final static PointCh pointAboveS1 = new PointCh(SECTOR_WIDTH + SwissBounds.MIN_E + 10,
-            SECTOR_HEIGHT + SwissBounds.MIN_N + 10);
-    private final static PointCh middle = new PointCh((SwissBounds.MIN_E + SwissBounds.MAX_E) / 2,
-            (SwissBounds.MIN_N + SwissBounds.MAX_N) / 2);
+    private static final PointCh bottomLeft = new PointCh(SwissBounds.MIN_E, SwissBounds.MIN_N);
+    private static final PointCh bottomRight = new PointCh(SwissBounds.MAX_E, SwissBounds.MIN_N);
+    private static final PointCh topRight = new PointCh(SwissBounds.MAX_E, SwissBounds.MAX_N);
+    private static final PointCh topLeft = new PointCh(SwissBounds.MIN_E, SwissBounds.MAX_N);
+    private static final PointCh pointOnS1Border = new PointCh(SECTOR_WIDTH + SwissBounds.MIN_E,
+                                                               SECTOR_HEIGHT + SwissBounds.MIN_N);
+    private static final PointCh pointUnderS1Border = new PointCh(SECTOR_WIDTH + SwissBounds.MIN_E
+            - 1e-8, SECTOR_HEIGHT + SwissBounds.MIN_N - 1e-8);
+    private static final PointCh pointCloseToBottomLeft = new PointCh(SwissBounds.MIN_E + 1,
+                                                                      SwissBounds.MIN_N + 1);
+    private static final PointCh pointAboveS1 = new PointCh(SECTOR_WIDTH + SwissBounds.MIN_E + 10,
+                                                            SECTOR_HEIGHT + SwissBounds.MIN_N + 10);
+    private static final PointCh middle = new PointCh((SwissBounds.MIN_E + SwissBounds.MAX_E) / 2,
+                                                      (SwissBounds.MIN_N + SwissBounds.MAX_N) / 2);
 
-    private final static int SMALL_DISTANCE = 30;
-    private final static int INTERMEDIATE_DISTANCE = 3000;
-    private final static double ALL_SECTORS_DISTANCE = SwissBounds.WIDTH;
+    private static final int SMALL_DISTANCE = 30;
+    private static final int INTERMEDIATE_DISTANCE = 3000;
+    private static final double ALL_SECTORS_DISTANCE = SwissBounds.WIDTH;
 
     @BeforeAll
     static void initGlobalVars() {
@@ -278,7 +278,7 @@ class GraphSectorsTest {
     @Test
     void sectorsInAreaSpecificPoint1Test() {
         PointCh specPoint1 = new PointCh(123 * SECTOR_WIDTH + SwissBounds.MIN_E + 100,
-                15 * SECTOR_HEIGHT + SwissBounds.MIN_N + 100);
+                                         15 * SECTOR_HEIGHT + SwissBounds.MIN_N + 100);
         // Distance of 0
         List<GraphSectors.Sector> expected = new ArrayList<>();
         expected.add(sectors.get(123 + 15 * 128));
@@ -327,7 +327,7 @@ class GraphSectorsTest {
     void sectorsInAreaSquareBorderExpansionTest() {
         double distance = SECTOR_HEIGHT / 2;
         PointCh left = new PointCh(SwissBounds.MIN_E + 3 * SECTOR_WIDTH - distance,
-                SwissBounds.MIN_N + 2 * SECTOR_HEIGHT + distance);
+                                   SwissBounds.MIN_N + 2 * SECTOR_HEIGHT + distance);
         List<GraphSectors.Sector> expected = new ArrayList<>();
         expected.add(sectors.get(2 + 2 * 128));
         expected.add(sectors.get(2 + 2 * 128 + 1));
@@ -336,7 +336,7 @@ class GraphSectorsTest {
         List<GraphSectors.Sector> actual = gs.sectorsInArea(left, distance);
         assertEquals(expected, actual);
         PointCh right = new PointCh(SwissBounds.MIN_E + 2 * SECTOR_WIDTH + distance,
-                SwissBounds.MIN_N + 2 * SECTOR_HEIGHT + distance);
+                                    SwissBounds.MIN_N + 2 * SECTOR_HEIGHT + distance);
         expected.clear();
         expected.add(sectors.get(2 + 2 * 128));
         expected.add(sectors.get(2 + 2 * 128 + 128));

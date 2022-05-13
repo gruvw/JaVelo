@@ -30,3 +30,6 @@ hs_err_pid*
 /visualization
 /others
 /data
+javelo-data
+osm-cache
+lib

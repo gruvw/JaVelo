@@ -121,8 +121,7 @@ public final class ElevationProfileManager {
         this.bottomBox = new VBox(statsText);
         this.bottomBox.setId("profile_data");
 
-        this.pane = new BorderPane();
-        this.pane.setCenter(centerPane);
+        this.pane = new BorderPane(centerPane);
         this.pane.setBottom(bottomBox);
         this.pane.getStylesheets().add("elevation_profile.css");
 
@@ -181,9 +180,10 @@ public final class ElevationProfileManager {
         highlightedLine.endYProperty().bind(Bindings.select(surroundingRectangleProperty, "maxY"));
         highlightedLine.visibleProperty().bind(highlightedPositionProperty.greaterThanOrEqualTo(0));
 
-        // ASK correct ? no profile ?
         statsText.textProperty().bind(Bindings.createStringBinding(() -> {
             ElevationProfile profile = profileProperty.get();
+            if (profile == null)
+                return "";
             return STATS_TEXT.formatted(profile.length() / 1000, profile.totalAscent(),
                     profile.totalDescent(), profile.minElevation(), profile.maxElevation());
         }, profileProperty));
@@ -208,6 +208,9 @@ public final class ElevationProfileManager {
      */
     private void draw() {
         ElevationProfile profile = profileProperty.get();
+        if (profile == null)
+            return;
+
         Transform worldToScreen = worldToScreenProperty.get();
 
         gridPath.getElements().clear();
@@ -296,6 +299,7 @@ public final class ElevationProfileManager {
                     .addAll(bottomLeft.getX(), bottomLeft.getY(), bottomRight.getX(),
                             bottomRight.getY());
 
+        // ASK correct
         int min = (int) surroundingRectangleProperty.get().getMinX();
         int max = (int) surroundingRectangleProperty.get().getMaxX();
         for (int p = min; p <= max; p++) {
@@ -315,6 +319,8 @@ public final class ElevationProfileManager {
      */
     private Transform createScreenToWorldTransform(Rectangle2D rectangle) {
         ElevationProfile profile = profileProperty.get();
+        if (profile == null)
+            return new Affine(); // TODO do not change
         Affine screenToWorldTransform = new Affine();
         screenToWorldTransform.prependTranslation(-PROFILE_PADDING.getLeft(),
                 -PROFILE_PADDING.getTop());

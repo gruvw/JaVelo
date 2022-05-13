@@ -1,7 +1,6 @@
 package ch.epfl.javelo.gui;
 
 import java.util.List;
-import java.util.function.Consumer;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
 import ch.epfl.javelo.routing.Route;
