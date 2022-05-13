@@ -120,6 +120,23 @@ public final class RouteBean {
     }
 
     /**
+     * Retrieves the index of the segment at a given position, ignoring the empty segments.
+     *
+     * @param position position on the route, in meters
+     * @return the index of the segment at the position {@code position}
+     */
+    public int indexOfNonEmptySegmentAt(double position) {
+        int index = route().indexOfSegmentAt(position);
+        for (int i = 0; i <= index; i++) {
+            int n1 = waypoints.get(i).closestNodeId();
+            int n2 = waypoints.get(i + 1).closestNodeId();
+            if (n1 == n2)
+                index++;
+        }
+        return index;
+    }
+
+    /**
      * Computes the best routes between every waypoint and combine them into a {@code MultiRoute}.
      * If any of the route is {@code null} or if there are strictly less than 2 waypoints, the route
      * and its profile are set to {@code null}.
@@ -135,6 +152,9 @@ public final class RouteBean {
         for (int i = 0; i < waypoints.size() - 1; i++) {
             int startNodeId = waypoints.get(i).closestNodeId();
             int destinationNodeId = waypoints.get(i + 1).closestNodeId();
+            // Don't compute route if start and destination are associated to the same node id
+            if (startNodeId == destinationNodeId)
+                continue;
             NodeIdPair key = new NodeIdPair(startNodeId, destinationNodeId);
             Route bestRoute = computedRoutes.containsKey(key) ? computedRoutes.get(key)
                     : routeComputer.bestRouteBetween(startNodeId, destinationNodeId);

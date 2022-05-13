@@ -12,7 +12,8 @@ import ch.epfl.javelo.projection.PointCh;
 public interface Route {
 
     /**
-     * Retrieves the index of the segment at a given position.
+     * Retrieves the index of the segment at a given position, taking into account the empty
+     * segments.
      *
      * @param position position on the route, in meters
      * @return the index of the segment at the position {@code position}

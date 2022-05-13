@@ -6,7 +6,7 @@ import ch.epfl.javelo.projection.PointCh;
  * A point on a route that is the closest to a point of reference (in Switzerland). (record)
  *
  * @param point               point on the route
- * @param position            position of the point along the route, in meters
+ * @param position            position of the point on the route, in meters
  * @param distanceToReference distance between the point on the route and the point of reference, in
  *                            meters
  *

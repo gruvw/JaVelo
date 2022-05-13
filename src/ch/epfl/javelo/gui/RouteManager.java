@@ -23,7 +23,6 @@ public final class RouteManager {
 
     private final RouteBean routeBean;
     private final ReadOnlyObjectProperty<MapViewParameters> mapParamsProperty;
-    private final Consumer<String> errorConsumer;
 
     private final Pane pane;
     private final Polyline line;
@@ -37,14 +36,11 @@ public final class RouteManager {
      * @param routeBean         the bean of the route
      * @param mapParamsProperty JavaFx read only property containing the parameters of the
      *                          background map
-     * @param errorConsumer     handles errors
      */
     public RouteManager(RouteBean routeBean,
-                        ReadOnlyObjectProperty<MapViewParameters> mapParamsProperty,
-                        Consumer<String> errorConsumer) {
+                        ReadOnlyObjectProperty<MapViewParameters> mapParamsProperty) {
         this.routeBean = routeBean;
         this.mapParamsProperty = mapParamsProperty;
-        this.errorConsumer = errorConsumer;
 
         this.line = new Polyline();
         this.line.setId("route");
@@ -94,17 +90,13 @@ public final class RouteManager {
             Route route = routeBean.route();
             double highlightedPosition = routeBean.highlightedPosition();
             int closestNodeId = route.nodeClosestTo(highlightedPosition);
-            for (Waypoint wp : routeBean.waypoints())
-                if (wp.closestNodeId() == closestNodeId) {
-                    errorConsumer.accept("Un point de passage est déjà présent à cet endroit !");
-                    return;
-                }
             Point2D position = circle.localToParent(e.getX(), e.getY());
             PointCh point = mapParamsProperty.get()
                                              .pointAt(position.getX(), position.getY())
                                              .toPointCh();
             Waypoint wp = new Waypoint(point, closestNodeId);
-            routeBean.waypoints().add(route.indexOfSegmentAt(highlightedPosition) + 1, wp);
+            routeBean.waypoints()
+                     .add(routeBean.indexOfNonEmptySegmentAt(highlightedPosition) + 1, wp);
         });
     }
 

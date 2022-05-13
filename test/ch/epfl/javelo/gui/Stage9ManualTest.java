@@ -42,8 +42,9 @@ public final class Stage9ManualTest extends Application {
 
         routeBean.setHighlightedPosition(1000);
 
-        RouteManager routeManager = new RouteManager(routeBean, mapViewParametersP,
-                                                     System.out::println);
+        // RouteManager routeManager = new RouteManager(routeBean, mapViewParametersP,
+        // System.out::println);
+        RouteManager routeManager = new RouteManager(routeBean, mapViewParametersP);
 
         StackPane mainPane = new StackPane(baseMapManager.pane(), waypointsManager.pane(),
                                            routeManager.pane());

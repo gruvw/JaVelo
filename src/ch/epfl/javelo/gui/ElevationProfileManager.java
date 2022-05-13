@@ -263,7 +263,7 @@ public final class ElevationProfileManager {
     /**
      * Draws a vertical line and its label at a given position.
      *
-     * @param position position along the route, in meters, in the real world
+     * @param position position on the route, in meters, in the real world
      */
     private void drawPosition(int position) {
         ElevationProfile profile = profileProperty.get();

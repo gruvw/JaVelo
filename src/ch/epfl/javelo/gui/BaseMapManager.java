@@ -5,6 +5,7 @@ import ch.epfl.javelo.Math2;
 import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleLongProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -97,9 +98,16 @@ public final class BaseMapManager {
      */
     private void registerHandlers() {
         // Zoom control
+        SimpleLongProperty minScrollTime = new SimpleLongProperty();
         pane.setOnScroll(e -> {
             MapViewParameters mapParams = mapParamsProperty.get();
-            double zoomDelta = Math.signum(e.getDeltaY());
+            if (e.getDeltaY() == 0d)
+                return;
+            long currentTime = System.currentTimeMillis();
+            if (currentTime < minScrollTime.get())
+                return;
+            minScrollTime.set(currentTime + 200);
+            int zoomDelta = (int) Math.signum(e.getDeltaY());
             int newZoomLevel = Math2.clamp(MIN_ZOOM_LEVEL, mapParams.zoomLevel() + (int) zoomDelta,
                     MAX_ZOOM_LEVEL);
             // CHANGE: remove zooms over waypoint (remove position, position.getX() -> e.getX())
