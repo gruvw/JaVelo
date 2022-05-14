@@ -18,16 +18,26 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.FileChooser.ExtensionFilter;
 
+// TODO document all Switzerland
+// ASK bin for all Switzerland
+/**
+ *
+ *
+ * @author Lucas Jung (324724)
+ * @author Florian Kolly (328313)
+ */
 public final class JaVelo extends Application {
 
     private static final String GRAPH_DIRECTORY = "javelo-data";
     private static final String CACHE_DIRECTORY = "osm-cache";
     private static final String TILE_SERVER_NAME = "tile.openstreetmap.org";
+    private static final String WINDOW_TITLE = "JaVelo";
     private static final int MIN_WIDTH = 800;
     private static final int MIN_HEIGHT = 600;
-    private static final String WINDOW_TITLE = "JaVelo";
 
     private static final String MENU_TEXT = "Fichier";
     private static final String MENU_ITEM_TEXT = "Exporter GPX";
@@ -39,7 +49,7 @@ public final class JaVelo extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage stage) throws Exception {
         Graph graph = Graph.loadFrom(Path.of(GRAPH_DIRECTORY));
         TileManager tileManager = new TileManager(Path.of(CACHE_DIRECTORY), TILE_SERVER_NAME);
         CostFunction costFunction = new CityBikeCF(graph);
@@ -55,10 +65,18 @@ public final class JaVelo extends Application {
         // Menu
         MenuItem gpxItem = new MenuItem(MENU_ITEM_TEXT);
         gpxItem.disableProperty().bind(routeBean.elevationProfileProperty().isNull());
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialFileName(GPX_FILE_NAME);
+        fileChooser.setTitle("Save GPX");
+        fileChooser.getExtensionFilters().addAll(new ExtensionFilter("GPX Files", "*.gpx"));
+
         gpxItem.setOnAction(e -> {
             try {
-                GpxGenerator.writeGpx(GPX_FILE_NAME, routeBean.route(),
-                        routeBean.elevationProfile());
+                String fileName = fileChooser.showSaveDialog(stage).getAbsolutePath();
+                if (fileName != null)
+                    GpxGenerator.writeGpx(fileName, routeBean.route(),
+                            routeBean.elevationProfile());
             } catch (IOException except) {
                 throw new UncheckedIOException(except); // should never happen
             }
@@ -70,6 +88,7 @@ public final class JaVelo extends Application {
 
         // Pane for the map (route and waypoints) and the profile
         Pane profilePane = elevationProfileManager.pane();
+        // FIXME pane does not update
         SplitPane splitPane = new SplitPane(annotatedMapManager.pane());
         routeBean.elevationProfileProperty().addListener((p, oldP, newP) -> {
             if (oldP != null && newP == null)
@@ -87,11 +106,11 @@ public final class JaVelo extends Application {
 
         // Stage
         Scene scene = new Scene(mainPane);
-        primaryStage.setMinWidth(MIN_WIDTH);
-        primaryStage.setMinHeight(MIN_HEIGHT);
-        primaryStage.setTitle(WINDOW_TITLE);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        stage.setMinWidth(MIN_WIDTH);
+        stage.setMinHeight(MIN_HEIGHT);
+        stage.setTitle(WINDOW_TITLE);
+        stage.setScene(scene);
+        stage.show();
     }
 
 }

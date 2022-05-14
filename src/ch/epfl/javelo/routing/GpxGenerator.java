@@ -26,7 +26,7 @@ import ch.epfl.javelo.projection.PointCh;
  */
 public class GpxGenerator {
 
-    private static final String DATA_FORMAT = "%.5f";
+    private static final String DATA_FORMAT = "%.6f";
 
     private GpxGenerator() {}
 

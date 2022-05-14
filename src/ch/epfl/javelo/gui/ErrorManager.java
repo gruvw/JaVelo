@@ -19,17 +19,17 @@ public final class ErrorManager {
     /**
      * Duration of the fade in animation of the error toast.
      */
-    private static final Duration FADE_IN_DURATION = new Duration(0.2);
+    private static final Duration FADE_IN_DURATION = new Duration(200);
 
     /**
      * Duration of the error toast, at max opacity.
      */
-    private static final Duration PAUSE_DURATION = new Duration(2);
+    private static final Duration PAUSE_DURATION = new Duration(2000);
 
     /**
      * Duration of the fade out animation of the error toast.
      */
-    private static final Duration FADE_OUT_TRANSITION = new Duration(0.5);
+    private static final Duration FADE_OUT_TRANSITION = new Duration(500);
 
     /**
      * Final/Maximal opacity of the error toast.
@@ -60,7 +60,7 @@ public final class ErrorManager {
         FadeTransition fadeOut = new FadeTransition(FADE_OUT_TRANSITION);
         fadeOut.setFromValue(FINAL_OPACITY);
         fadeOut.setToValue(0);
-        this.transition = new SequentialTransition(pane, fadeIn, pause, fadeOut);
+        this.transition = new SequentialTransition(this.pane, fadeIn, pause, fadeOut);
     }
 
     /**
@@ -78,11 +78,11 @@ public final class ErrorManager {
      * @param message short error message that will be displayed in the error toast
      */
     public void displayError(String message) {
-        System.out.println("Error: " + message);
+        java.awt.Toolkit.getDefaultToolkit().beep(); // FIXME
         transition.stop();
         text.setText(message);
         transition.play();
-        java.awt.Toolkit.getDefaultToolkit().beep();
+        System.out.println("WIDTH " + box.getWidth());
     }
 
 }

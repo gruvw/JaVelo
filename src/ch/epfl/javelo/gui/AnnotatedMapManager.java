@@ -45,6 +45,9 @@ public final class AnnotatedMapManager {
      */
     private static final int MOUSE_POSITION_THRESHOLD = 15;
 
+    private static final double DISABLED_VALUE = Double.NaN;
+    private static final Point2D DISABLED_POINT = new Point2D(DISABLED_VALUE, DISABLED_VALUE);
+
     private final StackPane pane;
     private final RouteBean routeBean;
 
@@ -75,7 +78,7 @@ public final class AnnotatedMapManager {
                                                                                   DEFAULT_MIN_X,
                                                                                   DEFAULT_MIN_Y));
         this.mousePositionProperty = new SimpleObjectProperty<>(Point2D.ZERO); // TODO init with nan
-        this.mousePositionOnRouteProperty = new SimpleDoubleProperty(Double.NaN);
+        this.mousePositionOnRouteProperty = new SimpleDoubleProperty(DISABLED_VALUE);
 
         this.waypointsManager = new WaypointsManager(graph, mapParamsProperty,
                                                      this.routeBean.waypoints(), errorConsumer);
@@ -115,10 +118,10 @@ public final class AnnotatedMapManager {
      */
     private void registerListeners() {
         mousePositionOnRouteProperty.bind(Bindings.createDoubleBinding(() -> {
-            System.out.println("called 2");
+            // System.out.println("called 2");
             Point2D mousePosition = mousePositionProperty.get();
-            if (routeBean.route() == null || mousePosition.getX() == Double.NaN)
-                return Double.NaN;
+            if (routeBean.route() == null || mousePosition.getX() == DISABLED_VALUE)
+                return DISABLED_VALUE;
             MapViewParameters mapParams = mapParamsProperty.get();
             Point2D mousePointCoords = new Point2D(mapParams.minX() + mousePosition.getX(),
                                                    mapParams.minY() + mousePosition.getY());
@@ -130,11 +133,11 @@ public final class AnnotatedMapManager {
                                                  mapPoint.yAtZoomLevel(mapParams.zoomLevel()));
             return mousePointCoords.distance(mapPointCoords) <= MOUSE_POSITION_THRESHOLD
                     ? routePoint.position()
-                    : Double.NaN;
+                    : DISABLED_VALUE;
         }, mousePositionProperty, routeBean.routeProperty(), mapParamsProperty));
 
         listener = e -> {
-            System.out.println("called");
+            // System.out.println("called");
         };
         mousePositionProperty.addListener(listener);
         pane.setOnMouseMoved(e -> {
@@ -142,15 +145,12 @@ public final class AnnotatedMapManager {
             // System.out.println("Moved " + p);
             // System.out.println(mousePositionProperty.get());
             mousePositionProperty.set(p);
-            System.out.println(mousePositionProperty.get());
+            // System.out.println(mousePositionProperty.get());
         });
-        // TODO NaN to const static
         // TODO test + comment
-        // pane.setOnMouseDragged(e -> mousePositionProperty.set(new Point2D(e.getX(), e.getY())));
-        // pane.setOnMouseExited(e -> mousePositionProperty.set(new Point2D(Double.NaN,
-        // Double.NaN)));
-        // pane.setOnMouseDragExited(
-        // e -> mousePositionProperty.set(new Point2D(Double.NaN, Double.NaN)));
+        pane.setOnMouseDragged(e -> mousePositionProperty.set(new Point2D(e.getX(), e.getY())));
+        pane.setOnMouseExited(e -> mousePositionProperty.set(DISABLED_POINT));
+        pane.setOnMouseDragExited(e -> mousePositionProperty.set(DISABLED_POINT));
     }
 
 }

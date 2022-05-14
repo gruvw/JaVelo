@@ -299,7 +299,6 @@ public final class ElevationProfileManager {
                     .addAll(bottomLeft.getX(), bottomLeft.getY(), bottomRight.getX(),
                             bottomRight.getY());
 
-        // ASK correct
         int min = (int) surroundingRectangleProperty.get().getMinX();
         int max = (int) surroundingRectangleProperty.get().getMaxX();
         for (int p = min; p <= max; p++) {
