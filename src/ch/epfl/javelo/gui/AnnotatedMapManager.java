@@ -15,6 +15,8 @@ import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
+import static ch.epfl.javelo.gui.ElevationProfileManager.DISABLED_VALUE;
+
 /**
  * Handles display of the background map, the route and the waypoints.
  * <p>
@@ -45,7 +47,6 @@ public final class AnnotatedMapManager {
      */
     private static final int MOUSE_POSITION_THRESHOLD = 15;
 
-    private static final double DISABLED_VALUE = Double.NaN;
     private static final Point2D DISABLED_POINT = new Point2D(DISABLED_VALUE, DISABLED_VALUE);
 
     private final StackPane pane;
