@@ -3,8 +3,13 @@ package ch.epfl.javelo.gui;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
+import javafx.geometry.Insets;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -37,7 +42,6 @@ public final class ErrorManager {
     private static final double FINAL_OPACITY = 0.8;
 
     private final Pane pane;
-    private final VBox box;
     private final Text text;
 
     private final SequentialTransition transition;
@@ -47,9 +51,8 @@ public final class ErrorManager {
      */
     public ErrorManager() {
         this.text = new Text();
-        this.box = new VBox(text);
-        this.box.getStylesheets().add("error.css");
-        this.pane = new Pane(box);
+        this.pane = new VBox(text);
+        this.pane.getStylesheets().add("error.css");
         this.pane.setMouseTransparent(true);
 
         // Transition
@@ -78,11 +81,10 @@ public final class ErrorManager {
      * @param message short error message that will be displayed in the error toast
      */
     public void displayError(String message) {
-        java.awt.Toolkit.getDefaultToolkit().beep(); // FIXME
+        java.awt.Toolkit.getDefaultToolkit().beep(); // ASK error
         transition.stop();
         text.setText(message);
         transition.play();
-        System.out.println("WIDTH " + box.getWidth());
     }
 
 }
