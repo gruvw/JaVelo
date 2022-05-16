@@ -3,13 +3,8 @@ package ch.epfl.javelo.gui;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.SequentialTransition;
-import javafx.geometry.Insets;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
@@ -47,7 +42,7 @@ public final class ErrorManager {
     private final SequentialTransition transition;
 
     /**
-     *
+     * Constructor of an error manager.
      */
     public ErrorManager() {
         this.text = new Text();
