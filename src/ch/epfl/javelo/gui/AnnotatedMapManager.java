@@ -4,7 +4,6 @@ import java.util.function.Consumer;
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.projection.PointWebMercator;
 import ch.epfl.javelo.routing.RoutePoint;
-import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
@@ -59,8 +58,6 @@ public final class AnnotatedMapManager {
     private final BaseMapManager baseMapManager;
     private final WaypointsManager waypointsManager;
     private final RouteManager routeManager;
-
-    private InvalidationListener listener;
 
     /**
      *
@@ -119,39 +116,30 @@ public final class AnnotatedMapManager {
      */
     private void registerListeners() {
         mousePositionOnRouteProperty.bind(Bindings.createDoubleBinding(() -> {
-            // System.out.println("called 2");
             Point2D mousePosition = mousePositionProperty.get();
-            if (routeBean.route() == null || mousePosition.getX() == DISABLED_VALUE)
+            if (routeBean.route() == null || Double.isNaN(mousePosition.getX()))
                 return DISABLED_VALUE;
             MapViewParameters mapParams = mapParamsProperty.get();
-            Point2D mousePointCoords = new Point2D(mapParams.minX() + mousePosition.getX(),
-                                                   mapParams.minY() + mousePosition.getY());
-            PointWebMercator cursorPoint = PointWebMercator.of(mapParams.zoomLevel(),
-                    mousePointCoords.getX(), mousePointCoords.getY());
-            RoutePoint routePoint = routeBean.route().pointClosestTo(cursorPoint.toPointCh());
-            PointWebMercator mapPoint = PointWebMercator.ofPointCh(routePoint.point());
-            Point2D mapPointCoords = new Point2D(mapPoint.xAtZoomLevel(mapParams.zoomLevel()),
-                                                 mapPoint.yAtZoomLevel(mapParams.zoomLevel()));
-            return mousePointCoords.distance(mapPointCoords) <= MOUSE_POSITION_THRESHOLD
-                    ? routePoint.position()
+            PointWebMercator cursorPoint = mapParams.pointAt(mousePosition.getX(),
+                    mousePosition.getY());
+            RoutePoint closestRoutePoint = routeBean.route()
+                                                    .pointClosestTo(cursorPoint.toPointCh());
+            PointWebMercator routePoint = PointWebMercator.ofPointCh(closestRoutePoint.point());
+            // ASK correct way ?
+            Point2D cursorPointCoords = new Point2D(cursorPoint.xAtZoomLevel(
+                    mapParams.zoomLevel()), cursorPoint.yAtZoomLevel(mapParams.zoomLevel()));
+            Point2D routePointCoords = new Point2D(routePoint.xAtZoomLevel(mapParams.zoomLevel()),
+                                                   routePoint.yAtZoomLevel(mapParams.zoomLevel()));
+            return cursorPointCoords.distance(routePointCoords) <= MOUSE_POSITION_THRESHOLD
+                    ? closestRoutePoint.position()
                     : DISABLED_VALUE;
         }, mousePositionProperty, routeBean.routeProperty(), mapParamsProperty));
 
-        listener = e -> {
-            // System.out.println("called");
-        };
-        mousePositionProperty.addListener(listener);
-        pane.setOnMouseMoved(e -> {
-            Point2D p = new Point2D(e.getX(), e.getY());
-            // System.out.println("Moved " + p);
-            // System.out.println(mousePositionProperty.get());
-            mousePositionProperty.set(p);
-            // System.out.println(mousePositionProperty.get());
-        });
+        pane.setOnMouseMoved(e -> mousePositionProperty.set(new Point2D(e.getX(), e.getY())));
+        pane.setOnMouseExited(e -> mousePositionProperty.set(DISABLED_POINT));
+
         // TODO test + comment
         pane.setOnMouseDragged(e -> mousePositionProperty.set(new Point2D(e.getX(), e.getY())));
-        pane.setOnMouseExited(e -> mousePositionProperty.set(DISABLED_POINT));
-        pane.setOnMouseDragExited(e -> mousePositionProperty.set(DISABLED_POINT));
     }
 
 }

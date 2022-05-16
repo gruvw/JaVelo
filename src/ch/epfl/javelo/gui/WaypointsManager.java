@@ -96,6 +96,7 @@ public final class WaypointsManager {
     private void redrawPins() {
         pane.getChildren().clear();
         pins.clear();
+
         createPins();
         positionPins();
     }

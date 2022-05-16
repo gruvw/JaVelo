@@ -22,7 +22,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser.ExtensionFilter;
 
-// TODO document all Switzerland
+// TODO document all
 // ASK bin for all Switzerland
 /**
  *
@@ -44,6 +44,10 @@ public final class JaVelo extends Application {
 
     private static final String GPX_FILE_NAME = "javelo.gpx";
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         launch(args);
     }
@@ -61,6 +65,13 @@ public final class JaVelo extends Application {
                                                                           errorManager::displayError);
         ElevationProfileManager elevationProfileManager = new ElevationProfileManager(routeBean.elevationProfileProperty(),
                                                                                       routeBean.highlightedPositionProperty());
+
+        elevationProfileManager.mousePositionOnProfileProperty()
+                               .addListener((p, o, n) -> routeBean.setHighlightedPosition(
+                                       n.doubleValue()));
+        annotatedMapManager.mousePositionOnRouteProperty()
+                           .addListener(
+                                   (p, o, n) -> routeBean.setHighlightedPosition(n.doubleValue()));
 
         // Menu
         MenuItem gpxItem = new MenuItem(MENU_ITEM_TEXT);
@@ -88,7 +99,6 @@ public final class JaVelo extends Application {
 
         // Pane for the map (route and waypoints) and the profile
         Pane profilePane = elevationProfileManager.pane();
-        // FIXME pane does not update
         SplitPane splitPane = new SplitPane(annotatedMapManager.pane());
         routeBean.elevationProfileProperty().addListener((p, oldP, newP) -> {
             if (oldP != null && newP == null)

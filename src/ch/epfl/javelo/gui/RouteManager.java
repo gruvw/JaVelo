@@ -4,6 +4,7 @@ import java.util.List;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
 import ch.epfl.javelo.routing.Route;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
@@ -66,9 +67,17 @@ public final class RouteManager {
     }
 
     /**
-     * Registers listeners.
+     * Registers bindings and listeners.
      */
     private void registerListeners() {
+        // ASK correct ?
+        circle.visibleProperty()
+              .bind(Bindings.createBooleanBinding(
+                      () -> isRouteValid() && routeBean.highlightedPosition() >= 0,
+                      routeBean.routeProperty(), routeBean.highlightedPositionProperty()));
+        line.visibleProperty()
+            .bind(Bindings.createBooleanBinding(() -> isRouteValid(), routeBean.routeProperty()));
+
         mapParamsProperty.addListener((p, o, n) -> {
             // Redraw line only when zoom changes, reposition it otherwise
             if (o.zoomLevel() == n.zoomLevel() && isRouteValid()) {
@@ -77,6 +86,7 @@ public final class RouteManager {
             } else
                 draw();
         });
+
         routeBean.routeProperty().addListener(route -> draw());
         routeBean.highlightedPositionProperty().addListener(hp -> placeCircle());
     }
@@ -89,6 +99,7 @@ public final class RouteManager {
             Route route = routeBean.route();
             double highlightedPosition = routeBean.highlightedPosition();
             int closestNodeId = route.nodeClosestTo(highlightedPosition);
+            // ASK new waypoint where we click close to the circle or on the circle (big zoom)?
             Point2D position = circle.localToParent(e.getX(), e.getY());
             PointCh point = mapParamsProperty.get()
                                              .pointAt(position.getX(), position.getY())
@@ -101,19 +112,14 @@ public final class RouteManager {
 
     /**
      * Draws and positions the line representing the route and the circle when a valid route is
-     * found, hides them otherwise.
+     * exists.
      */
     private void draw() {
-        if (!isRouteValid()) {
-            line.setVisible(false);
-            circle.setVisible(false);
+        if (!isRouteValid())
             return;
-        }
 
         drawLine();
         placeCircle();
-        line.setVisible(true);
-        circle.setVisible(true);
     }
 
     /**
@@ -143,9 +149,11 @@ public final class RouteManager {
     }
 
     /**
-     * Move the circle to the correct location on the pane.
+     * Moves the circle to the correct location on the pane.
      */
     private void placeCircle() {
+        if (Double.isNaN(routeBean.highlightedPosition()))
+            return;
         MapViewParameters mapParams = mapParamsProperty.get();
         int zoomLevel = mapParams.zoomLevel();
         Point2D topLeft = mapParams.topLeft();
@@ -153,6 +161,7 @@ public final class RouteManager {
         PointWebMercator point = PointWebMercator.ofPointCh(pointCh);
         circle.setCenterX(point.xAtZoomLevel(zoomLevel) - topLeft.getX());
         circle.setCenterY(point.yAtZoomLevel(zoomLevel) - topLeft.getY());
+        // ASK Not perfectly centered on route at max zoom level
     }
 
     /**
