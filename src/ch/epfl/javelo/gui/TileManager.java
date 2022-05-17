@@ -16,7 +16,7 @@ import ch.epfl.javelo.projection.PointWebMercator;
 import javafx.scene.image.Image;
 
 /**
- * Represents an OSM tiles manager.
+ * Represents a tiles manager, displaying tiles images of the map.
  * <p>
  * Arguments are not checked.
  *
@@ -37,7 +37,7 @@ public final class TileManager {
     private final Map<TileId, Image> cacheMemory;
 
     /**
-     * Represents an OSM tile. (record)
+     * Represents a tile. (record)
      *
      * @param zoomLevel zoom level of the tile
      * @param x         x index of the tile

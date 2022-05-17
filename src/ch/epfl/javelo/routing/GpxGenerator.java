@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
+import java.util.Locale;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -59,8 +60,10 @@ public class GpxGenerator {
         Iterator<Edge> edgesIterator = route.edges().iterator();
         for (PointCh point : route.points()) {
             Element rtept = doc.createElement("rtept");
-            rtept.setAttribute("lat", String.format(DATA_FORMAT, Math.toDegrees(point.lat())));
-            rtept.setAttribute("lon", String.format(DATA_FORMAT, Math.toDegrees(point.lon())));
+            rtept.setAttribute("lat",
+                    String.format(Locale.ROOT, DATA_FORMAT, Math.toDegrees(point.lat())));
+            rtept.setAttribute("lon",
+                    String.format(Locale.ROOT, DATA_FORMAT, Math.toDegrees(point.lon())));
             Element ele = doc.createElement("ele");
             ele.setTextContent(String.format(DATA_FORMAT, profile.elevationAt(runningLength)));
             rtept.appendChild(ele);

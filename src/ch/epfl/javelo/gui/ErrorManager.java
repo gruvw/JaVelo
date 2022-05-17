@@ -32,9 +32,9 @@ public final class ErrorManager {
     private static final Duration FADE_OUT_TRANSITION = new Duration(500);
 
     /**
-     * Final/Maximal opacity of the error toast.
+     * Maximal opacity of the error toast.
      */
-    private static final double FINAL_OPACITY = 0.8;
+    private static final double MAX_OPACITY = 0.8;
 
     private final Pane pane;
     private final Text text;
@@ -53,10 +53,10 @@ public final class ErrorManager {
         // Transition
         FadeTransition fadeIn = new FadeTransition(FADE_IN_DURATION);
         fadeIn.setFromValue(0);
-        fadeIn.setToValue(FINAL_OPACITY);
+        fadeIn.setToValue(MAX_OPACITY);
         PauseTransition pause = new PauseTransition(PAUSE_DURATION);
         FadeTransition fadeOut = new FadeTransition(FADE_OUT_TRANSITION);
-        fadeOut.setFromValue(FINAL_OPACITY);
+        fadeOut.setFromValue(MAX_OPACITY);
         fadeOut.setToValue(0);
         this.transition = new SequentialTransition(this.pane, fadeIn, pause, fadeOut);
     }
@@ -76,7 +76,7 @@ public final class ErrorManager {
      * @param message short error message that will be displayed in the error toast
      */
     public void displayError(String message) {
-        java.awt.Toolkit.getDefaultToolkit().beep(); // ASK error
+        java.awt.Toolkit.getDefaultToolkit().beep();
         transition.stop();
         text.setText(message);
         transition.play();

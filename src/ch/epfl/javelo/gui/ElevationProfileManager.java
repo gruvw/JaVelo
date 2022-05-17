@@ -172,12 +172,9 @@ public final class ElevationProfileManager {
         worldToScreenProperty.bind(Bindings.createObjectBinding(
                 () -> screenToWorldProperty.get().createInverse(), screenToWorldProperty));
 
-        // ASK right way
         highlightedLine.layoutXProperty().bind(Bindings.createDoubleBinding(() -> {
             double highlighted = highlightedPositionProperty.get();
-            double mouse = mousePositionOnProfileProperty.get();
-            double position = !Double.isNaN(mouse) ? mouse
-                    : (!Double.isNaN(highlighted) ? highlighted : DISABLED_VALUE);
+            double position = !Double.isNaN(highlighted) ? highlighted : DISABLED_VALUE;
             return worldToScreenProperty.get().transform(position, 0).getX();
         }, mousePositionOnProfileProperty, highlightedPositionProperty, worldToScreenProperty));
         highlightedLine.startYProperty()

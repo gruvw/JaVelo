@@ -1,5 +1,6 @@
 package ch.epfl.javelo.gui;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
@@ -22,10 +23,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser.ExtensionFilter;
 
-// TODO document all
-// ASK bin for all Switzerland
 /**
- * Primary class for the application. Handles the execution and the display of the window.
+ * Primary class of the application. Handles the execution and the display of the window.
  *
  * @author Lucas Jung (324724)
  * @author Florian Kolly (328313)
@@ -38,7 +37,7 @@ public final class JaVelo extends Application {
     private static final String GRAPH_DIRECTORY = "javelo-data";
 
     /**
-     * Directory of the tile cache.
+     * Directory of the tiles disk cache.
      */
     private static final String CACHE_DIRECTORY = "osm-cache";
 
@@ -48,7 +47,7 @@ public final class JaVelo extends Application {
     private static final String TILE_SERVER_NAME = "tile.openstreetmap.org";
 
     /**
-     * Name of the application's window.
+     * Title of the application's window.
      */
     private static final String WINDOW_TITLE = "JaVelo";
 
@@ -79,7 +78,7 @@ public final class JaVelo extends Application {
 
     /**
      * Entry point of the application.
-     * 
+     *
      * @param args Java command line arguments
      */
     public static void main(String[] args) {
@@ -111,7 +110,7 @@ public final class JaVelo extends Application {
         MenuItem gpxItem = new MenuItem(MENU_ITEM_TEXT);
         gpxItem.disableProperty().bind(routeBean.elevationProfileProperty().isNull());
 
-        // ASK: File chooser and "," in GPX instead of "." on Windows
+        // CHANGE: remove file chooser: default save on project root as default filename
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialFileName(GPX_FILE_NAME);
         fileChooser.setTitle("Save GPX");
@@ -119,9 +118,9 @@ public final class JaVelo extends Application {
 
         gpxItem.setOnAction(e -> {
             try {
-                String fileName = fileChooser.showSaveDialog(stage).getAbsolutePath();
-                if (fileName != null)
-                    GpxGenerator.writeGpx(fileName, routeBean.route(),
+                File file = fileChooser.showSaveDialog(stage);
+                if (file != null)
+                    GpxGenerator.writeGpx(file.getAbsolutePath(), routeBean.route(),
                             routeBean.elevationProfile());
             } catch (IOException except) {
                 throw new UncheckedIOException(except); // should never happen
@@ -132,7 +131,10 @@ public final class JaVelo extends Application {
         MenuBar menuBar = new MenuBar(menu);
         menuBar.setUseSystemMenuBar(true);
 
+        // ASK rond point à contre sens
+
         // Pane for the map (route and waypoints) and the profile
+        // ASK split pane cannot resize over text
         Pane profilePane = elevationProfileManager.pane();
         SplitPane splitPane = new SplitPane(annotatedMapManager.pane());
         routeBean.elevationProfileProperty().addListener((p, oldP, newP) -> {

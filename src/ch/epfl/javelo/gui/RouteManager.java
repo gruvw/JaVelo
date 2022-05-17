@@ -70,11 +70,12 @@ public final class RouteManager {
      * Registers bindings and listeners.
      */
     private void registerListeners() {
-        // ASK correct ?
         circle.visibleProperty()
-              .bind(Bindings.createBooleanBinding(
-                      () -> isRouteValid() && routeBean.highlightedPosition() >= 0,
-                      routeBean.routeProperty(), routeBean.highlightedPositionProperty()));
+              .bind(routeBean.highlightedPositionProperty()
+                             .greaterThanOrEqualTo(0)
+                             .and(Bindings.createBooleanBinding(() -> isRouteValid(),
+                                     routeBean.routeProperty())));
+
         line.visibleProperty()
             .bind(Bindings.createBooleanBinding(() -> isRouteValid(), routeBean.routeProperty()));
 
@@ -99,7 +100,6 @@ public final class RouteManager {
             Route route = routeBean.route();
             double highlightedPosition = routeBean.highlightedPosition();
             int closestNodeId = route.nodeClosestTo(highlightedPosition);
-            // ASK new waypoint where we click close to the circle or on the circle (big zoom)?
             Point2D position = circle.localToParent(e.getX(), e.getY());
             PointCh point = mapParamsProperty.get()
                                              .pointAt(position.getX(), position.getY())

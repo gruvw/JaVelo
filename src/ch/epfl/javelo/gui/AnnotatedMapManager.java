@@ -17,7 +17,7 @@ import javafx.scene.layout.StackPane;
 import static ch.epfl.javelo.gui.ElevationProfileManager.DISABLED_VALUE;
 
 /**
- * Handles display of the background map, the route and the waypoints.
+ * Handles display and superposition of the background map, the route and the waypoints.
  * <p>
  * Arguments are not checked.
  *
@@ -42,7 +42,7 @@ public final class AnnotatedMapManager {
     private static final int DEFAULT_MIN_Y = 370650;
 
     /**
-     * Maximum distance in pixels between the mouse and the route to display the highlighted
+     * Maximum distance in pixels between the mouse and the route to register the highlighted
      * position.
      */
     private static final int MOUSE_POSITION_THRESHOLD = 15;
@@ -65,11 +65,11 @@ public final class AnnotatedMapManager {
 
     /**
      * Constructor of an annotated map manager.
-     * 
+     *
      * @param graph         graph of the routes
-     * @param tileManager   OSM tiles manager
-     * @param routeBean     the bean of the route
-     * @param errorConsumer handles errors
+     * @param tileManager   tiles manager
+     * @param routeBean     bean of the route
+     * @param errorConsumer errors handler
      */
     public AnnotatedMapManager(Graph graph,
                                TileManager tileManager,
@@ -107,8 +107,8 @@ public final class AnnotatedMapManager {
     /**
      * Returns the property containing the position of the mouse on the route.
      * <p>
-     * The position of the mouse on the route is NaN if the mouse cursor if further away than 15
-     * pixels from the route.
+     * The position of the mouse on the route is {@code Double.NaN} if the mouse cursor if further
+     * away than 15 pixels from the route.
      *
      * @return the property containing the position of the mouse on the route
      */
@@ -130,7 +130,6 @@ public final class AnnotatedMapManager {
             RoutePoint closestRoutePoint = routeBean.route()
                                                     .pointClosestTo(cursorPoint.toPointCh());
             PointWebMercator routePoint = PointWebMercator.ofPointCh(closestRoutePoint.point());
-            // ASK correct way ?
             Point2D cursorPointCoords = new Point2D(cursorPoint.xAtZoomLevel(
                     mapParams.zoomLevel()), cursorPoint.yAtZoomLevel(mapParams.zoomLevel()));
             Point2D routePointCoords = new Point2D(routePoint.xAtZoomLevel(mapParams.zoomLevel()),
@@ -142,9 +141,8 @@ public final class AnnotatedMapManager {
 
         pane.setOnMouseMoved(e -> mousePositionProperty.set(new Point2D(e.getX(), e.getY())));
         pane.setOnMouseExited(e -> mousePositionProperty.set(DISABLED_POINT));
-
-        // TODO test + comment
-        pane.setOnMouseDragged(e -> mousePositionProperty.set(new Point2D(e.getX(), e.getY())));
+        // Solves bug about highlighted position when mouse dragged or drag exited
+        pane.setOnMouseDragged(e -> mousePositionProperty.set(DISABLED_POINT));
     }
 
 }

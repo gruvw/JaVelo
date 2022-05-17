@@ -41,7 +41,7 @@ public final class BaseMapManager {
     /**
      * Constructor of a background map manager.
      *
-     * @param tileManager       OSM tiles manager
+     * @param tileManager       tiles manager
      * @param waypointsManager  waypoints manager
      * @param mapParamsProperty JavaFx property containing the parameters of the background map
      */
@@ -161,6 +161,8 @@ public final class BaseMapManager {
      */
     private void drawTiles() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
+        // Clear the canvas to avoid visual bugs if connection is lost
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         MapViewParameters mapParams = mapParamsProperty.get();
 
         int zoomLevel = mapParams.zoomLevel();

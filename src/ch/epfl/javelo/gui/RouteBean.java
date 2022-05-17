@@ -121,6 +121,7 @@ public final class RouteBean {
         return highlightedPositionProperty.get();
     }
 
+    // ASK why not read only
     /**
      * Changes the value stored inside the {@code highlightedPositionProperty}.
      */

@@ -44,7 +44,7 @@ public final class WaypointsManager {
      * @param graph         graph of the routes
      * @param mapParameters property containing the parameters of the background map
      * @param waypoints     list of all the waypoints
-     * @param errorConsumer handles errors
+     * @param errorConsumer errors handler
      */
     public WaypointsManager(Graph graph,
                             ObjectProperty<MapViewParameters> mapParamsProperty,
