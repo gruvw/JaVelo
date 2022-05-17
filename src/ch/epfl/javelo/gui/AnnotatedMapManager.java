@@ -42,10 +42,14 @@ public final class AnnotatedMapManager {
     private static final int DEFAULT_MIN_Y = 370650;
 
     /**
-     *
+     * Maximum distance in pixels between the mouse and the route to display the highlighted
+     * position.
      */
     private static final int MOUSE_POSITION_THRESHOLD = 15;
 
+    /**
+     * Value used as the position of the highlighted point when there is none.
+     */
     private static final Point2D DISABLED_POINT = new Point2D(DISABLED_VALUE, DISABLED_VALUE);
 
     private final StackPane pane;
@@ -60,11 +64,12 @@ public final class AnnotatedMapManager {
     private final RouteManager routeManager;
 
     /**
-     *
-     * @param graph
-     * @param tileManager
-     * @param routeBean
-     * @param errorConsumer
+     * Constructor of an annotated map manager.
+     * 
+     * @param graph         graph of the routes
+     * @param tileManager   OSM tiles manager
+     * @param routeBean     the bean of the route
+     * @param errorConsumer handles errors
      */
     public AnnotatedMapManager(Graph graph,
                                TileManager tileManager,
@@ -75,7 +80,7 @@ public final class AnnotatedMapManager {
         this.mapParamsProperty = new SimpleObjectProperty<>(new MapViewParameters(DEFAULT_ZOOM,
                                                                                   DEFAULT_MIN_X,
                                                                                   DEFAULT_MIN_Y));
-        this.mousePositionProperty = new SimpleObjectProperty<>(Point2D.ZERO); // TODO init with nan
+        this.mousePositionProperty = new SimpleObjectProperty<>(DISABLED_POINT);
         this.mousePositionOnRouteProperty = new SimpleDoubleProperty(DISABLED_VALUE);
 
         this.waypointsManager = new WaypointsManager(graph, mapParamsProperty,

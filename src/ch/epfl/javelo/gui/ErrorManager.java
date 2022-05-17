@@ -42,7 +42,7 @@ public final class ErrorManager {
     private final SequentialTransition transition;
 
     /**
-     *
+     * Constructor of an error manager.
      */
     public ErrorManager() {
         this.text = new Text();

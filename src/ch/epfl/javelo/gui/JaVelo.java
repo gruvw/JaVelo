@@ -25,28 +25,62 @@ import javafx.stage.FileChooser.ExtensionFilter;
 // TODO document all
 // ASK bin for all Switzerland
 /**
- *
+ * Primary class for the application. Handles the execution and the display of the window.
  *
  * @author Lucas Jung (324724)
  * @author Florian Kolly (328313)
  */
 public final class JaVelo extends Application {
 
+    /**
+     * Directory of the graph.
+     */
     private static final String GRAPH_DIRECTORY = "javelo-data";
+
+    /**
+     * Directory of the tile cache.
+     */
     private static final String CACHE_DIRECTORY = "osm-cache";
+
+    /**
+     * URL of the tile server.
+     */
     private static final String TILE_SERVER_NAME = "tile.openstreetmap.org";
+
+    /**
+     * Name of the application's window.
+     */
     private static final String WINDOW_TITLE = "JaVelo";
+
+    /**
+     * Minimum width of the window.
+     */
     private static final int MIN_WIDTH = 800;
+
+    /**
+     * Minimum height of the window.
+     */
     private static final int MIN_HEIGHT = 600;
 
+    /**
+     * Text of the menu item.
+     */
     private static final String MENU_TEXT = "Fichier";
+
+    /**
+     * Text of the submenu action.
+     */
     private static final String MENU_ITEM_TEXT = "Exporter GPX";
 
+    /**
+     * Default filename when saving the GPX file.
+     */
     private static final String GPX_FILE_NAME = "javelo.gpx";
 
     /**
-     *
-     * @param args
+     * Entry point of the application.
+     * 
+     * @param args Java command line arguments
      */
     public static void main(String[] args) {
         launch(args);
@@ -77,6 +111,7 @@ public final class JaVelo extends Application {
         MenuItem gpxItem = new MenuItem(MENU_ITEM_TEXT);
         gpxItem.disableProperty().bind(routeBean.elevationProfileProperty().isNull());
 
+        // ASK: File chooser and "," in GPX instead of "." on Windows
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialFileName(GPX_FILE_NAME);
         fileChooser.setTitle("Save GPX");
