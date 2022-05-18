@@ -62,7 +62,7 @@ public record Edge(int fromNodeId,
      * @return the point at the given position
      */
     public PointCh pointAt(double position) {
-        double ratio = position / length;
+        double ratio = length != 0 ? position / length : 0; // fix point outside of Switzerland
         return new PointCh(Math2.interpolate(fromPoint.e(), toPoint.e(), ratio),
                            Math2.interpolate(fromPoint.n(), toPoint.n(), ratio));
     }

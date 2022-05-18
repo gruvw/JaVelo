@@ -10,6 +10,7 @@ import ch.epfl.javelo.routing.CostFunction;
 import ch.epfl.javelo.routing.GpxGenerator;
 import ch.epfl.javelo.routing.RouteComputer;
 import javafx.application.Application;
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
@@ -99,12 +100,13 @@ public final class JaVelo extends Application {
         ElevationProfileManager elevationProfileManager = new ElevationProfileManager(routeBean.elevationProfileProperty(),
                                                                                       routeBean.highlightedPositionProperty());
 
-        elevationProfileManager.mousePositionOnProfileProperty()
-                               .addListener((p, o, n) -> routeBean.setHighlightedPosition(
-                                       n.doubleValue()));
-        annotatedMapManager.mousePositionOnRouteProperty()
-                           .addListener(
-                                   (p, o, n) -> routeBean.setHighlightedPosition(n.doubleValue()));
+        // Bind highlighted position of the route with the annotated map and the elevation profile
+        routeBean.highlightedPositionProperty()
+                 .bind(Bindings.when(
+                         annotatedMapManager.mousePositionOnRouteProperty().greaterThanOrEqualTo(0))
+                               .then(annotatedMapManager.mousePositionOnRouteProperty())
+                               .otherwise(
+                                       elevationProfileManager.mousePositionOnProfileProperty()));
 
         // Menu
         MenuItem gpxItem = new MenuItem(MENU_ITEM_TEXT);
@@ -134,7 +136,6 @@ public final class JaVelo extends Application {
         // ASK rond point à contre sens
 
         // Pane for the map (route and waypoints) and the profile
-        // ASK split pane cannot resize over text
         Pane profilePane = elevationProfileManager.pane();
         SplitPane splitPane = new SplitPane(annotatedMapManager.pane());
         routeBean.elevationProfileProperty().addListener((p, oldP, newP) -> {

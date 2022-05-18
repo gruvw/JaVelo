@@ -39,7 +39,7 @@ public final class Stage9ManualTest extends Application {
         BaseMapManager baseMapManager = new BaseMapManager(tileManager, waypointsManager,
                                                            mapViewParametersP);
 
-        routeBean.setHighlightedPosition(1000);
+        routeBean.highlightedPositionProperty().set(1000);
 
         // RouteManager routeManager = new RouteManager(routeBean, mapViewParametersP,
         // System.out::println);

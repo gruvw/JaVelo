@@ -161,7 +161,6 @@ public final class RouteManager {
         PointWebMercator point = PointWebMercator.ofPointCh(pointCh);
         circle.setCenterX(point.xAtZoomLevel(zoomLevel) - topLeft.getX());
         circle.setCenterY(point.yAtZoomLevel(zoomLevel) - topLeft.getY());
-        // ASK Not perfectly centered on route at max zoom level
     }
 
     /**

@@ -12,7 +12,6 @@ import ch.epfl.javelo.routing.Route;
 import ch.epfl.javelo.routing.RouteComputer;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -108,7 +107,7 @@ public final class RouteBean {
      *
      * @return the property containing the highlighted position
      */
-    public ReadOnlyDoubleProperty highlightedPositionProperty() {
+    public DoubleProperty highlightedPositionProperty() {
         return highlightedPositionProperty;
     }
 
@@ -119,14 +118,6 @@ public final class RouteBean {
      */
     public double highlightedPosition() {
         return highlightedPositionProperty.get();
-    }
-
-    // ASK why not read only
-    /**
-     * Changes the value stored inside the {@code highlightedPositionProperty}.
-     */
-    public void setHighlightedPosition(double val) {
-        highlightedPositionProperty.set(val);
     }
 
     /**
