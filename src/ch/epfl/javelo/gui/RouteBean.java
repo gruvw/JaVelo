@@ -34,10 +34,13 @@ public final class RouteBean {
     private final DoubleProperty highlightedPositionProperty;
 
     /**
-     * Cache memory storing the every {@code SingleRoute} used in the current route.
+     * Cache memory storing every {@code SingleRoute} used in the current route.
      */
     private final HashMap<NodeIdPair, Route> computedRoutes;
 
+    /**
+     * Maximum distance between two samplings in the profile.
+     */
     private static final int MAX_STEP_LENGTH = 5;
 
     /**

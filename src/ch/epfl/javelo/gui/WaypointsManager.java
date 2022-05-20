@@ -76,7 +76,7 @@ public final class WaypointsManager {
 
     /**
      * Adds a waypoint at position {@code (x, y)} on the pane. A waypoint is added only if there is
-     * at least one node in a square of side length of 1000 meters centered at the given
+     * at least one node in a circle of radius {@code SEARCH_DISTANCE} meters centered at the given
      * coordinates.
      *
      * @return true if the waypoint was added, false otherwise

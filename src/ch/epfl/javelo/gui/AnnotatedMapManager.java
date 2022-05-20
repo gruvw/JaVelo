@@ -129,6 +129,7 @@ public final class AnnotatedMapManager {
                     mousePosition.getY());
             RoutePoint closestRoutePoint = routeBean.route()
                                                     .pointClosestTo(cursorPoint.toPointCh());
+                                                    System.out.println(cursorPoint.toPointCh());
             PointWebMercator routePoint = PointWebMercator.ofPointCh(closestRoutePoint.point());
             Point2D cursorPointCoords = new Point2D(cursorPoint.xAtZoomLevel(
                     mapParams.zoomLevel()), cursorPoint.yAtZoomLevel(mapParams.zoomLevel()));

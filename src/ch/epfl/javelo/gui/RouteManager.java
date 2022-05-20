@@ -28,6 +28,9 @@ public final class RouteManager {
     private final Polyline line;
     private final Circle circle;
 
+    /**
+     * Radius of the highlighted circle.
+     */
     private static final int CIRCLE_RADIUS = 5;
 
     /**
@@ -111,7 +114,7 @@ public final class RouteManager {
     }
 
     /**
-     * Draws and positions the line representing the route and the circle when a valid route is
+     * Draws and positions the line representing the route and the circle when a valid route
      * exists.
      */
     private void draw() {
@@ -164,7 +167,7 @@ public final class RouteManager {
     }
 
     /**
-     * Checks wether the route in the {@code routeBean} exists or not.
+     * Checks whether the route in the {@code routeBean} exists or not.
      *
      * @return true if a route exists, false otherwise
      */

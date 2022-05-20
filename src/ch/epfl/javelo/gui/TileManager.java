@@ -30,6 +30,9 @@ public final class TileManager {
      */
     public static final int TILE_SIDE_LENGTH = 256;
 
+    /**
+     * Maximum number of tiles saved in cache memory.
+     */
     private static final int MAX_ENTRIES = 100;
 
     private final Path tilesDirectory;
@@ -70,7 +73,7 @@ public final class TileManager {
         /**
          * Checks if the given attributes form a valid tile.
          *
-         * @return true if the given attributes form a valid OSM tile, false otherwise
+         * @return true if the given attributes form a valid tile, false otherwise
          */
         public static boolean isValid(int zoomLevel, int x, int y) {
             double limit = Math.pow(2, zoomLevel);
