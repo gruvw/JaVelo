@@ -122,14 +122,13 @@ public final class AnnotatedMapManager {
     private void registerListeners() {
         mousePositionOnRouteProperty.bind(Bindings.createDoubleBinding(() -> {
             Point2D mousePosition = mousePositionProperty.get();
-            if (routeBean.route() == null || Double.isNaN(mousePosition.getX()))
+            if (!routeBean.isRouteValid() || Double.isNaN(mousePosition.getX()))
                 return DISABLED_VALUE;
             MapViewParameters mapParams = mapParamsProperty.get();
             PointWebMercator cursorPoint = mapParams.pointAt(mousePosition.getX(),
                     mousePosition.getY());
             RoutePoint closestRoutePoint = routeBean.route()
                                                     .pointClosestTo(cursorPoint.toPointCh());
-                                                    System.out.println(cursorPoint.toPointCh());
             PointWebMercator routePoint = PointWebMercator.ofPointCh(closestRoutePoint.point());
             Point2D cursorPointCoords = new Point2D(cursorPoint.xAtZoomLevel(
                     mapParams.zoomLevel()), cursorPoint.yAtZoomLevel(mapParams.zoomLevel()));

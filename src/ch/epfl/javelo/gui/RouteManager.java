@@ -4,7 +4,6 @@ import java.util.List;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
 import ch.epfl.javelo.routing.Route;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
@@ -29,7 +28,7 @@ public final class RouteManager {
     private final Circle circle;
 
     /**
-     * Radius of the highlighted circle.
+     * Radius of the highlighted position circle.
      */
     private static final int CIRCLE_RADIUS = 5;
 
@@ -76,15 +75,13 @@ public final class RouteManager {
         circle.visibleProperty()
               .bind(routeBean.highlightedPositionProperty()
                              .greaterThanOrEqualTo(0)
-                             .and(Bindings.createBooleanBinding(() -> isRouteValid(),
-                                     routeBean.routeProperty())));
+                             .and(routeBean.routeProperty().isNotNull()));
 
-        line.visibleProperty()
-            .bind(Bindings.createBooleanBinding(() -> isRouteValid(), routeBean.routeProperty()));
+        line.visibleProperty().bind(routeBean.routeProperty().isNotNull());
 
         mapParamsProperty.addListener((p, o, n) -> {
             // Redraw line only when zoom changes, reposition it otherwise
-            if (o.zoomLevel() == n.zoomLevel() && isRouteValid()) {
+            if (o.zoomLevel() == n.zoomLevel() && routeBean.isRouteValid()) {
                 placeLine();
                 placeCircle();
             } else
@@ -114,11 +111,11 @@ public final class RouteManager {
     }
 
     /**
-     * Draws and positions the line representing the route and the circle when a valid route
-     * exists.
+     * Draws and positions the line representing the route and the circle representing the
+     * highlighted position when a valid route exists.
      */
     private void draw() {
-        if (!isRouteValid())
+        if (!routeBean.isRouteValid())
             return;
 
         drawLine();
@@ -164,15 +161,6 @@ public final class RouteManager {
         PointWebMercator point = PointWebMercator.ofPointCh(pointCh);
         circle.setCenterX(point.xAtZoomLevel(zoomLevel) - topLeft.getX());
         circle.setCenterY(point.yAtZoomLevel(zoomLevel) - topLeft.getY());
-    }
-
-    /**
-     * Checks whether the route in the {@code routeBean} exists or not.
-     *
-     * @return true if a route exists, false otherwise
-     */
-    private boolean isRouteValid() {
-        return routeBean.route() != null;
     }
 
 }
