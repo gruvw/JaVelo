@@ -39,7 +39,7 @@ public final class RouteBean {
     private final HashMap<NodeIdPair, Route> computedRoutes;
 
     /**
-     * Maximum distance between two samplings in the profile.
+     * Maximum distance, in meters, between two elevation profile samples.
      */
     private static final int MAX_STEP_LENGTH = 5;
 
@@ -121,6 +121,15 @@ public final class RouteBean {
      */
     public double highlightedPosition() {
         return highlightedPositionProperty.get();
+    }
+
+    /**
+     * Checks whether the route exists or not.
+     *
+     * @return true if a route exists, false otherwise
+     */
+    public boolean isRouteValid() {
+        return routeProperty.get() != null;
     }
 
     /**

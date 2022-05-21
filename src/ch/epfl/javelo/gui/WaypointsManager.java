@@ -75,16 +75,16 @@ public final class WaypointsManager {
     }
 
     /**
-     * Adds a waypoint at position {@code (x, y)} on the pane. A waypoint is added only if there is
-     * at least one node in a circle of radius {@code SEARCH_DISTANCE} meters centered at the given
-     * coordinates.
+     * Adds a waypoint at the position {@code (x, y)} on the pane. A waypoint is added only if there
+     * is at least one node in a circle of radius {@code SEARCH_DISTANCE} meters centered on the
+     * given coordinates.
      *
-     * @return true if the waypoint was added, false otherwise
+     * @return true if a waypoint was added, false otherwise
      */
     public boolean addWaypoint(double x, double y) {
         PointCh point = mapParamsProperty.get().pointAt(x, y).toPointCh();
         Waypoint wp = waypointAt(point);
-        if (wp == null)
+        if (wp == null) // could not find a valid waypoint
             return false;
         waypoints.add(wp);
         return true;
@@ -198,11 +198,12 @@ public final class WaypointsManager {
     }
 
     /**
-     * Creates the waypoint at a given position in Switzerland.
+     * Creates the waypoint at a given position in Switzerland if the position is valid, publishes
+     * an error to the error consumer otherwise.
      *
      * @param point the position of the waypoint in Switzerland
-     * @return the waypoint at the given position in Switzerland if a graph node is found close to
-     *         the position, {@code null} otherwise
+     * @return the waypoint at the given position in Switzerland if a graph node is found closer
+     *         than {@code SEARCH_DISTANCE} to the position, {@code null} otherwise
      */
     private Waypoint waypointAt(PointCh point) {
         // Point could be null if set outside of Switzerland
