@@ -199,7 +199,7 @@ public final class Graph {
      *
      * @param edgeId id (index) of the edge
      * @return the profile of the edge corresponding to the given id as a function, or a function
-     *         always returning {@code Double.NaN} if the edge does not have a profile
+     *         always returning NaN if the edge does not have a profile
      */
     public DoubleUnaryOperator edgeProfile(int edgeId) {
         if (!edges.hasProfile(edgeId))

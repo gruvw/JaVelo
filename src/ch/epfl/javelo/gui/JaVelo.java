@@ -135,13 +135,13 @@ public final class JaVelo extends Application {
 
         // ASK rond point à contre sens
 
-        // Pane for the map (route and waypoints) and the profile
+        // Map and Profile
         Pane profilePane = elevationProfileManager.pane();
         SplitPane splitPane = new SplitPane(annotatedMapManager.pane());
-        routeBean.elevationProfileProperty().addListener((p, oldP, newP) -> {
-            if (oldP != null && newP == null)
+        routeBean.elevationProfileProperty().addListener((p, o, n) -> {
+            if (o != null && n == null)
                 splitPane.getItems().remove(profilePane);
-            else if (oldP == null && newP != null)
+            else if (o == null && n != null)
                 splitPane.getItems().add(profilePane);
         });
         SplitPane.setResizableWithParent(profilePane, false);

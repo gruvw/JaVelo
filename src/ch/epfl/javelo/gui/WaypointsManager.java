@@ -23,20 +23,25 @@ import javafx.scene.shape.SVGPath;
  */
 public final class WaypointsManager {
 
+    /**
+     * Maximum radius, in meters, where a node is sought.
+     */
+    private static final int SEARCH_DISTANCE = 500;
+
+    private static final String CONTOUR_SVG = "M-8-20C-5-14-2-7 0 0 2-7 5-14 8-20 20-40-20-40-8-20";
+    private static final String INTERIOR_SVG = "M0-23A1 1 0 000-29 1 1 0 000-23";
+    private static final String ERROR_MSG = "Aucune route à proximité !";
+
     private final Graph graph;
     private final ObjectProperty<MapViewParameters> mapParamsProperty;
     private final ObservableList<Waypoint> waypoints;
     private final Consumer<String> errorConsumer;
 
     private final Pane pane;
+    private final List<Group> pins;
 
     private Point2D lastMousePosition;
     private Point2D lastValidPinPosition;
-    private List<Group> pins;
-
-    private static final int SEARCH_DISTANCE = 500;
-    private static final String CONTOUR_SVG = "M-8-20C-5-14-2-7 0 0 2-7 5-14 8-20 20-40-20-40-8-20";
-    private static final String INTERIOR_SVG = "M0-23A1 1 0 000-29 1 1 0 000-23";
 
     /**
      * Constructor of a waypoints manager.
@@ -203,13 +208,13 @@ public final class WaypointsManager {
      *
      * @param point the position of the waypoint in Switzerland
      * @return the waypoint at the given position in Switzerland if a graph node is found closer
-     *         than {@code SEARCH_DISTANCE} to the position, {@code null} otherwise
+     *         than {@code SEARCH_DISTANCE} meters to the position, {@code null} otherwise
      */
     private Waypoint waypointAt(PointCh point) {
         // Point could be null if set outside of Switzerland
         int closestNodeId = point != null ? graph.nodeClosestTo(point, SEARCH_DISTANCE) : -1;
         if (closestNodeId == -1) {
-            errorConsumer.accept("Aucune route à proximité !");
+            errorConsumer.accept(ERROR_MSG);
             return null;
         }
         return new Waypoint(point, closestNodeId);

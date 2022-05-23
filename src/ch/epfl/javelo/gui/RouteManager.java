@@ -11,7 +11,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Polyline;
 
 /**
- * Handles display and interactions with the route and the highlighted point.
+ * Handles display and interactions of the route and the highlighted point.
  * <p>
  * Arguments are not checked.
  *
@@ -19,6 +19,11 @@ import javafx.scene.shape.Polyline;
  * @author Florian Kolly (328313)
  */
 public final class RouteManager {
+
+    /**
+     * Radius of the highlighted position circle.
+     */
+    private static final int CIRCLE_RADIUS = 5;
 
     private final RouteBean routeBean;
     private final ReadOnlyObjectProperty<MapViewParameters> mapParamsProperty;
@@ -28,15 +33,10 @@ public final class RouteManager {
     private final Circle circle;
 
     /**
-     * Radius of the highlighted position circle.
-     */
-    private static final int CIRCLE_RADIUS = 5;
-
-    /**
      * Constructor of a route manager.
      *
-     * @param routeBean         the bean of the route
-     * @param mapParamsProperty JavaFx read only property containing the parameters of the
+     * @param routeBean         the route bean
+     * @param mapParamsProperty JavaFx read-only property containing the parameters of the
      *                          background map
      */
     public RouteManager(RouteBean routeBean,
@@ -88,8 +88,8 @@ public final class RouteManager {
                 draw();
         });
 
-        routeBean.routeProperty().addListener(route -> draw());
-        routeBean.highlightedPositionProperty().addListener(hp -> placeCircle());
+        routeBean.routeProperty().addListener((p, o, n) -> draw());
+        routeBean.highlightedPositionProperty().addListener((p, o, n) -> placeCircle());
     }
 
     /**
@@ -126,15 +126,18 @@ public final class RouteManager {
      * Computes and draws the line from the route.
      */
     private void drawLine() {
+        line.getPoints().clear(); // clear old line
+
         List<PointCh> points = routeBean.route().points();
-        Double[] positions = new Double[points.size() * 2];
+        Double[] positions = new Double[points.size() * 2]; // ASK use of Double
         int zoomLevel = mapParamsProperty.get().zoomLevel();
+
         for (int i = 0; i < points.size(); i++) {
             PointWebMercator point = PointWebMercator.ofPointCh(points.get(i));
             positions[i * 2] = point.xAtZoomLevel(zoomLevel);
             positions[i * 2 + 1] = point.yAtZoomLevel(zoomLevel);
         }
-        line.getPoints().clear(); // clear old line
+
         line.getPoints().addAll(positions); // repopulate line
         placeLine();
     }

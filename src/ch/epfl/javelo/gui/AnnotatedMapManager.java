@@ -17,7 +17,7 @@ import javafx.scene.layout.StackPane;
 import static ch.epfl.javelo.gui.ElevationProfileManager.DISABLED_VALUE;
 
 /**
- * Handles display and superposition of the background map, the route and the waypoints.
+ * Handles display and superposition of the background map, the route and the waypoints panes.
  * <p>
  * Arguments are not checked.
  *
@@ -34,12 +34,12 @@ public final class AnnotatedMapManager {
     /**
      * Default X coordinate for the top left corner of the map, in the Web Mercator system.
      */
-    private static final int DEFAULT_MIN_X = 543200;
+    private static final int DEFAULT_MIN_X = 543_200;
 
     /**
      * Default Y coordinate for the top left corner of the map, in the Web Mercator system.
      */
-    private static final int DEFAULT_MIN_Y = 370650;
+    private static final int DEFAULT_MIN_Y = 370_650;
 
     /**
      * Maximum distance in pixels between the mouse and the route to register the highlighted
@@ -56,8 +56,8 @@ public final class AnnotatedMapManager {
     private final RouteBean routeBean;
 
     private final ObjectProperty<MapViewParameters> mapParamsProperty;
-    private final DoubleProperty mousePositionOnRouteProperty;
     private final ObjectProperty<Point2D> mousePositionProperty;
+    private final DoubleProperty mousePositionOnRouteProperty;
 
     private final BaseMapManager baseMapManager;
     private final WaypointsManager waypointsManager;
@@ -68,7 +68,7 @@ public final class AnnotatedMapManager {
      *
      * @param graph         graph of the routes
      * @param tileManager   tiles manager
-     * @param routeBean     bean of the route
+     * @param routeBean     the route bean
      * @param errorConsumer errors handler
      */
     public AnnotatedMapManager(Graph graph,
@@ -80,8 +80,8 @@ public final class AnnotatedMapManager {
         this.mapParamsProperty = new SimpleObjectProperty<>(new MapViewParameters(DEFAULT_ZOOM,
                                                                                   DEFAULT_MIN_X,
                                                                                   DEFAULT_MIN_Y));
-        this.mousePositionProperty = new SimpleObjectProperty<>(DISABLED_POINT);
         this.mousePositionOnRouteProperty = new SimpleDoubleProperty(DISABLED_VALUE);
+        this.mousePositionProperty = new SimpleObjectProperty<>(DISABLED_POINT);
 
         this.waypointsManager = new WaypointsManager(graph, mapParamsProperty,
                                                      this.routeBean.waypoints(), errorConsumer);
@@ -92,7 +92,7 @@ public final class AnnotatedMapManager {
                                   waypointsManager.pane());
         this.pane.getStylesheets().add("map.css");
 
-        registerListeners();
+        registerHandlers();
     }
 
     /**
@@ -107,8 +107,8 @@ public final class AnnotatedMapManager {
     /**
      * Returns the property containing the position of the mouse on the route.
      * <p>
-     * The position of the mouse on the route is {@code Double.NaN} if the mouse cursor if further
-     * away than 15 pixels from the route.
+     * The position of the mouse on the route is NaN if the mouse cursor if further away than
+     * {@code MOUSE_POSITION_THRESHOLD} pixels from the route.
      *
      * @return the property containing the position of the mouse on the route
      */
@@ -117,9 +117,9 @@ public final class AnnotatedMapManager {
     }
 
     /**
-     * Registers listeners and bindings.
+     * Registers handlers and bindings.
      */
-    private void registerListeners() {
+    private void registerHandlers() {
         mousePositionOnRouteProperty.bind(Bindings.createDoubleBinding(() -> {
             Point2D mousePosition = mousePositionProperty.get();
             if (!routeBean.isRouteValid() || Double.isNaN(mousePosition.getX()))
@@ -140,9 +140,9 @@ public final class AnnotatedMapManager {
         }, mousePositionProperty, routeBean.routeProperty(), mapParamsProperty));
 
         pane.setOnMouseMoved(e -> mousePositionProperty.set(new Point2D(e.getX(), e.getY())));
-        pane.setOnMouseExited(e -> mousePositionProperty.set(DISABLED_POINT));
         // Solves bug about highlighted position when mouse dragged or drag exited
-        pane.setOnMouseDragged(e -> mousePositionProperty.set(DISABLED_POINT));
+        pane.setOnMouseDragged(e -> mousePositionProperty.set(new Point2D(e.getX(), e.getY())));
+        pane.setOnMouseExited(e -> mousePositionProperty.set(DISABLED_POINT));
     }
 
 }

@@ -77,7 +77,7 @@ public final class TileManager {
          */
         public static boolean isValid(int zoomLevel, int x, int y) {
             double limit = Math.pow(2, zoomLevel);
-            return (zoomLevel >= 0) && (0 <= x && x < limit) && (0 <= y && y < limit);
+            return (0 <= zoomLevel) && (0 <= x && x < limit) && (0 <= y && y < limit);
         }
 
         /**

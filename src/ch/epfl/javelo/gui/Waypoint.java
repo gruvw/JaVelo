@@ -12,4 +12,5 @@ import ch.epfl.javelo.projection.PointCh;
  * @author Florian Kolly (328313)
  */
 public record Waypoint(PointCh point, int closestNodeId) {
+
 }

@@ -43,24 +43,24 @@ public final class ElevationProfileManager {
     protected static final double DISABLED_VALUE = Double.NaN;
 
     /**
-     * Possible distances between two vertical lines, representing the position.
+     * Possible distances, in meters, between two vertical lines, representing the position.
      */
     private static final int[] POSITION_STEPS = {1000, 2000, 5000, 10_000, 25_000, 50_000, 100_000};
 
     /**
      * Minimum number of pixels between two vertical lines of the grid.
      */
-    private static final int MIN_VERTICAL_SPACING = 25;
+    private static final int MIN_VERTICAL_SPACING = 50; // ASK values
 
     /**
-     * Possible distances between two horizontal lines, representing the elevation.
+     * Possible distances, in meters, between two horizontal lines, representing the elevation.
      */
     private static final int[] ELEVATION_STEPS = {5, 10, 20, 25, 50, 100, 200, 250, 500, 1_000};
 
     /**
      * Minimum number of pixels between two horizontal lines of the grid.
      */
-    private static final int MIN_HORIZONTAL_SPACING = 50;
+    private static final int MIN_HORIZONTAL_SPACING = 25;
 
     /**
      * Spacing (padding) between the center pane and its parent.
@@ -80,7 +80,6 @@ public final class ElevationProfileManager {
 
     private final ReadOnlyObjectProperty<ElevationProfile> profileProperty;
     private final ReadOnlyDoubleProperty highlightedPositionProperty;
-
     private final DoubleProperty mousePositionOnProfileProperty;
 
     private final ObjectProperty<Rectangle2D> surroundingRectangleProperty;
@@ -151,8 +150,8 @@ public final class ElevationProfileManager {
     /**
      * Returns the position of the cursor along the profile.
      *
-     * @return the position of the cursor along the profile, in meters, or {@code Double.NaN} if no
-     *         position needs to be highlighted
+     * @return the position of the cursor along the profile, in meters, or NaN if no position needs
+     *         to be highlighted
      */
     public ReadOnlyDoubleProperty mousePositionOnProfileProperty() {
         return mousePositionOnProfileProperty;
@@ -195,8 +194,8 @@ public final class ElevationProfileManager {
      * Registers event handlers and listeners.
      */
     private void registerHandlers() {
-        profileProperty.addListener(e -> draw());
-        surroundingRectangleProperty.addListener(e -> draw());
+        profileProperty.addListener((p, o, n) -> draw());
+        surroundingRectangleProperty.addListener((p, o, n) -> draw());
 
         centerPane.setOnMouseMoved(e -> mousePositionOnProfileProperty.set(
                 surroundingRectangleProperty.get().contains(e.getX(), e.getY())
@@ -212,7 +211,6 @@ public final class ElevationProfileManager {
     private void draw() {
         gridPath.getElements().clear();
         textLabels.getChildren().clear();
-        graphPolygon.getPoints().clear();
 
         ElevationProfile profile = profileProperty.get();
         if (profile == null)
@@ -293,6 +291,8 @@ public final class ElevationProfileManager {
      * Draws the polygon representing the profile.
      */
     private void drawPolygon() {
+        graphPolygon.getPoints().clear();
+
         ElevationProfile profile = profileProperty.get();
         Transform worldToScreen = worldToScreenProperty.get();
 

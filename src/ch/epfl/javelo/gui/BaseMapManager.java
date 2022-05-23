@@ -60,8 +60,6 @@ public final class BaseMapManager {
 
         registerListeners();
         registerHandlers();
-
-        redrawOnNextPulse();
     }
 
     /**
@@ -87,9 +85,9 @@ public final class BaseMapManager {
         mapParamsProperty.addListener((p, o, n) -> redrawOnNextPulse());
 
         // Redraw if needed at every pulse
-        canvas.sceneProperty().addListener((p, oldS, newS) -> {
-            assert oldS == null;
-            newS.addPreLayoutPulseListener(this::redrawIfNeeded);
+        canvas.sceneProperty().addListener((p, o, n) -> {
+            assert o == null;
+            n.addPreLayoutPulseListener(this::redrawIfNeeded);
         });
     }
 
@@ -161,12 +159,13 @@ public final class BaseMapManager {
      */
     private void drawTiles() {
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        // Clear the canvas to avoid visual bugs if connection is lost
+        // Clear the canvas to avoid visual bugs when no connection
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        MapViewParameters mapParams = mapParamsProperty.get();
 
+        MapViewParameters mapParams = mapParamsProperty.get();
         int zoomLevel = mapParams.zoomLevel();
         PointWebMercator topLeft = mapParams.pointAt(0, 0);
+
         TileId topLeftTile = TileId.of(topLeft, zoomLevel);
         double offsetX = topLeftTile.x() * TileManager.TILE_SIDE_LENGTH
                 - topLeft.xAtZoomLevel(zoomLevel);

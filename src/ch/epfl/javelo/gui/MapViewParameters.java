@@ -7,10 +7,10 @@ import javafx.geometry.Point2D;
  * Represents the parameters of the background map. (record)
  *
  * @param zoomLevel zoom level of the map
- * @param minX      x coordinate (Web Mercator) of the top left corner of the displayed portion of
- *                  the map
- * @param minY      y coordinate (Web Mercator) of the top left corner of the displayed portion of
- *                  the map
+ * @param minX      x coordinate (Web Mercator at zoom level {@code zoomLevel}) of the top left
+ *                  corner of the displayed portion of the map
+ * @param minY      y coordinate (Web Mercator at zoom level {@code zoomLevel}) of the top left
+ *                  corner of the displayed portion of the map
  *
  * @author Lucas Jung (324724)
  * @author Florian Kolly (328313)
@@ -42,7 +42,7 @@ public record MapViewParameters(int zoomLevel, double minX, double minY) {
     }
 
     /**
-     * Retrieves a point relative to the top left corner {@code PointWebMercator}.
+     * Retrieves a point relative to the top left corner as a {@code PointWebMercator}.
      * <p>
      * Note: {@code x} and {@code y} in the window's coordinates system.
      *

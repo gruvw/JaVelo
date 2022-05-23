@@ -20,7 +20,8 @@ import javafx.collections.ObservableList;
 import javafx.collections.ListChangeListener.Change;
 
 /**
- * Beans containing the properties about the waypoints and the corresponding route. (JavaFX Bean)
+ * JavaFx bean containing the JavaFx properties of the waypoints and the corresponding route.
+ * (JavaFX Bean)
  *
  * @author Lucas Jung (324724)
  * @author Florian Kolly (328313)
@@ -88,7 +89,7 @@ public final class RouteBean {
     }
 
     /**
-     * Returns the property containing the elevation profile.
+     * Returns the property containing the elevation profile, as read-only.
      *
      * @return the property containing the elevation profile
      */
@@ -181,9 +182,9 @@ public final class RouteBean {
         }
         computedRoutes.keySet().retainAll(keysToKeep);
         Route combinedRoute = new MultiRoute(segments);
-        routeProperty.set(combinedRoute);
         ElevationProfile profile = ElevationProfileComputer.elevationProfile(combinedRoute,
                 MAX_STEP_LENGTH);
+        routeProperty.set(combinedRoute);
         elevationProfileProperty.set(profile);
     }
 
@@ -193,7 +194,7 @@ public final class RouteBean {
     }
 
     /**
-     * Pair of node id representing the start and the end of a route between two waypoints.
+     * Pair of node ids representing the start and the end of a route between two waypoints.
      */
     private record NodeIdPair(int startNodeId, int destinationNodeId) {
 
