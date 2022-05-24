@@ -101,6 +101,7 @@ public final class JaVelo extends Application {
                                                                                       routeBean.highlightedPositionProperty());
 
         // Bind highlighted position of the route with the annotated map and the elevation profile
+        // CHANGE: formatage
         routeBean.highlightedPositionProperty()
                  .bind(Bindings.when(
                          annotatedMapManager.mousePositionOnRouteProperty().greaterThanOrEqualTo(0))
@@ -132,8 +133,6 @@ public final class JaVelo extends Application {
         menu.getItems().add(gpxItem);
         MenuBar menuBar = new MenuBar(menu);
         menuBar.setUseSystemMenuBar(true);
-
-        // ASK rond point à contre sens
 
         // Map and Profile
         Pane profilePane = elevationProfileManager.pane();

@@ -36,7 +36,7 @@ public final class RouteManager {
      * Constructor of a route manager.
      *
      * @param routeBean         the route bean
-     * @param mapParamsProperty JavaFx read-only property containing the parameters of the
+     * @param mapParamsProperty JavaFX read-only property containing the parameters of the
      *                          background map
      */
     public RouteManager(RouteBean routeBean,
@@ -126,10 +126,8 @@ public final class RouteManager {
      * Computes and draws the line from the route.
      */
     private void drawLine() {
-        line.getPoints().clear(); // clear old line
-
         List<PointCh> points = routeBean.route().points();
-        Double[] positions = new Double[points.size() * 2]; // ASK use of Double
+        Double[] positions = new Double[points.size() * 2];
         int zoomLevel = mapParamsProperty.get().zoomLevel();
 
         for (int i = 0; i < points.size(); i++) {
@@ -138,7 +136,7 @@ public final class RouteManager {
             positions[i * 2 + 1] = point.yAtZoomLevel(zoomLevel);
         }
 
-        line.getPoints().addAll(positions); // repopulate line
+        line.getPoints().setAll(positions); // repopulate line
         placeLine();
     }
 

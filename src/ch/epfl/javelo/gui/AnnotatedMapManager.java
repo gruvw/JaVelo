@@ -106,9 +106,6 @@ public final class AnnotatedMapManager {
 
     /**
      * Returns the property containing the position of the mouse on the route.
-     * <p>
-     * The position of the mouse on the route is NaN if the mouse cursor if further away than
-     * {@code MOUSE_POSITION_THRESHOLD} pixels from the route.
      *
      * @return the property containing the position of the mouse on the route
      */
@@ -117,27 +114,42 @@ public final class AnnotatedMapManager {
     }
 
     /**
+     * Computes the position of the mouse along the route. (JavaFX binding)
+     * <p>
+     * The position of the mouse on the route is NaN if the mouse cursor if further away than
+     * {@code MOUSE_POSITION_THRESHOLD} pixels from the route.
+     *
+     * @param mousePosition position of the mouse on the screen
+     * @param routeBean     the route bean
+     * @param mapParams     JavaFX property containing the parameters of the background map
+     * @return the position of the mouse along the route
+     */
+    private static double computeMousePosition(Point2D mousePosition,
+                                               RouteBean routeBean,
+                                               MapViewParameters mapParams) {
+        if (!routeBean.isRouteValid() || Double.isNaN(mousePosition.getX()))
+            return DISABLED_VALUE;
+        PointWebMercator cursorPoint = mapParams.pointAt(mousePosition.getX(),
+                mousePosition.getY());
+        RoutePoint closestRoutePoint = routeBean.route().pointClosestTo(cursorPoint.toPointCh());
+        PointWebMercator routePoint = PointWebMercator.ofPointCh(closestRoutePoint.point());
+        Point2D cursorPointCoords = new Point2D(cursorPoint.xAtZoomLevel(mapParams.zoomLevel()),
+                                                cursorPoint.yAtZoomLevel(mapParams.zoomLevel()));
+        Point2D routePointCoords = new Point2D(routePoint.xAtZoomLevel(mapParams.zoomLevel()),
+                                               routePoint.yAtZoomLevel(mapParams.zoomLevel()));
+        return cursorPointCoords.distance(routePointCoords) <= MOUSE_POSITION_THRESHOLD
+                ? closestRoutePoint.position()
+                : DISABLED_VALUE;
+    }
+
+    /**
      * Registers handlers and bindings.
      */
     private void registerHandlers() {
-        mousePositionOnRouteProperty.bind(Bindings.createDoubleBinding(() -> {
-            Point2D mousePosition = mousePositionProperty.get();
-            if (!routeBean.isRouteValid() || Double.isNaN(mousePosition.getX()))
-                return DISABLED_VALUE;
-            MapViewParameters mapParams = mapParamsProperty.get();
-            PointWebMercator cursorPoint = mapParams.pointAt(mousePosition.getX(),
-                    mousePosition.getY());
-            RoutePoint closestRoutePoint = routeBean.route()
-                                                    .pointClosestTo(cursorPoint.toPointCh());
-            PointWebMercator routePoint = PointWebMercator.ofPointCh(closestRoutePoint.point());
-            Point2D cursorPointCoords = new Point2D(cursorPoint.xAtZoomLevel(
-                    mapParams.zoomLevel()), cursorPoint.yAtZoomLevel(mapParams.zoomLevel()));
-            Point2D routePointCoords = new Point2D(routePoint.xAtZoomLevel(mapParams.zoomLevel()),
-                                                   routePoint.yAtZoomLevel(mapParams.zoomLevel()));
-            return cursorPointCoords.distance(routePointCoords) <= MOUSE_POSITION_THRESHOLD
-                    ? closestRoutePoint.position()
-                    : DISABLED_VALUE;
-        }, mousePositionProperty, routeBean.routeProperty(), mapParamsProperty));
+        mousePositionOnRouteProperty.bind(Bindings.createDoubleBinding(
+                () -> computeMousePosition(mousePositionProperty.get(), routeBean,
+                        mapParamsProperty.get()),
+                mousePositionProperty, routeBean.routeProperty(), mapParamsProperty));
 
         pane.setOnMouseMoved(e -> mousePositionProperty.set(new Point2D(e.getX(), e.getY())));
         // Solves bug about highlighted position when mouse dragged or drag exited

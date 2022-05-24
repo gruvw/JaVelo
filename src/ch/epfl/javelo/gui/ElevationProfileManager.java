@@ -50,7 +50,7 @@ public final class ElevationProfileManager {
     /**
      * Minimum number of pixels between two vertical lines of the grid.
      */
-    private static final int MIN_VERTICAL_SPACING = 50; // ASK values
+    private static final int MIN_VERTICAL_SPACING = 50;
 
     /**
      * Possible distances, in meters, between two horizontal lines, representing the elevation.
@@ -158,16 +158,56 @@ public final class ElevationProfileManager {
     }
 
     /**
+     * Computes the transformation mapping screen coordinates to real world coordinates. (JavaFX
+     * binding)
+     * <p>
+     * [Pixels X, Pixels Y] -> [Position (meters), Elevation (meters)]
+     *
+     * @param rectangle surrounding rectangle containing the initial points
+     * @param profile   elevation profile of the current route
+     * @return the transformation mapping screen coordinates to real world coordinates
+     */
+    private static Transform createScreenToWorldTransform(Rectangle2D rectangle,
+                                                          ElevationProfile profile) {
+        Affine screenToWorldTransform = new Affine();
+        if (profile != null) {
+            screenToWorldTransform.prependTranslation(-PROFILE_PADDING.getLeft(),
+                    -PROFILE_PADDING.getTop());
+            screenToWorldTransform.prependScale(profile.length() / rectangle.getWidth(),
+                    (profile.minElevation() - profile.maxElevation()) / rectangle.getHeight());
+            screenToWorldTransform.prependTranslation(0, profile.maxElevation());
+        }
+        return screenToWorldTransform;
+    }
+
+    /**
+     * Creates the surrounding rectangle around the graph. (JavaFX binding)
+     *
+     * @param paneWidth  width of the pane containing the surrounding rectangle
+     * @param paneHeight height of the pane containing the surrounding rectangle
+     * @return the newly created rectangle
+     */
+    private static Rectangle2D computeRectangle(double paneWidth, double paneHeight) {
+        double width = Math.max(
+                paneWidth - (PROFILE_PADDING.getLeft() + PROFILE_PADDING.getRight()), 0);
+        double height = Math.max(
+                paneHeight - (PROFILE_PADDING.getBottom() + PROFILE_PADDING.getTop()), 0);
+        return new Rectangle2D(PROFILE_PADDING.getLeft(), PROFILE_PADDING.getTop(), width, height);
+    }
+
+    /**
      * Registers bindings.
      */
     private void registerBindings() {
         surroundingRectangleProperty.bind(Bindings.createObjectBinding(
-                () -> createRectangle(centerPane.getWidth(), centerPane.getHeight()),
+                () -> computeRectangle(centerPane.getWidth(), centerPane.getHeight()),
                 centerPane.widthProperty(), centerPane.heightProperty()));
 
-        screenToWorldProperty.bind(Bindings.createObjectBinding(
-                () -> createScreenToWorldTransform(surroundingRectangleProperty.get()),
-                surroundingRectangleProperty, profileProperty));
+        screenToWorldProperty.bind(
+                Bindings.createObjectBinding(
+                        () -> createScreenToWorldTransform(surroundingRectangleProperty.get(),
+                                profileProperty.get()),
+                        surroundingRectangleProperty, profileProperty));
         worldToScreenProperty.bind(Bindings.createObjectBinding(
                 () -> screenToWorldProperty.get().createInverse(), screenToWorldProperty));
 
@@ -175,7 +215,7 @@ public final class ElevationProfileManager {
             double highlighted = highlightedPositionProperty.get();
             double position = !Double.isNaN(highlighted) ? highlighted : DISABLED_VALUE;
             return worldToScreenProperty.get().transform(position, 0).getX();
-        }, mousePositionOnProfileProperty, highlightedPositionProperty, worldToScreenProperty));
+        }, highlightedPositionProperty, worldToScreenProperty));
         highlightedLine.startYProperty()
                        .bind(Bindings.select(surroundingRectangleProperty, "minY"));
         highlightedLine.endYProperty().bind(Bindings.select(surroundingRectangleProperty, "maxY"));
@@ -183,10 +223,10 @@ public final class ElevationProfileManager {
 
         statsText.textProperty().bind(Bindings.createStringBinding(() -> {
             ElevationProfile profile = profileProperty.get();
-            if (profile == null)
-                return "";
-            return STATS_TEXT.formatted(profile.length() / 1000, profile.totalAscent(),
-                    profile.totalDescent(), profile.minElevation(), profile.maxElevation());
+            return profile != null
+                    ? STATS_TEXT.formatted(profile.length() / 1000, profile.totalAscent(),
+                            profile.totalDescent(), profile.minElevation(), profile.maxElevation())
+                    : "";
         }, profileProperty));
     }
 
@@ -213,10 +253,10 @@ public final class ElevationProfileManager {
         textLabels.getChildren().clear();
 
         ElevationProfile profile = profileProperty.get();
+        Transform worldToScreen = worldToScreenProperty.get();
+
         if (profile == null)
             return;
-
-        Transform worldToScreen = worldToScreenProperty.get();
 
         // Horizontal lines (Elevations)
         int elevationStep = Arrays.stream(ELEVATION_STEPS)
@@ -309,42 +349,6 @@ public final class ElevationProfileManager {
             Point2D converted = worldToScreen.transform(position, profile.elevationAt(position));
             graphPolygon.getPoints().addAll(converted.getX(), converted.getY());
         }
-    }
-
-    /**
-     * Computes the transformation mapping screen coordinates to real world coordinates.
-     * <p>
-     * [Pixels X, Pixels Y] -> [Position (meters), Elevation (meters)]
-     *
-     * @param rectangle surrounding rectangle containing the initial points
-     * @return the transformation mapping screen coordinates to real world coordinates
-     */
-    private Transform createScreenToWorldTransform(Rectangle2D rectangle) {
-        ElevationProfile profile = profileProperty.get();
-        Affine screenToWorldTransform = new Affine();
-        if (profile != null) {
-            screenToWorldTransform.prependTranslation(-PROFILE_PADDING.getLeft(),
-                    -PROFILE_PADDING.getTop());
-            screenToWorldTransform.prependScale(profile.length() / rectangle.getWidth(),
-                    (profile.minElevation() - profile.maxElevation()) / rectangle.getHeight());
-            screenToWorldTransform.prependTranslation(0, profile.maxElevation());
-        }
-        return screenToWorldTransform;
-    }
-
-    /**
-     * Creates the surrounding rectangle around the graph.
-     *
-     * @param paneWidth  width of the pane containing the surrounding rectangle
-     * @param paneHeight height of the pane containing the surrounding rectangle
-     * @return the newly created rectangle
-     */
-    private Rectangle2D createRectangle(double paneWidth, double paneHeight) {
-        double width = Math.max(
-                paneWidth - (PROFILE_PADDING.getLeft() + PROFILE_PADDING.getRight()), 0);
-        double height = Math.max(
-                paneHeight - (PROFILE_PADDING.getBottom() + PROFILE_PADDING.getTop()), 0);
-        return new Rectangle2D(PROFILE_PADDING.getLeft(), PROFILE_PADDING.getTop(), width, height);
     }
 
     /**

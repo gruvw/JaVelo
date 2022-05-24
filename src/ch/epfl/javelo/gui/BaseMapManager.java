@@ -43,7 +43,7 @@ public final class BaseMapManager {
      *
      * @param tileManager       tiles manager
      * @param waypointsManager  waypoints manager
-     * @param mapParamsProperty JavaFx property containing the parameters of the background map
+     * @param mapParamsProperty JavaFX property containing the parameters of the background map
      */
     public BaseMapManager(TileManager tileManager,
                           WaypointsManager waypointsManager,

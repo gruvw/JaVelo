@@ -20,7 +20,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.ListChangeListener.Change;
 
 /**
- * JavaFx bean containing the JavaFx properties of the waypoints and the corresponding route.
+ * JavaFX bean containing the JavaFX properties of the waypoints and the corresponding route.
  * (JavaFX Bean)
  *
  * @author Lucas Jung (324724)
