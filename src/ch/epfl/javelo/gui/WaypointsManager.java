@@ -84,6 +84,8 @@ public final class WaypointsManager {
      * is at least one node in a circle of radius {@code SEARCH_DISTANCE} meters centered at the
      * given coordinates.
      *
+     * @param x x coordinate of the waypoint relative to the top left corner of the pane
+     * @param y y coordinate of the waypoint relative to the top left corner of the pane
      * @return true if a waypoint was added, false otherwise
      */
     public boolean addWaypoint(double x, double y) {

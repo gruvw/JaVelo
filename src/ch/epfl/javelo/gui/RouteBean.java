@@ -46,6 +46,8 @@ public final class RouteBean {
 
     /**
      * Constructor of a RouteBean.
+     *
+     * @param routeComputer a route planner
      */
     public RouteBean(RouteComputer routeComputer) {
         this.routeComputer = routeComputer;
@@ -195,6 +197,10 @@ public final class RouteBean {
 
     /**
      * Pair of node ids representing the start and the end of a route between two waypoints.
+     * (record)
+     *
+     * @param startNodeId       id of the starting node
+     * @param destinationNodeId id of the destination node
      */
     private record NodeIdPair(int startNodeId, int destinationNodeId) {
 

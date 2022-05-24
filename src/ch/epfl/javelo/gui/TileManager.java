@@ -73,6 +73,9 @@ public final class TileManager {
         /**
          * Checks if the given attributes form a valid tile.
          *
+         * @param zoomLevel zoom level
+         * @param x         x index of the tile
+         * @param y         y index of the tile
          * @return true if the given attributes form a valid tile, false otherwise
          */
         public static boolean isValid(int zoomLevel, int x, int y) {
@@ -81,7 +84,7 @@ public final class TileManager {
         }
 
         /**
-         * Form the string path of a tile's image.
+         * Forms the string path of a tile's image.
          *
          * @return the string path of a tile's image.
          */
@@ -149,6 +152,7 @@ public final class TileManager {
     /**
      * Retrieves the path of the tile's image (on-disk).
      *
+     * @param tile the tile of which we want the path
      * @return path of the tile's image on the disk
      */
     private Path pathOf(TileId tile) {

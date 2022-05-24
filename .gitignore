@@ -33,3 +33,4 @@ hs_err_pid*
 javelo-data
 osm-cache
 lib
+.vsls.json
