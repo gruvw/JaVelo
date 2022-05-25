@@ -164,6 +164,7 @@ public final class BaseMapManager {
 
         MapViewParameters mapParams = mapParamsProperty.get();
         int zoomLevel = mapParams.zoomLevel();
+        // ASK error when point outside of world (stage 8)
         PointWebMercator topLeft = mapParams.pointAt(0, 0);
 
         TileId topLeftTile = TileId.of(topLeft, zoomLevel);
@@ -176,7 +177,12 @@ public final class BaseMapManager {
         int tilesYNb = (int) Math.ceil(canvas.getHeight() / TileManager.TILE_SIDE_LENGTH);
         for (int x = 0; x <= tilesXNb; x++) {
             for (int y = 0; y <= tilesYNb; y++) {
-                TileId tile = new TileId(zoomLevel, topLeftTile.x() + x, topLeftTile.y() + y);
+                int tileX = topLeftTile.x() + x;
+                int tileY = topLeftTile.y() + y;
+                // Check that tile exists (world border)
+                if (!TileId.isValid(zoomLevel, tileX, tileY))
+                    continue;
+                TileId tile = new TileId(zoomLevel, tileX, tileY);
                 try {
                     Image image = tileManager.imageForTileAt(tile);
                     gc.drawImage(image, x * TileManager.TILE_SIDE_LENGTH + offsetX,

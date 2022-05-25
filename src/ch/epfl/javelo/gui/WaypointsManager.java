@@ -12,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.ListChangeListener.Change;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.SVGPath;
 
@@ -175,8 +176,8 @@ public final class WaypointsManager {
             pin.setLayoutY(pin.getLayoutY() + movement.getY());
         });
         pin.setOnMouseReleased(e -> {
-            Point2D movement = new Point2D(e.getX(), e.getY()).subtract(lastMousePosition);
             if (!e.isStillSincePress()) {
+                Point2D movement = new Point2D(e.getX(), e.getY()).subtract(lastMousePosition);
                 PointCh point = mapParamsProperty.get()
                                                  .pointAt(pin.getLayoutX() + movement.getX(),
                                                          pin.getLayoutY() + movement.getY())

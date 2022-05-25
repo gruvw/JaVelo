@@ -32,7 +32,7 @@ public final class ErrorManager {
     private static final Duration FADE_OUT_TRANSITION = new Duration(500);
 
     /**
-     * Maximal opacity of the error toast.
+     * Maximum opacity of the error toast.
      */
     private static final double MAX_OPACITY = 0.8;
 
