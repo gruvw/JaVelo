@@ -184,6 +184,10 @@ public final class RouteBean {
             segments.add(bestRoute);
         }
         computedRoutes.keySet().retainAll(keysToKeep);
+        if (segments.isEmpty()) { // if all waypoints are on same node id
+            emptyRoute();
+            return;
+        }
         Route combinedRoute = new MultiRoute(segments);
         ElevationProfile profile = ElevationProfileComputer.elevationProfile(combinedRoute,
                 MAX_STEP_LENGTH);
