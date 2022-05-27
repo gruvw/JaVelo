@@ -104,7 +104,6 @@ public final class TileManager {
     public TileManager(Path tilesDirectory, String serverName) {
         this.tilesDirectory = tilesDirectory;
         this.serverBaseUrl = "https://" + serverName + "/";
-        // ASK: why 0.75 by default?
         this.cacheMemory = new LinkedHashMap<>(MAX_ENTRIES, 0.75f, true);
     }
 

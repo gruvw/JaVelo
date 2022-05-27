@@ -35,7 +35,7 @@ public final class JaVelo extends Application {
     /**
      * Directory of the graph.
      */
-    private static final String GRAPH_DIRECTORY = "javelo-data"; // ASK
+    private static final String GRAPH_DIRECTORY = "javelo-data";
 
     /**
      * Directory of the tiles on-disk cache.

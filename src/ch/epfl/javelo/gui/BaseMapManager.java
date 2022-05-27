@@ -166,7 +166,6 @@ public final class BaseMapManager {
 
         MapViewParameters mapParams = mapParamsProperty.get();
         int zoomLevel = mapParams.zoomLevel();
-        // ASK error when point outside of world (stage 8)
         PointWebMercator topLeft = mapParams.pointAt(0, 0);
 
         TileId topLeftTile = TileId.of(topLeft, zoomLevel);
