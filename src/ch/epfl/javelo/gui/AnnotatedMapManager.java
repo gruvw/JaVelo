@@ -2,6 +2,7 @@ package ch.epfl.javelo.gui;
 
 import java.util.function.Consumer;
 import ch.epfl.javelo.data.Graph;
+import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
 import ch.epfl.javelo.routing.RoutePoint;
 import javafx.beans.binding.Bindings;
@@ -80,12 +81,6 @@ public final class AnnotatedMapManager {
                                   waypointsManager.pane());
         this.pane.getStylesheets().add("map.css");
 
-        // CHANGE: remove listener
-        routeBean.routeProperty().addListener((p, o, n) -> {
-            if (n == null)
-                errorConsumer.accept("No route found");
-        });
-
         registerHandlers();
     }
 
@@ -126,7 +121,10 @@ public final class AnnotatedMapManager {
             return DISABLED_VALUE;
         PointWebMercator cursorPoint = mapParams.pointAt(mousePosition.getX(),
                 mousePosition.getY());
-        RoutePoint closestRoutePoint = routeBean.route().pointClosestTo(cursorPoint.toPointCh());
+        PointCh cursorPointCh = cursorPoint.toPointCh();
+        if (cursorPointCh == null) // cursor outside of Switzerland
+            return DISABLED_VALUE;
+        RoutePoint closestRoutePoint = routeBean.route().pointClosestTo(cursorPointCh);
         PointWebMercator routePoint = PointWebMercator.ofPointCh(closestRoutePoint.point());
         Point2D cursorPointCoords = new Point2D(cursorPoint.xAtZoomLevel(mapParams.zoomLevel()),
                                                 cursorPoint.yAtZoomLevel(mapParams.zoomLevel()));
