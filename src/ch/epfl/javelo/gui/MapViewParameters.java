@@ -5,6 +5,8 @@ import javafx.geometry.Point2D;
 
 /**
  * Represents the parameters of the background map. (record)
+ * <p>
+ * Arguments are not checked.
  *
  * @param zoomLevel zoom level of the map
  * @param minX      x coordinate (Web Mercator at zoom level {@code zoomLevel}) of the top left
@@ -34,6 +36,8 @@ public record MapViewParameters(int zoomLevel, double minX, double minY) {
 
     /**
      * Retrieves the point at the top left corner of the displayed portion as a 2D point.
+     * <p>
+     * Coordinates are in Web Mercator at the current zoom level.
      *
      * @return the 2D point corresponding to the top left corner
      */
@@ -44,7 +48,7 @@ public record MapViewParameters(int zoomLevel, double minX, double minY) {
     /**
      * Retrieves a point relative to the top left corner as a {@code PointWebMercator}.
      * <p>
-     * Note: {@code x} and {@code y} in the window's coordinates system.
+     * Note: {@code x} and {@code y} are in the window's coordinates system.
      *
      * @param x x coordinate of the point relative to the top left corner
      * @param y y coordinate of the point relative to the top left corner
@@ -58,7 +62,7 @@ public record MapViewParameters(int zoomLevel, double minX, double minY) {
     /**
      * Retrieves the horizontal distance from the top left corner to the given point.
      *
-     * @param point point in the Web Mercator projection
+     * @param point Web Mercator point
      * @return the horizontal distance from the top left corner to the given Web Mercator point
      */
     public double viewX(PointWebMercator point) {
@@ -68,7 +72,7 @@ public record MapViewParameters(int zoomLevel, double minX, double minY) {
     /**
      * Retrieves the vertical distance from the top left corner to the given point.
      *
-     * @param point point in the Web Mercator projection
+     * @param point Web Mercator point
      * @return the vertical distance from the top left corner to the given Web Mercator point
      */
     public double viewY(PointWebMercator point) {

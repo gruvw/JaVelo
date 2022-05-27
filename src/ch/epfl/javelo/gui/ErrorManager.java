@@ -71,7 +71,7 @@ public final class ErrorManager {
     }
 
     /**
-     * Displays the error toast on the pane for a short time, along with a beep sound.
+     * Displays the error toast on the pane for a short time and plays a beep sound.
      *
      * @param message short error message that will be displayed in the error toast
      */

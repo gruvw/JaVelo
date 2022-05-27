@@ -17,13 +17,16 @@ import static ch.epfl.javelo.gui.TileManager.TileId;
 
 /**
  * Handles display and interactions with the background map.
- * <p>
- * Arguments are not checked.
  *
  * @author Lucas Jung (324724)
  * @author Florian Kolly (328313)
  */
 public final class BaseMapManager {
+
+    /**
+     * Time between two zoom events to be registered, in ms.
+     */
+    private static final int SCROLL_WAIT_TIME = 200;
 
     private static final int MIN_ZOOM_LEVEL = 8;
     private static final int MAX_ZOOM_LEVEL = 19;
@@ -39,7 +42,7 @@ public final class BaseMapManager {
     private Point2D lastMousePosition;
 
     /**
-     * Constructor of a background map manager.
+     * Constructor of a base map manager.
      *
      * @param tileManager       tiles manager
      * @param waypointsManager  waypoints manager
@@ -53,7 +56,6 @@ public final class BaseMapManager {
         this.mapParamsProperty = mapParamsProperty;
 
         this.canvas = new Canvas();
-
         this.pane = new Pane(this.canvas);
         // CHANGE: remove part that zooms over waypoint
         this.pane.setId("mapPane"); // used to cascade zoom action from waypoint pin
@@ -104,7 +106,7 @@ public final class BaseMapManager {
             long currentTime = System.currentTimeMillis();
             if (currentTime < minScrollTime.get())
                 return;
-            minScrollTime.set(currentTime + 200);
+            minScrollTime.set(currentTime + SCROLL_WAIT_TIME);
             int zoomDelta = (int) Math.signum(e.getDeltaY());
             int newZoomLevel = Math2.clamp(MIN_ZOOM_LEVEL, mapParams.zoomLevel() + (int) zoomDelta,
                     MAX_ZOOM_LEVEL);

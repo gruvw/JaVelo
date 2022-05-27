@@ -37,6 +37,7 @@ public final class TileManager {
 
     private final Path tilesDirectory;
     private final String serverBaseUrl;
+
     private final Map<TileId, Image> cacheMemory;
 
     /**
@@ -58,19 +59,6 @@ public final class TileManager {
         }
 
         /**
-         * Creates a tile from a point in Web Mercator projection, at a given zoom level.
-         *
-         * @param point     point inside the tile
-         * @param zoomLevel zoom level
-         * @return the tile at zoom level {@code zoomLevel} containing the given point
-         */
-        public static TileId of(PointWebMercator point, int zoomLevel) {
-            int tileX = (int) Math.floor(point.xAtZoomLevel(zoomLevel) / TILE_SIDE_LENGTH);
-            int tileY = (int) Math.floor(point.yAtZoomLevel(zoomLevel) / TILE_SIDE_LENGTH);
-            return new TileId(zoomLevel, tileX, tileY);
-        }
-
-        /**
          * Checks if the given attributes form a valid tile.
          *
          * @param zoomLevel zoom level
@@ -81,6 +69,19 @@ public final class TileManager {
         public static boolean isValid(int zoomLevel, int x, int y) {
             double limit = Math.pow(2, zoomLevel);
             return (0 <= zoomLevel) && (0 <= x && x < limit) && (0 <= y && y < limit);
+        }
+
+        /**
+         * Creates a tile from a point in Web Mercator projection, at a given zoom level.
+         *
+         * @param point     point inside the tile
+         * @param zoomLevel zoom level
+         * @return the tile at zoom level {@code zoomLevel} containing the given point
+         */
+        public static TileId of(PointWebMercator point, int zoomLevel) {
+            int tileX = (int) Math.floor(point.xAtZoomLevel(zoomLevel) / TILE_SIDE_LENGTH);
+            int tileY = (int) Math.floor(point.yAtZoomLevel(zoomLevel) / TILE_SIDE_LENGTH);
+            return new TileId(zoomLevel, tileX, tileY);
         }
 
         /**
@@ -98,11 +99,12 @@ public final class TileManager {
      * Constructor of a tile manager.
      *
      * @param tilesDirectory path to the directory containing the on-disk tiles storage
-     * @param serverName     name of the tiles server
+     * @param serverName     name of the tile server
      */
     public TileManager(Path tilesDirectory, String serverName) {
         this.tilesDirectory = tilesDirectory;
         this.serverBaseUrl = "https://" + serverName + "/";
+        // ASK: why 0.75 by default?
         this.cacheMemory = new LinkedHashMap<>(MAX_ENTRIES, 0.75f, true);
     }
 
@@ -110,7 +112,7 @@ public final class TileManager {
      * Retrieves the image of a given tile.
      * <p>
      * The image is first sought in the cache memory, then on the disk. If the image is not found in
-     * either of them, it is downloaded from the tiles server and loaded in the cache memory (and
+     * either of them, it is downloaded from the tile server and loaded in the cache memory (and
      * also saved on the disk).
      *
      * @param tile tile to retrieve
@@ -132,7 +134,7 @@ public final class TileManager {
     }
 
     /**
-     * Retrieves a tile's image from the tiles server and saves it to the disk.
+     * Retrieves a tile's image from the tile server and saves it to the disk.
      *
      * @param tile the tile of which we download the image
      * @throws IOException if any IO error occurs

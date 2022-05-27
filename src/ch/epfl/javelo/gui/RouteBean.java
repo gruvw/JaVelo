@@ -28,7 +28,13 @@ import javafx.collections.ListChangeListener.Change;
  */
 public final class RouteBean {
 
+    /**
+     * Maximum distance, in meters, between two elevation profile samples.
+     */
+    private static final int MAX_STEP_LENGTH = 5;
+
     private final RouteComputer routeComputer;
+
     private final ObservableList<Waypoint> waypoints;
     private final ObjectProperty<Route> routeProperty;
     private final ObjectProperty<ElevationProfile> elevationProfileProperty;
@@ -38,11 +44,6 @@ public final class RouteBean {
      * Cache memory storing every {@code SingleRoute} used in the current route.
      */
     private final HashMap<NodeIdPair, Route> computedRoutes;
-
-    /**
-     * Maximum distance, in meters, between two elevation profile samples.
-     */
-    private static final int MAX_STEP_LENGTH = 5;
 
     /**
      * Constructor of a RouteBean.
@@ -109,7 +110,7 @@ public final class RouteBean {
     }
 
     /**
-     * Returns the property containing the highlighted position, as read-only.
+     * Returns the property containing the highlighted position.
      *
      * @return the property containing the highlighted position
      */

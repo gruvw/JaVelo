@@ -29,8 +29,6 @@ import javafx.scene.transform.Transform;
 
 /**
  * Handles interactions and display of the profile.
- * <p>
- * Arguments are not checked.
  *
  * @author Lucas Jung (324724)
  * @author Florian Kolly (328313)
@@ -139,9 +137,9 @@ public final class ElevationProfileManager {
     }
 
     /**
-     * Returns the pane rendering the profile layout.
+     * Returns the pane rendering the profile's layout.
      *
-     * @return the pane rendering the profile layout
+     * @return the pane rendering the profile's layout
      */
     public Pane pane() {
         return pane;
@@ -155,6 +153,21 @@ public final class ElevationProfileManager {
      */
     public ReadOnlyDoubleProperty mousePositionOnProfileProperty() {
         return mousePositionOnProfileProperty;
+    }
+
+    /**
+     * Creates the surrounding rectangle around the graph. (JavaFX binding)
+     *
+     * @param paneWidth  width of the pane containing the surrounding rectangle
+     * @param paneHeight height of the pane containing the surrounding rectangle
+     * @return the newly created rectangle
+     */
+    private static Rectangle2D computeRectangle(double paneWidth, double paneHeight) {
+        double width = Math.max(
+                paneWidth - (PROFILE_PADDING.getLeft() + PROFILE_PADDING.getRight()), 0);
+        double height = Math.max(
+                paneHeight - (PROFILE_PADDING.getBottom() + PROFILE_PADDING.getTop()), 0);
+        return new Rectangle2D(PROFILE_PADDING.getLeft(), PROFILE_PADDING.getTop(), width, height);
     }
 
     /**
@@ -178,21 +191,6 @@ public final class ElevationProfileManager {
             screenToWorldTransform.prependTranslation(0, profile.maxElevation());
         }
         return screenToWorldTransform;
-    }
-
-    /**
-     * Creates the surrounding rectangle around the graph. (JavaFX binding)
-     *
-     * @param paneWidth  width of the pane containing the surrounding rectangle
-     * @param paneHeight height of the pane containing the surrounding rectangle
-     * @return the newly created rectangle
-     */
-    private static Rectangle2D computeRectangle(double paneWidth, double paneHeight) {
-        double width = Math.max(
-                paneWidth - (PROFILE_PADDING.getLeft() + PROFILE_PADDING.getRight()), 0);
-        double height = Math.max(
-                paneHeight - (PROFILE_PADDING.getBottom() + PROFILE_PADDING.getTop()), 0);
-        return new Rectangle2D(PROFILE_PADDING.getLeft(), PROFILE_PADDING.getTop(), width, height);
     }
 
     /**
@@ -335,6 +333,7 @@ public final class ElevationProfileManager {
 
         ElevationProfile profile = profileProperty.get();
         Transform worldToScreen = worldToScreenProperty.get();
+        Rectangle2D rectangle = surroundingRectangleProperty.get();
 
         Point2D bottomLeft = worldToScreen.transform(profile.length(), profile.minElevation());
         Point2D bottomRight = worldToScreen.transform(0, profile.minElevation());
@@ -342,8 +341,8 @@ public final class ElevationProfileManager {
                     .addAll(bottomLeft.getX(), bottomLeft.getY(), bottomRight.getX(),
                             bottomRight.getY());
 
-        int min = (int) surroundingRectangleProperty.get().getMinX();
-        int max = (int) surroundingRectangleProperty.get().getMaxX();
+        int min = (int) rectangle.getMinX();
+        int max = (int) rectangle.getMaxX();
         for (int p = min; p <= max; p++) {
             double position = screenToWorldProperty.get().transform(p, 0).getX();
             Point2D converted = worldToScreen.transform(position, profile.elevationAt(position));

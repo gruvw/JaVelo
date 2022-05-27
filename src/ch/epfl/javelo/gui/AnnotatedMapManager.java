@@ -18,8 +18,6 @@ import static ch.epfl.javelo.gui.ElevationProfileManager.DISABLED_VALUE;
 
 /**
  * Handles display and superposition of the background map, the route and the waypoints panes.
- * <p>
- * Arguments are not checked.
  *
  * @author Lucas Jung (324724)
  * @author Florian Kolly (328313)
@@ -27,22 +25,14 @@ import static ch.epfl.javelo.gui.ElevationProfileManager.DISABLED_VALUE;
 public final class AnnotatedMapManager {
 
     /**
-     * Default zoom level of the map.
+     * Default parameters of the map.
      */
-    private static final int DEFAULT_ZOOM = 12;
+    private static final MapViewParameters DEFAULT_MAP_PARAMETERS = new MapViewParameters(12,
+                                                                                          543_200,
+                                                                                          370_650);
 
     /**
-     * Default X coordinate for the top left corner of the map, in the Web Mercator system.
-     */
-    private static final int DEFAULT_MIN_X = 543_200;
-
-    /**
-     * Default Y coordinate for the top left corner of the map, in the Web Mercator system.
-     */
-    private static final int DEFAULT_MIN_Y = 370_650;
-
-    /**
-     * Maximum distance in pixels between the mouse and the route to register the highlighted
+     * Maximum distance, in pixels, between the mouse and the route to register the highlighted
      * position.
      */
     private static final int MOUSE_POSITION_THRESHOLD = 15;
@@ -77,9 +67,7 @@ public final class AnnotatedMapManager {
                                Consumer<String> errorConsumer) {
         this.routeBean = routeBean;
 
-        this.mapParamsProperty = new SimpleObjectProperty<>(new MapViewParameters(DEFAULT_ZOOM,
-                                                                                  DEFAULT_MIN_X,
-                                                                                  DEFAULT_MIN_Y));
+        this.mapParamsProperty = new SimpleObjectProperty<>(DEFAULT_MAP_PARAMETERS);
         this.mousePositionOnRouteProperty = new SimpleDoubleProperty(DISABLED_VALUE);
         this.mousePositionProperty = new SimpleObjectProperty<>(DISABLED_POINT);
 
@@ -91,6 +79,12 @@ public final class AnnotatedMapManager {
         this.pane = new StackPane(baseMapManager.pane(), routeManager.pane(),
                                   waypointsManager.pane());
         this.pane.getStylesheets().add("map.css");
+
+        // CHANGE: remove listener
+        routeBean.routeProperty().addListener((p, o, n) -> {
+            if (n == null)
+                errorConsumer.accept("No route found");
+        });
 
         registerHandlers();
     }
@@ -119,7 +113,8 @@ public final class AnnotatedMapManager {
      * The position of the mouse on the route is NaN if the mouse cursor if further away than
      * {@code MOUSE_POSITION_THRESHOLD} pixels from the route.
      *
-     * @param mousePosition position of the mouse on the screen
+     * @param mousePosition position of the mouse on the screen, in pixels relative to the top left
+     *                      corner
      * @param routeBean     the route bean
      * @param mapParams     JavaFX property containing the parameters of the background map
      * @return the position of the mouse along the route

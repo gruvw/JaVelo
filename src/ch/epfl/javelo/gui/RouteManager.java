@@ -12,8 +12,6 @@ import javafx.scene.shape.Polyline;
 
 /**
  * Handles display and interactions of the route and the highlighted point.
- * <p>
- * Arguments are not checked.
  *
  * @author Lucas Jung (324724)
  * @author Florian Kolly (328313)
@@ -99,6 +97,7 @@ public final class RouteManager {
         circle.setOnMouseClicked(e -> {
             Route route = routeBean.route();
             double highlightedPosition = routeBean.highlightedPosition();
+
             int closestNodeId = route.nodeClosestTo(highlightedPosition);
             Point2D position = circle.localToParent(e.getX(), e.getY());
             PointCh point = mapParamsProperty.get()
@@ -150,11 +149,13 @@ public final class RouteManager {
     }
 
     /**
-     * Moves the circle to the correct location on the pane.
+     * Moves the circle to the correct location on the pane when a valid highlighted position
+     * exists.
      */
     private void placeCircle() {
         if (Double.isNaN(routeBean.highlightedPosition()))
             return;
+
         MapViewParameters mapParams = mapParamsProperty.get();
         int zoomLevel = mapParams.zoomLevel();
         Point2D topLeft = mapParams.topLeft();

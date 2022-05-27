@@ -35,10 +35,10 @@ public final class JaVelo extends Application {
     /**
      * Directory of the graph.
      */
-    private static final String GRAPH_DIRECTORY = "javelo-data";
+    private static final String GRAPH_DIRECTORY = "javelo-data"; // ASK
 
     /**
-     * Directory of the tiles disk cache.
+     * Directory of the tiles on-disk cache.
      */
     private static final String CACHE_DIRECTORY = "osm-cache";
 
@@ -61,16 +61,6 @@ public final class JaVelo extends Application {
      * Minimum height of the window.
      */
     private static final int MIN_HEIGHT = 600;
-
-    /**
-     * Text of the menu item.
-     */
-    private static final String MENU_TEXT = "Fichier";
-
-    /**
-     * Text of the submenu action.
-     */
-    private static final String MENU_ITEM_TEXT = "Exporter GPX";
 
     /**
      * Default filename when saving the GPX file.
@@ -110,7 +100,7 @@ public final class JaVelo extends Application {
                                        elevationProfileManager.mousePositionOnProfileProperty()));
 
         // Menu
-        MenuItem gpxItem = new MenuItem(MENU_ITEM_TEXT);
+        MenuItem gpxItem = new MenuItem("Exporter GPX");
         gpxItem.disableProperty().bind(routeBean.elevationProfileProperty().isNull());
 
         // CHANGE: remove file chooser: default save on project root as default filename
@@ -129,7 +119,8 @@ public final class JaVelo extends Application {
                 throw new UncheckedIOException(except); // should never happen
             }
         });
-        Menu menu = new Menu(MENU_TEXT);
+
+        Menu menu = new Menu("Fichier");
         menu.getItems().add(gpxItem);
         MenuBar menuBar = new MenuBar(menu);
         menuBar.setUseSystemMenuBar(true);
@@ -143,8 +134,8 @@ public final class JaVelo extends Application {
             else if (o == null && n != null)
                 splitPane.getItems().add(profilePane);
         });
-        SplitPane.setResizableWithParent(profilePane, false);
         splitPane.setOrientation(Orientation.VERTICAL);
+        SplitPane.setResizableWithParent(profilePane, false);
 
         // Menu & Pane
         Pane mapPane = new StackPane(splitPane, errorManager.pane());

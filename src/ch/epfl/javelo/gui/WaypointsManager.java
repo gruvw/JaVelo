@@ -12,7 +12,6 @@ import javafx.collections.ObservableList;
 import javafx.collections.ListChangeListener.Change;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.SVGPath;
 
@@ -29,9 +28,13 @@ public final class WaypointsManager {
      */
     private static final int SEARCH_DISTANCE = 500;
 
+    /**
+     * Message that is given to the error consumer when a waypoint cannot be placed or moved.
+     */
+    private static final String ERROR_MSG = "Aucune route à proximité !";
+
     private static final String CONTOUR_SVG = "M-8-20C-5-14-2-7 0 0 2-7 5-14 8-20 20-40-20-40-8-20";
     private static final String INTERIOR_SVG = "M0-23A1 1 0 000-29 1 1 0 000-23";
-    private static final String ERROR_MSG = "Aucune route à proximité !";
 
     private final Graph graph;
     private final ObjectProperty<MapViewParameters> mapParamsProperty;
@@ -155,8 +158,8 @@ public final class WaypointsManager {
     /**
      * Registers event handlers to a given pin.
      *
-     * @param pin           the pin that will register the event handlers
-     * @param waypointIndex the index of the waypoint that the given pin represents
+     * @param pin           pin that will register the event handlers
+     * @param waypointIndex index of the waypoint that the given pin represents
      */
     private void registerPinHandlers(Group pin, int waypointIndex) {
         // Remove marker control
@@ -178,6 +181,7 @@ public final class WaypointsManager {
         pin.setOnMouseReleased(e -> {
             if (!e.isStillSincePress()) {
                 Point2D movement = new Point2D(e.getX(), e.getY()).subtract(lastMousePosition);
+                // CHANGE: format
                 PointCh point = mapParamsProperty.get()
                                                  .pointAt(pin.getLayoutX() + movement.getX(),
                                                          pin.getLayoutY() + movement.getY())
@@ -209,7 +213,7 @@ public final class WaypointsManager {
      * Creates the waypoint at a given position in Switzerland if the position is valid, publishes
      * an error to the error consumer otherwise.
      *
-     * @param point the position of the waypoint in Switzerland
+     * @param point position of the waypoint in Switzerland
      * @return the waypoint at the given position in Switzerland if a graph node is found closer
      *         than {@code SEARCH_DISTANCE} meters to the position, {@code null} otherwise
      */
