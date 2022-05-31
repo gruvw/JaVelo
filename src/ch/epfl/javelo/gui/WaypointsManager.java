@@ -6,7 +6,6 @@ import java.util.function.Consumer;
 import ch.epfl.javelo.data.Graph;
 import ch.epfl.javelo.projection.PointCh;
 import ch.epfl.javelo.projection.PointWebMercator;
-import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.collections.ListChangeListener.Change;
@@ -134,14 +133,6 @@ public final class WaypointsManager {
 
             pane.getChildren().add(pin);
 
-            // CHANGE: remove part that zooms over waypoint
-            // Cascade zoom event from waypoint to map pane
-            Platform.runLater(() -> pin.setOnScroll(pane.getParent()
-                                                        .getChildrenUnmodifiable()
-                                                        .filtered(n -> n.getId() == "mapPane")
-                                                        .get(0) // map pane always exists
-                                                        .getOnScroll()));
-
             registerPinHandlers(pin, i);
 
             // Add style to marker
@@ -181,10 +172,9 @@ public final class WaypointsManager {
         pin.setOnMouseReleased(e -> {
             if (!e.isStillSincePress()) {
                 Point2D movement = new Point2D(e.getX(), e.getY()).subtract(lastMousePosition);
-                // CHANGE: format
                 PointCh point = mapParamsProperty.get()
                                                  .pointAt(pin.getLayoutX() + movement.getX(),
-                                                         pin.getLayoutY() + movement.getY())
+                                                          pin.getLayoutY() + movement.getY())
                                                  .toPointCh();
                 Waypoint wp = waypointAt(point);
                 if (wp == null) {

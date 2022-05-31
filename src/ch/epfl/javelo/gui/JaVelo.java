@@ -1,6 +1,5 @@
 package ch.epfl.javelo.gui;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
@@ -20,9 +19,7 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.FileChooser.ExtensionFilter;
 
 /**
  * Primary class of the application. Handles the execution and the display of the window.
@@ -91,30 +88,18 @@ public final class JaVelo extends Application {
                                                                                       routeBean.highlightedPositionProperty());
 
         // Bind highlighted position of the route with the annotated map and the elevation profile
-        // CHANGE: formatage
         routeBean.highlightedPositionProperty()
-                 .bind(Bindings.when(
-                         annotatedMapManager.mousePositionOnRouteProperty().greaterThanOrEqualTo(0))
+                 .bind(Bindings.when(annotatedMapManager.mousePositionOnRouteProperty().greaterThanOrEqualTo(0))
                                .then(annotatedMapManager.mousePositionOnRouteProperty())
-                               .otherwise(
-                                       elevationProfileManager.mousePositionOnProfileProperty()));
+                               .otherwise(elevationProfileManager.mousePositionOnProfileProperty()));
 
         // Menu
         MenuItem gpxItem = new MenuItem("Exporter GPX");
         gpxItem.disableProperty().bind(routeBean.elevationProfileProperty().isNull());
 
-        // CHANGE: remove file chooser: default save on project root as default filename
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialFileName(GPX_FILE_NAME);
-        fileChooser.setTitle("Save GPX");
-        fileChooser.getExtensionFilters().addAll(new ExtensionFilter("GPX Files", "*.gpx"));
-
         gpxItem.setOnAction(e -> {
             try {
-                File file = fileChooser.showSaveDialog(stage);
-                if (file != null)
-                    GpxGenerator.writeGpx(file.getAbsolutePath(), routeBean.route(),
-                            routeBean.elevationProfile());
+                GpxGenerator.writeGpx(GPX_FILE_NAME, routeBean.route(), routeBean.elevationProfile());
             } catch (IOException except) {
                 throw new UncheckedIOException(except); // should never happen
             }
