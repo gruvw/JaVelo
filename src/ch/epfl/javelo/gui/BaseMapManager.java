@@ -100,7 +100,6 @@ public final class BaseMapManager {
         // Zoom control
         SimpleLongProperty minScrollTime = new SimpleLongProperty();
         pane.setOnScroll(e -> {
-            MapViewParameters mapParams = mapParamsProperty.get();
             if (e.getDeltaY() == 0d)
                 return;
             long currentTime = System.currentTimeMillis();
@@ -108,7 +107,8 @@ public final class BaseMapManager {
                 return;
             minScrollTime.set(currentTime + SCROLL_WAIT_TIME);
             int zoomDelta = (int) Math.signum(e.getDeltaY());
-            int newZoomLevel = Math2.clamp(MIN_ZOOM_LEVEL, mapParams.zoomLevel() + (int) zoomDelta,
+            MapViewParameters mapParams = mapParamsProperty.get();
+            int newZoomLevel = Math2.clamp(MIN_ZOOM_LEVEL, mapParams.zoomLevel() + zoomDelta,
                     MAX_ZOOM_LEVEL);
             // CHANGE: remove zooms over waypoint (remove position, position.getX() -> e.getX())
             Point2D position = ((Node) e.getSource()).localToParent(e.getX(), e.getY());

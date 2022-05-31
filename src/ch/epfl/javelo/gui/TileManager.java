@@ -53,6 +53,7 @@ public final class TileManager {
          * Constructor of a tile.
          *
          * @throws IllegalArgumentException if the tile is invalid
+         * @see TileManager.TileId#isValid
          */
         public TileId {
             Preconditions.checkArgument(isValid(zoomLevel, x, y));
