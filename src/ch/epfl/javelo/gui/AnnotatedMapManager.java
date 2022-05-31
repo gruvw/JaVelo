@@ -94,7 +94,7 @@ public final class AnnotatedMapManager {
     }
 
     /**
-     * Returns the property containing the position of the mouse on the route.
+     * Returns the property containing the position of the mouse on the route, as read-only.
      *
      * @return the property containing the position of the mouse on the route
      */

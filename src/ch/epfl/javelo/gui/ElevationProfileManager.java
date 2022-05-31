@@ -146,7 +146,7 @@ public final class ElevationProfileManager {
     }
 
     /**
-     * Returns the position of the cursor along the profile.
+     * Returns the position of the cursor along the profile, as read-only.
      *
      * @return the position of the cursor along the profile, in meters, or NaN if no position needs
      *         to be highlighted
