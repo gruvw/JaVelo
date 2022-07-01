@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -56,6 +57,8 @@ public final class BaseMapManager {
 
         this.canvas = new Canvas();
         this.pane = new Pane(this.canvas);
+        // CHANGE: remove part that zooms over waypoint
+        this.pane.setId("mapPane"); // used to cascade zoom action from waypoint pin
 
         registerListeners();
         registerHandlers();
@@ -107,12 +110,14 @@ public final class BaseMapManager {
             MapViewParameters mapParams = mapParamsProperty.get();
             int newZoomLevel = Math2.clamp(MIN_ZOOM_LEVEL, mapParams.zoomLevel() + zoomDelta,
                     MAX_ZOOM_LEVEL);
-            PointWebMercator centerOfZoom = mapParams.pointAt(e.getX(), e.getY());
+            // CHANGE: remove zooms over waypoint (remove position, position.getX() -> e.getX())
+            Point2D position = ((Node) e.getSource()).localToParent(e.getX(), e.getY());
+            PointWebMercator centerOfZoom = mapParams.pointAt(position.getX(), position.getY());
             mapParamsProperty.set(new MapViewParameters(newZoomLevel,
                                                         centerOfZoom.xAtZoomLevel(newZoomLevel)
-                                                                - e.getX(),
+                                                                - position.getX(),
                                                         centerOfZoom.yAtZoomLevel(newZoomLevel)
-                                                                - e.getY()));
+                                                                - position.getY()));
         });
 
         // Map movement control
