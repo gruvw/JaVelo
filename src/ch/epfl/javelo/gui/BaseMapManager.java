@@ -57,7 +57,6 @@ public final class BaseMapManager {
 
         this.canvas = new Canvas();
         this.pane = new Pane(this.canvas);
-        // CHANGE: remove part that zooms over waypoint
         this.pane.setId("mapPane"); // used to cascade zoom action from waypoint pin
 
         registerListeners();
@@ -110,7 +109,7 @@ public final class BaseMapManager {
             MapViewParameters mapParams = mapParamsProperty.get();
             int newZoomLevel = Math2.clamp(MIN_ZOOM_LEVEL, mapParams.zoomLevel() + zoomDelta,
                     MAX_ZOOM_LEVEL);
-            // CHANGE: remove zooms over waypoint (remove position, position.getX() -> e.getX())
+
             Point2D position = ((Node) e.getSource()).localToParent(e.getX(), e.getY());
             PointWebMercator centerOfZoom = mapParams.pointAt(position.getX(), position.getY());
             mapParamsProperty.set(new MapViewParameters(newZoomLevel,

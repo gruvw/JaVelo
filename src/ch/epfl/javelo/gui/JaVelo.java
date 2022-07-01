@@ -91,7 +91,6 @@ public final class JaVelo extends Application {
                                                                                       routeBean.highlightedPositionProperty());
 
         // Bind highlighted position of the route with the annotated map and the elevation profile
-        // CHANGE: formatage
         routeBean.highlightedPositionProperty()
                  .bind(Bindings.when(
                          annotatedMapManager.mousePositionOnRouteProperty().greaterThanOrEqualTo(0))
@@ -103,7 +102,6 @@ public final class JaVelo extends Application {
         MenuItem gpxItem = new MenuItem("Exporter GPX");
         gpxItem.disableProperty().bind(routeBean.elevationProfileProperty().isNull());
 
-        // CHANGE: remove file chooser: default save on project root as default filename
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialFileName(GPX_FILE_NAME);
         fileChooser.setTitle("Save GPX");
