@@ -35,12 +35,12 @@ public final class JaVelo extends Application {
     /**
      * Directory of the graph.
      */
-    private static final String GRAPH_DIRECTORY = "javelo-data";
+    private static final String GRAPH_DIRECTORY = ".javelo/ch_west";
 
     /**
      * Directory of the tiles on-disk cache.
      */
-    private static final String CACHE_DIRECTORY = "osm-cache";
+    private static final String CACHE_DIRECTORY = ".javelo/osm-cache";
 
     /**
      * URL of the tile server.
