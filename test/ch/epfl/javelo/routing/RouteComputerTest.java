@@ -15,7 +15,7 @@ public class RouteComputerTest {
 
     @Test
     void bestRouteThrowsTest() throws IOException {
-        Graph gLausanne = Graph.loadFrom(Path.of("data/lausanne"));
+        Graph gLausanne = Graph.loadFrom(Path.of(".javelo/lausanne"));
         CostFunction cfLausanne = new CityBikeCF(gLausanne);
         RouteComputer rcLausanne = new RouteComputer(gLausanne, cfLausanne);
         assertThrows(IllegalArgumentException.class,
@@ -24,7 +24,7 @@ public class RouteComputerTest {
 
     @Test
     void bestRouteBetweenLausanneTest() throws IOException {
-        Graph gLausanne = Graph.loadFrom(Path.of("data/lausanne"));
+        Graph gLausanne = Graph.loadFrom(Path.of(".javelo/lausanne"));
         CostFunction cfLausanne = new CityBikeCF(gLausanne);
         RouteComputer rcLausanne = new RouteComputer(gLausanne, cfLausanne);
         Route r = rcLausanne.bestRouteBetween(159049, 117669);
@@ -40,7 +40,7 @@ public class RouteComputerTest {
 
     @Test
     void bestRouteBetweenChWestTest() throws IOException {
-        Graph g_west = Graph.loadFrom(Path.of("data/ch_west"));
+        Graph g_west = Graph.loadFrom(Path.of(".javelo/ch_west"));
         CostFunction cf_west = new CityBikeCF(g_west);
         RouteComputer rc_west = new RouteComputer(g_west, cf_west);
         Route r = rc_west.bestRouteBetween(2046055, 2694240);
@@ -64,7 +64,7 @@ public class RouteComputerTest {
     private RouteComputer newLausanneRouteComputer() {
         if (graph == null) {
             try {
-                graph = Graph.loadFrom(Path.of("data/lausanne"));
+                graph = Graph.loadFrom(Path.of(".javelo/lausanne"));
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }

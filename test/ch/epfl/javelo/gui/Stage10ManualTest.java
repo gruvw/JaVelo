@@ -23,7 +23,7 @@ public final class Stage10ManualTest extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Graph graph = Graph.loadFrom(Path.of("data/lausanne"));
+        Graph graph = Graph.loadFrom(Path.of(".javelo/lausanne"));
         CityBikeCF costFunction = new CityBikeCF(graph);
         RouteComputer routeComputer = new RouteComputer(graph, costFunction);
 

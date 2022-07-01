@@ -22,7 +22,7 @@ public class Stage6ManualTest {
         System.out.println("Average of " + totalTime / (double) iterations + "ms");
 
         // LAUSANNE
-        Graph gLausanne = Graph.loadFrom(Path.of("data/lausanne"));
+        Graph gLausanne = Graph.loadFrom(Path.of(".javelo/lausanne"));
         CostFunction cfLausanne = new CityBikeCF(gLausanne);
         RouteComputer rcLausanne = new RouteComputer(gLausanne, cfLausanne);
         Route r = rcLausanne.bestRouteBetween(159049, 117669); // lausanne exemple donnée

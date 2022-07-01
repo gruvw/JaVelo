@@ -14,7 +14,7 @@ public class Stage7ManualTest {
         GpxGenerator.writeGpx("ch_west-out.gpx", routeWest,
                 ElevationProfileComputer.elevationProfile(routeWest, 1.2));
 
-        Graph gLausanne = Graph.loadFrom(Path.of("data/lausanne"));
+        Graph gLausanne = Graph.loadFrom(Path.of(".javelo/lausanne"));
         CostFunction cfLausanne = new CityBikeCF(gLausanne);
         RouteComputer rcLausanne = new RouteComputer(gLausanne, cfLausanne);
         Route routeLausanne = rcLausanne.bestRouteBetween(159049, 117669);

@@ -21,7 +21,7 @@ public final class Stage8ManualTest extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Graph graph = Graph.loadFrom(Path.of("data/lausanne"));
+        Graph graph = Graph.loadFrom(Path.of(".javelo/lausanne"));
         Path cacheBasePath = Path.of("data/tiles");
         String tileServerHost = "tile.openstreetmap.org";
         TileManager tileManager = new TileManager(cacheBasePath, tileServerHost);

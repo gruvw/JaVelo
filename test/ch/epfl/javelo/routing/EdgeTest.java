@@ -22,26 +22,28 @@ public class EdgeTest {
     private static PointCh pointB = new PointCh(2546875.820309356, 1183248.8220051485);
 
     private static Edge edgeAB = new Edge(2022, 2023, pointA, pointB, pointA.distanceTo(pointB),
-            value -> Math.pow(value, 2));;
+                                          value -> Math.pow(value, 2));;
 
     @BeforeAll
     static void initGlobalVars() throws IOException {
-        graph = Graph.loadFrom(Path.of("data/lausanne"));
+        graph = Graph.loadFrom(Path.of(".javelo/lausanne"));
     }
 
     @Test
     void ofTest() {
         // Testing using edge id (index) 5413 -> OSM edge id 32319962[-3:-1]
         // From node OSM 7780441076 (id/index 2666) to node OSM 7780441077 (id/index 2664)
-        PointCh origin = new PointCh(
-                Ch1903.e(Math.toRadians(6.6214028), Math.toRadians(46.6303228)),
-                Ch1903.n(Math.toRadians(6.6214028), Math.toRadians(46.6303228)));
-        PointCh target = new PointCh(
-                Ch1903.e(Math.toRadians(6.6236244), Math.toRadians(46.6295067)),
-                Ch1903.n(Math.toRadians(6.6236244), Math.toRadians(46.6295067)));
+        PointCh origin = new PointCh(Ch1903.e(Math.toRadians(6.6214028),
+                Math.toRadians(46.6303228)),
+                                     Ch1903.n(Math.toRadians(6.6214028),
+                                             Math.toRadians(46.6303228)));
+        PointCh target = new PointCh(Ch1903.e(Math.toRadians(6.6236244),
+                Math.toRadians(46.6295067)),
+                                     Ch1903.n(Math.toRadians(6.6236244),
+                                             Math.toRadians(46.6295067)));
         Edge actualEdge = Edge.of(graph, 5413, 2666, 2664);
         Edge expectedEdge = new Edge(2666, 2664, origin, target, origin.distanceTo(target),
-                value -> Math.pow(value, 2));
+                                     value -> Math.pow(value, 2));
         assertEquals(expectedEdge.fromNodeId(), actualEdge.fromNodeId());
         assertEquals(expectedEdge.toNodeId(), actualEdge.toNodeId());
         TestUtils.assertEqualsPointCh(expectedEdge.fromPoint(), actualEdge.fromPoint(), 0.0625);
@@ -65,7 +67,7 @@ public class EdgeTest {
     void pointAtTest() {
         PointCh pointI = new PointCh(2635259.48, 1154575.27);
         Edge edgeFlat = new Edge(2022, 2023, pointA, pointI, pointA.distanceTo(pointI),
-                graph.edgeProfile(0));
+                                 graph.edgeProfile(0));
         PointCh pointC = new PointCh(2566842.8, 1154575.27);
         TestUtils.assertEqualsPointCh(pointC, edgeFlat.pointAt(31583.32), 1e-2);
         PointCh pointD = new PointCh(2544138.65, 1176492.45);
@@ -89,7 +91,7 @@ public class EdgeTest {
 
     @Test
     void edgeOfWorksOnLausanneData() throws IOException {
-        var graph = Graph.loadFrom(Path.of("data/lausanne"));
+        var graph = Graph.loadFrom(Path.of(".javelo/lausanne"));
 
         var edge = Edge.of(graph, 4095, 2022, 2021);
 
